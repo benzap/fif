@@ -1,0 +1,11 @@
+#+TITLE: fif - Stack-based Programming in Clojure
+#+AUTHOR: Benjamin Zaporzan
+#+DATE: 2018-04-04
+#+EMAIL: benzaporzan@gmail.com
+#+LANGUAGE: en
+#+OPTIONS: H:2 num:t toc:t \n:nil ::t |:t ^:t f:t tex:t
+
+*fif* is meant to be a play on *forth*. The name forth was originally
+ meant to be spelt *fourth*, but had to be reduced in order to fit
+ within the restrictions of computers at the time of it's creation,
+ and so the name stuck.
