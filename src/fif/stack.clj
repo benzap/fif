@@ -95,7 +95,7 @@
   (let [current-mode (peek (get-flags sm))]
     (if-let [modefn (-> sm :modes (get current-mode))]
       (modefn sm arg)
-      (throw (ex-info "Unable to find mode for flagged mode: " current-mode)))))
+      (throw (ex-info "Unable to find mode function for flagged mode: " current-mode)))))
 
 
 (defn process-arg [sm arg]
@@ -135,8 +135,8 @@
 
 (defn eval-string [sm s]
   (->> s
-      wrap-eval-string
-      edn/read-string
-      (eval-fn sm)))
+       wrap-eval-string
+       edn/read-string
+       (eval-fn sm)))
 
 #_(eval-string (new-stack-machine) "1 2 3")

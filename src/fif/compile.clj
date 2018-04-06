@@ -47,7 +47,7 @@
 
 
 
-(defn add-compile-mode [sm]
+(defn import-compile-mode [sm]
   (-> sm
       (stack/set-word arg-start-token start-defn)
       (stack/set-mode compile-mode-flag compile-mode)))

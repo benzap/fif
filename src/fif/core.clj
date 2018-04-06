@@ -1,17 +1,44 @@
 (ns fif.core
   (:require [fif.stack :as stack]
-            [fif.stdlib :as stdlib]
-            [fif.compile :refer [add-compile-mode]]))
+            [fif.stdlib :refer [import-stdlib]]
+            [fif.compile :refer [import-compile-mode]]))
 
 
-(defn eval! [stack & args])
-  
+(def get-stack stack/get-stack)
+(def get-ret stack/get-ret)
+
+
+(def ^:dynamic *default-stack*
+  (-> (stack/new-stack-machine)
+      import-stdlib
+      import-compile-mode))
+
+
+(defn fif-fn [args]
+  (-> *default-stack*
+      (stack/eval-fn args)))
+
+
+#_(fif-fn [1 1 '+])
+
+
+(defmacro fif-eval [& body]
+  `(fif-fn (quote ~body)))
+
+
+#_(fif-eval 1 1 + >r)
+
+
+(defmacro fif-reval [& body]
+  `(-> (fif-fn (quote ~body)) stack/get-ret))
+
+
+#_(fif-reval 1 1 + dup >r 1 + >r)
+
 
 (-> (stack/new-stack-machine)
-    (stack/set-word '+ stdlib/op+)
-    (stack/set-word '- stdlib/op-)
-    (stack/set-word '. stdlib/dot)
-    (add-compile-mode)
+    (import-stdlib)
+    (import-compile-mode)
 
     (stack/eval
 
@@ -21,4 +48,14 @@
        2 +
      endfn
 
-     2 addtwo .))
+     2 addtwo .
+
+     2 addtwo addtwo .
+
+     fn addfour
+       addtwo addtwo
+     endfn
+
+     4 addfour .
+     .s))
+
