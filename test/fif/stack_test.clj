@@ -1,6 +1,6 @@
-(ns fif.core-test
+(ns fif.stack-test
   (:require [clojure.test :refer :all]
-            [fif.core :refer :all]))
+            [fif.stack :refer :all]))
 
 
 (deftest test-stackmachine

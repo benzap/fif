@@ -1,22 +1,24 @@
-(ns fif.core)
+(ns fif.core
+  (:require [fif.stack :as stack]
+            [fif.stdlib :as stdlib]
+            [fif.compile :refer [add-compile-mode]]))
 
 
+(defn eval! [stack & args])
+  
 
-(def *symbols (atom {}))
-(def *stack (atom []))
+(-> (stack/new-stack-machine)
+    (stack/set-word '+ stdlib/op+)
+    (stack/set-word '- stdlib/op-)
+    (stack/set-word '. stdlib/dot)
+    (add-compile-mode)
 
+    (stack/eval
 
-(defn push! [val]
-  (swap! *stack conj val))
+     1 1 + . ;; First Example
+     1 1 + 1 - .
+     fn addtwo
+       2 +
+     endfn
 
-
-(defn pop! []
-  (swap! *stack pop))
-
-
-(defn eval! [])
-
-
-
-
-
+     2 addtwo .))
