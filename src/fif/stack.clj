@@ -7,6 +7,7 @@
   (push-stack [this arg])
   (pop-stack [this])
   (get-stack [this])
+  (set-stack [this stack])
   (clear-stack [this])
 
   (push-ret [this ret])
@@ -37,6 +38,9 @@
 
   (get-stack [this]
     (-> this :arg-stack))
+
+  (set-stack [this stack]
+    (assoc this :arg-stack stack))
 
   (clear-stack [this]
     (assoc this :arg-stack (empty (:arg-stack this))))
@@ -140,3 +144,47 @@
        (eval-fn sm)))
 
 #_(eval-string (new-stack-machine) "1 2 3")
+
+
+(defn take-to-token [coll token]
+  (into '() (take-while #(not= % token) coll)))
+
+
+(defn strip-token [coll token]
+  (cond-> coll
+   (= (peek coll) token)
+   (rest)
+   (= (last coll) token)
+   (as-> $ (take (dec (count $)) $))))
+
+
+(defn rest-at-token [coll token]
+  (let [idx-token (inc (count (take-to-token coll token)))]
+    (into '() (drop idx-token coll))))
+
+
+(comment
+ (def x '(0 if 1 else 2 then))
+ (def y '(1 if 1 then))
+
+ (take-to-token x 'then)
+
+ (rest-at-token x 'else))
+
+
+(defn between-tokens [coll start end]
+  (-> coll
+    (take-to-token end)
+    (rest-at-token start)))
+
+
+(defn split-at-token [coll token]
+  [(take-to-token coll token)
+   (rest-at-token coll token)])
+
+
+(defn push-coll [coll tokens]
+  (reduce (fn [coll token] (conj coll token)) coll tokens))
+
+
+#_(split-at-token (between-tokens y 'if 'then) 'else)

@@ -57,5 +57,17 @@
      endfn
 
      4 addfour .
-     .s))
 
+     2 2 - if 1 else 2 then .
+
+     fn cond1
+       if true else false then
+     endfn
+
+     fn cond2
+       if 1 else 2 then
+     endfn
+
+     2 2 - cond1 cond2 .
+
+     .s))

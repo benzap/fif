@@ -8,7 +8,8 @@
   - Most of the functions listed were taken from the Forth standard library."
   (:refer-clojure :exclude [+])
   (:require [fif.stack :as stack :refer :all]
-            [fif.def :refer []]))
+            [fif.def :refer []]
+            [fif.stdlib.conditional :refer [import-stdlib-conditional-mode]]))
 
 
 (def *stdlib-words (atom {}))
@@ -19,7 +20,9 @@
 
 
 (defn import-stdlib [sm]
-  (update-in sm [:words] merge @*stdlib-words))
+  (-> sm
+   (update-in [:words] merge @*stdlib-words)
+   (import-stdlib-conditional-mode)))
 
 
 (defn op+
