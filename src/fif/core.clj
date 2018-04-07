@@ -27,6 +27,7 @@
 
 
 #_(fif-eval 1 1 + >r)
+#_(fif-eval variable x 100 x ! x at)
 
 
 (defmacro fif-reval [& body]
@@ -69,5 +70,9 @@
      endfn
 
      2 2 - cond1 cond2 .
+
+     variable x
+     100 x !
+     x at .
 
      .s))

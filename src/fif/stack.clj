@@ -3,7 +3,7 @@
   (:require [clojure.tools.reader.edn :as edn]))
 
 
-(defprotocol IStack
+(defprotocol IStackMachine
   (push-stack [this arg])
   (pop-stack [this])
   (get-stack [this])
@@ -19,6 +19,9 @@
   (remove-word [this wname])
   (get-words [this])
 
+  (set-variable [this vname vval])
+  (get-variables [this])
+
   (set-mode [this flag modefn])
   (remove-mode [this flag])
 
@@ -27,8 +30,8 @@
   (get-flags [this]))
 
 
-(defrecord StackMachine [words arg-stack ret-stack flags]
-  IStack
+(defrecord StackMachine [arg-stack ret-stack flags words variables modes]
+  IStackMachine
   (push-stack [this arg]
     (update-in this [:arg-stack] conj arg))
 
@@ -66,6 +69,12 @@
   (get-words [this]
     (-> this :words))
 
+  (set-variable [this vname vval]
+    (update-in this [:variables] assoc vname vval))
+
+  (get-variables [this]
+    (-> this :variables))
+
   (set-mode [this flag modefn]
     (update-in this [:modes] assoc flag modefn))
 
@@ -88,6 +97,7 @@
     :ret-stack '()
     :flags []
     :words {}
+    :variables {}
     :modes {}}))
 
 

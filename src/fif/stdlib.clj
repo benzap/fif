@@ -9,7 +9,8 @@
   (:refer-clojure :exclude [+])
   (:require [fif.stack :as stack :refer :all]
             [fif.def :refer []]
-            [fif.stdlib.conditional :refer [import-stdlib-conditional-mode]]))
+            [fif.stdlib.conditional :refer [import-stdlib-conditional-mode]]
+            [fif.stdlib.variable :refer [import-stdlib-variable-mode]]))
 
 
 (def *stdlib-words (atom {}))
@@ -22,7 +23,8 @@
 (defn import-stdlib [sm]
   (-> sm
    (update-in [:words] merge @*stdlib-words)
-   (import-stdlib-conditional-mode)))
+   (import-stdlib-conditional-mode)
+   (import-stdlib-variable-mode)))
 
 
 (defn op+
