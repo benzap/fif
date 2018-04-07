@@ -59,7 +59,7 @@
 
      4 addfour .
 
-     2 2 - if 1 else 2 then .
+     2 2 - if 1 1 + else 2 2 + then .
 
      fn cond1
        if true else false then
@@ -75,4 +75,36 @@
      100 x !
      x at .
 
+     9000 constant VAL
+
+     VAL .
+
      .s))
+
+#_(fif-reval 1 1 + dup >r 1 + >r)
+
+(fif-reval 2 2 - if 1 1 + else 2 2 + then >r)
+
+(fif-reval 1 1 = >r)
+
+(fif-reval true if 1 else 2 then >r)
+
+(fif-eval
+  23 dup 18 <  if "You are underage"      else
+     dup 50 <  if "You are the right age" else
+     dup 50 >= if "You are too old"       else
+     then then then >r)
+
+(fif-eval false
+  if
+    2 2 +
+  else
+    dup if true else false then
+  then
+
+  >r)
+
+(fif-reval 23 dup 18 < >r)
+
+
+(fif-eval 2 dup dup 3 4)

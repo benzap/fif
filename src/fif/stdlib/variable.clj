@@ -13,9 +13,6 @@
       (stack/pop-flag)))
 
 
-()
-
-
 (defn start-variable
   [sm]
   (-> sm

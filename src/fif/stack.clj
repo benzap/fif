@@ -170,11 +170,11 @@
 
 (defn rest-at-token [coll token]
   (let [idx-token (inc (count (take-to-token coll token)))]
-    (into '() (drop idx-token coll))))
+    (reverse (into '() (drop idx-token coll)))))
 
 
 (comment
- (def x '(0 if 1 else 2 then))
+ (def x '(0 if 1 1 + else 2 2 + then))
  (def y '(1 if 1 then))
 
  (take-to-token x 'then)
@@ -184,7 +184,7 @@
 
 (defn between-tokens [coll start end]
   (-> coll
-    (take-to-token end)
+    (reverse (take-to-token end))
     (rest-at-token start)))
 
 
@@ -193,8 +193,24 @@
    (rest-at-token coll token)])
 
 
+
+
+
+(defn replace-token [coll otoken ntoken]
+  (->> (for [tok coll]
+        (if (= otoken tok) ntoken tok))
+      (into '())
+      reverse))
+
+(replace-token '(if inner-if some-val inner-then then) 'inner-if 'if)
+  
+
+
 (defn push-coll [coll tokens]
-  (reduce (fn [coll token] (conj coll token)) coll tokens))
+  (reduce (fn [coll token] (conj coll token)) coll (reverse tokens)))
+
+
+(push-coll '(1 2 3) '(if 1 else 2 then))
 
 
 #_(split-at-token (between-tokens y 'if 'then) 'else)

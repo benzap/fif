@@ -6,11 +6,12 @@
   Notes:
 
   - Most of the functions listed were taken from the Forth standard library."
-  (:refer-clojure :exclude [+])
+  (:refer-clojure :exclude [eval])
   (:require [fif.stack :as stack :refer :all]
             [fif.def :refer []]
             [fif.stdlib.conditional :refer [import-stdlib-conditional-mode]]
-            [fif.stdlib.variable :refer [import-stdlib-variable-mode]]))
+            [fif.stdlib.variable :refer [import-stdlib-variable-mode]]
+            [fif.stdlib.constant :refer [import-stdlib-constant-mode]]))
 
 
 (def *stdlib-words (atom {}))
@@ -24,14 +25,15 @@
   (-> sm
    (update-in [:words] merge @*stdlib-words)
    (import-stdlib-conditional-mode)
-   (import-stdlib-variable-mode)))
+   (import-stdlib-variable-mode)
+   (import-stdlib-constant-mode)))
 
 
 (defn op+
   "(n n -- n) Add top two values of stack"
   [sm]
   (let [[i j] (get-stack sm)
-        result (clojure.core/+ i j)]
+        result (clojure.core/+ j i)]
     (-> sm pop-stack pop-stack (push-stack result))))
 (register-stdlib-word! '+ op+)
 
@@ -40,7 +42,7 @@
   "(n n -- n) Subtract top two values of stack"
   [sm]
   (let [[i j] (get-stack sm)
-        result (clojure.core/- i j)]
+        result (clojure.core/- j i)]
     (-> sm pop-stack pop-stack (push-stack result))))
 (register-stdlib-word! '- op-)
 
@@ -49,7 +51,7 @@
   "(n n -- n) Multiply top two values of the stack"
   [sm]
   (let [[i j] (get-stack sm)
-        result (clojure.core/* i j)]
+        result (clojure.core/* j i)]
     (-> sm pop-stack pop-stack (push-stack result))))
 (register-stdlib-word! '* op*)
 
@@ -58,18 +60,18 @@
   "(n n -- n) Divide top two values of the stack"
   [sm]
   (let [[i j] (get-stack sm)
-        result (clojure.core// i j)]
+        result (clojure.core// j i)]
     (-> sm pop-stack pop-stack (push-stack result))))
 (register-stdlib-word! '/ op-div)
 
 
-(defn mod
+(defn op-mod
   "(n n -- n) Get the modulo of the top two values"
   [sm]
   (let [[i j] (get-stack sm)
-        result (clojure.core/mod i j)]
+        result (clojure.core/mod j i)]
     (-> sm pop-stack pop-stack (push-stack result))))
-(register-stdlib-word! 'mod mod)
+(register-stdlib-word! 'mod op-mod)
 
 
 (defn negate
@@ -94,7 +96,7 @@
   "(n n -- n) Gets the max value between the top two values"
   [sm]
   (let [[i j] (get-stack sm)
-        result (max i j)]
+        result (max j i)]
     (-> sm pop-stack pop-stack (push-stack result))))
 (register-stdlib-word! 'max op-max)
 
@@ -103,7 +105,7 @@
   "(n n -- n) Gets teh min value between the top two values"
   [sm]
   (let [[i j] (get-stack sm)
-        result (min i j)]
+        result (min j i)]
     (-> sm pop-stack pop-stack (push-stack result))))
 (register-stdlib-word! 'min op-min)
 
@@ -187,3 +189,40 @@
         item (nth stack pos)
         new-stack (nthrest stack)]))
 (register-stdlib-word! 'roll roll)
+
+
+(defn op-<
+  [sm]
+  (let [[i j] (get-stack sm)
+        result (clojure.core/< j i)]
+   (-> sm
+       pop-stack pop-stack (push-stack result))))
+(register-stdlib-word! '< op-<)
+
+
+(defmacro defstack-arity-2 [name fn]
+  `(defn ~name
+     [sm#]
+     (let [[i# j#] (get-stack sm#)
+           result# (~fn j# i#)]
+       (-> sm#
+           pop-stack pop-stack (push-stack result#)))))
+           
+
+(macroexpand-1 '(defstack-arity-2 op-= =))
+
+
+(defstack-arity-2 op-<= <=)
+(register-stdlib-word! '<= op-<=)
+
+
+(defstack-arity-2 op-= =)
+(register-stdlib-word! '= op-=)
+
+
+(defstack-arity-2 op-> >)
+(register-stdlib-word! '> op->)
+
+
+(defstack-arity-2 op->= >=)
+(register-stdlib-word! '>= op->=)
