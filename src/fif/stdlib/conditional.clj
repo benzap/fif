@@ -28,22 +28,23 @@
 (defn inner-conditional-mode
   "For handling any inner if-else-then tokens, this tracks and converts
   them into a representation which won't impede parsing."
-  [sm arg]
-  (cond
-   (= arg arg-if-token)
-   (-> sm (stack/push-flag inner-conditional-flag)
-       (stack/push-stack arg-inner-if-token)
-       stack/dequeue-code)
-   (= arg arg-else-token)
-   (-> sm (stack/push-stack arg-inner-else-token)
-       stack/dequeue-code)
-   (= arg arg-then-token)
-   (-> sm (stack/pop-flag)
-       (stack/push-stack arg-inner-then-token)
-       stack/dequeue-code)
-   :else
-   (-> sm (stack/push-stack arg)
-       stack/dequeue-code)))
+  [sm]
+  (let [arg (-> sm stack/get-code first)]
+    (cond
+      (= arg arg-if-token)
+      (-> sm (stack/push-flag inner-conditional-flag)
+          (stack/push-stack arg-inner-if-token)
+          stack/dequeue-code)
+      (= arg arg-else-token)
+      (-> sm (stack/push-stack arg-inner-else-token)
+          stack/dequeue-code)
+      (= arg arg-then-token)
+      (-> sm (stack/pop-flag)
+          (stack/push-stack arg-inner-then-token)
+          stack/dequeue-code)
+      :else
+      (-> sm (stack/push-stack arg)
+          stack/dequeue-code))))
    
 
 (defn clean-inner-conditionals [stack]
@@ -53,53 +54,53 @@
       (stack/replace-token arg-inner-else-token arg-else-token)))
 
 
-
 (defn conditional-mode
-  [sm arg]
-  (cond
+  [sm]
+  (let [arg (-> sm stack/get-code first)]
+    (cond
 
-    ;; We found a nested if, we need to process this later
-    (= arg arg-if-token)
-    (-> sm (stack/push-flag inner-conditional-flag)
-           (stack/push-stack arg-inner-if-token)
-           stack/dequeue-code)
-    (not= arg arg-then-token)
-    (-> sm (stack/push-stack arg) stack/dequeue-code)
-    :else
-    (let [stack (stack/get-stack sm)
+      ;; We found a nested if, we need to process this later
+      (= arg arg-if-token)
+      (-> sm (stack/push-flag inner-conditional-flag)
+          (stack/push-stack arg-inner-if-token)
+          stack/dequeue-code)
+      (not= arg arg-then-token)
+      (-> sm (stack/push-stack arg) stack/dequeue-code)
+      :else
+      (let [stack (stack/get-stack sm)
 
-          conditional-content
-          (reverse (stack/take-to-token stack arg-if-token))
+            conditional-content
+            (reverse (stack/take-to-token stack arg-if-token))
 
-          _ (prn "Content: " conditional-content)
+            ;;_ (prn "Content: " conditional-content)
 
-          [falsy-content truthy-content]
-          (stack/split-at-token conditional-content arg-else-token)
+            [falsy-content truthy-content]
+            (stack/split-at-token conditional-content arg-else-token)
 
-          _ (prn "Truthy: " truthy-content)
-          _ (prn "Falsy: " falsy-content)
+            ;;_ (prn "Truthy: " truthy-content)
+            ;;_ (prn "Falsy: " falsy-content)
 
-          falsy-content (clean-inner-conditionals falsy-content)
-          truthy-content (clean-inner-conditionals truthy-content)
+            falsy-content (clean-inner-conditionals falsy-content)
+            truthy-content (clean-inner-conditionals truthy-content)
 
-          _ (prn "Clean Truthy: " truthy-content)
-          _ (prn "Clean Falsy: " falsy-content)
+            ;;_ (prn "Clean Truthy: " truthy-content)
+            ;;_ (prn "Clean Falsy: " falsy-content)
 
-          clean-stack (clean-inner-conditionals (stack/rest-at-token stack arg-if-token))
+            clean-stack (clean-inner-conditionals (stack/rest-at-token stack arg-if-token))
 
-          _ (prn "Clean Stack:" (pop clean-stack))
+            ;;_ (prn "Clean Stack:" (pop clean-stack))
 
-          bool-flag (-> clean-stack peek condition-true?)
+            bool-flag (-> clean-stack peek condition-true?)
 
-          _ (prn "Bool Flag: " bool-flag)
+            ;;_ (prn "Bool Flag: " bool-flag)
 
-          new-code (if bool-flag truthy-content falsy-content)
+            new-code (if bool-flag truthy-content falsy-content)]
 
-          _ (prn "New Code: " new-code)]
-       (-> sm
-         (stack/set-stack (pop clean-stack))
-         (stack/set-code (concat new-code (-> sm stack/dequeue-code stack/get-code)))
-         (stack/pop-flag)))))
+            ;;_ (prn "New Code: " new-code)]
+        (-> sm
+            (stack/set-stack (pop clean-stack))
+            (stack/set-code (concat new-code (-> sm stack/dequeue-code stack/get-code)))
+            (stack/pop-flag))))))
 
 
 (defn start-if

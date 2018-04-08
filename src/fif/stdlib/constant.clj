@@ -13,12 +13,14 @@
 
 
 (defn constant-mode
-  [sm arg]
-  (let [[cval] (stack/get-stack sm)]
+  [sm]
+  (let [arg (-> sm stack/get-code first)
+        [cval] (stack/get-stack sm)]
     (-> sm
-      (stack/pop-stack)
-      (stack/set-word arg (wrap-word-constant cval))
-      (stack/pop-flag))))
+        (stack/pop-stack)
+        (stack/set-word arg (wrap-word-constant cval))
+        (stack/pop-flag)
+        stack/dequeue-code)))
 
 
 (defn start-constant

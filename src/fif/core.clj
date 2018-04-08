@@ -27,7 +27,7 @@
 
 
 #_(fif-eval 1 1 + >r)
-#_(fif-eval variable x 100 x ! x at)
+#_(fif-reval variable x 100 x ! x at >r)
 
 
 (defmacro fif-reval [& body]
@@ -37,49 +37,65 @@
 #_(fif-reval 1 1 + dup >r 1 + >r)
 
 
-#_(-> (stack/new-stack-machine)
-      (import-stdlib)
-      (import-compile-mode)
+#_(fif-reval
 
-      (stack/eval
+   1 1 + . cr ;; First Example
+   1 1 + 1 - . cr
+   fn addtwo
+   2 +
+   endfn
+   
+   2 addtwo . cr
+   
+   2 addtwo addtwo . cr
+   
+   fn addfour
+   addtwo addtwo
+   endfn
+   
+   4 addfour . cr
+   
+   2 2 - if 1 1 + else 2 2 + then . cr
+   
+   fn cond1
+   if true else false then
+   endfn
+   
+   fn cond2
+   if 1 else 2 then
+   endfn
+   
+   2 2 - cond1 cond2 . cr
+   
+   variable x
+   100 x !
+   x at . cr
+   
+   variable y
+   {:x 123} y !
+   y at . cr
 
-       1 1 + . ;; First Example
-       1 1 + 1 - .
-       fn addtwo
-       2 +
-       endfn
+   9000 constant VAL
 
-       2 addtwo .
+   VAL dup dup . cr
 
-       2 addtwo addtwo .
+   .s)
 
-       fn addfour
-       addtwo addtwo
-       endfn
 
-       4 addfour .
+#_(fif-reval
+   fn factorial
+   dup 1 > if dup dec factorial * else then
+   endfn
+   
+   5 factorial
+   >r)
 
-       2 2 - if 1 1 + else 2 2 + then .
 
-       fn cond1
-       if true else false then
-       endfn
+#_(fif-eval
+   fn cond1 if true else false then endfn
 
-       fn cond2
-       if 1 else 2 then
-       endfn
+   0 cond1 .s)
 
-       2 2 - cond1 cond2 .
-
-       variable x
-       100 x !
-       x at .
-
-       9000 constant VAL
-
-       VAL .
-
-       .s))
 
 #_(fif-reval 1 1 + dup >r 1 + >r)
 

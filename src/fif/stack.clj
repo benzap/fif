@@ -34,6 +34,11 @@
   (set-code [this stack])
   (get-code [this])
 
+  (set-step-max [this m])
+  (inc-step [this])
+  (set-step-num [this n])
+  (get-step-num [this])
+
   (step [this])
   (run [this]))
 
@@ -42,28 +47,23 @@
   (not (empty? (get-flags sm))))
   
 
-(defn process-mode [sm arg]
-  (let [current-mode (peek (get-flags sm))]
+(defn process-mode [sm]
+  (let [arg (-> sm get-code first)
+        current-mode (peek (get-flags sm))]
     (if-let [modefn (-> sm :modes (get current-mode))]
-      (modefn sm arg)
+      (modefn sm)
       (throw (ex-info "Unable to find mode function for flagged mode: " current-mode)))))
 
 
-(defn process-arg [sm arg]
-  (cond
-    (symbol? arg)
-    (if-let [wfn (-> sm get-words (get arg))]
-      (wfn sm)
-      (-> sm (push-stack arg) dequeue-code))
-    :else
-    (-> sm (push-stack arg) dequeue-code)))
-
-
-(defn eval-arg [sm arg])
-  
-    
-    
-#_(eval-arg (new-stack-machine) (edn/read-string "+"))
+(defn process-arg [sm]
+  (let [arg (-> sm get-code first)]
+    (cond
+      (symbol? arg)
+      (if-let [wfn (-> sm get-words (get arg))]
+        (wfn sm)
+        (-> sm (push-stack arg) dequeue-code))
+      :else
+      (-> sm (push-stack arg) dequeue-code))))
 
 
 (defn eval-fn [sm args]
@@ -138,7 +138,7 @@
       (into '())
       reverse))
 
-(replace-token '(if inner-if some-val inner-then then) 'inner-if 'if)
+#_(replace-token '(if inner-if some-val inner-then then) 'inner-if 'if)
   
 
 
@@ -146,14 +146,15 @@
   (reduce (fn [coll token] (conj coll token)) coll (reverse tokens)))
 
 
-(push-coll '(1 2 3) '(if 1 else 2 then))
+#_(push-coll '(1 2 3) '(if 1 else 2 then))
 
 
 #_(split-at-token (between-tokens y 'if 'then) 'else)
 
 
 (defrecord StackMachine [arg-stack code-stack ret-stack 
-                         flags words variables modes]
+                         flags words variables modes
+                         step-num step-max]
   IStackMachine
   (push-stack [this arg]
     (update-in this [:arg-stack] conj arg))
@@ -225,16 +226,27 @@
   (get-code [this]
     (-> this :code-stack))
 
+  (set-step-max [this m]
+    (assoc this :step-max m))
+
+  (inc-step [this]
+    (update this :step-num inc))
+
+  (set-step-num [this n]
+    (assoc this :step-num n))
+
+  (get-step-num [this]
+    (-> this :step-num))
+
   (step [this]
     (let [arg (-> this get-code first)]
       (if (has-flags? this)
-        (-> this (process-mode arg))
-        (-> this (process-arg arg)))))
+        (-> this (process-mode) inc-step)
+        (-> this (process-arg) inc-step))))
 
   (run [this]
     (loop [sm this]
-      (prn (-> sm get-stack) "--" (-> sm get-code))
-      (if-let [arg (-> sm get-code first)]
+      (if-not (empty? (-> sm get-code))
         (recur (step sm))
         sm))))
 
@@ -247,4 +259,6 @@
     :flags []
     :words {}
     :variables {}
-    :modes {}}))
+    :modes {}
+    :step-num 0
+    :step-max 0}))

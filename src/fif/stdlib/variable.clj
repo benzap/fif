@@ -7,16 +7,19 @@
 
 
 (defn variable-mode
-  [sm arg]
-  (-> sm
-      (stack/set-variable arg nil)
-      (stack/pop-flag)))
+  [sm]
+  (let [arg (-> sm stack/get-code first)]
+    (-> sm
+        (stack/set-variable arg nil)
+        (stack/pop-flag)
+        stack/dequeue-code)))
 
 
 (defn start-variable
   [sm]
   (-> sm
-      (stack/push-flag variable-mode-flag)))
+      (stack/push-flag variable-mode-flag)
+      stack/dequeue-code))
 
 
 (defn setv [sm]
@@ -25,7 +28,8 @@
     (-> sm
         stack/pop-stack
         stack/pop-stack
-        (stack/set-variable sym val))))
+        (stack/set-variable sym val)
+        stack/dequeue-code)))
 
 
 (defn getv [sm]
@@ -34,7 +38,8 @@
     ;; TODO: Check if variable exists
     (-> sm
         stack/pop-stack
-        (stack/push-stack val))))
+        (stack/push-stack val)
+        stack/dequeue-code)))
 
 
 (defn import-stdlib-variable-mode [sm]

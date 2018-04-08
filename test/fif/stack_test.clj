@@ -1,4 +1,5 @@
 (ns fif.stack-test
+  (:refer-clojure :exclude [eval])
   (:require [clojure.test :refer :all]
             [fif.stack :refer :all]))
 
@@ -43,7 +44,8 @@
       (let [s (-> s (set-word 'val (wrap-cword nil))
                     (remove-word 'val))]
         (is (nil? (get (-> s get-words) 'val)))))))
-         
+
+
 (deftest test-stackmachine-run
   (testing "Test stepping through stackmachine"
     (let [s (-> (new-stack-machine)
@@ -62,5 +64,19 @@
                 (enqueue-code 5))
           s2 (run s)]
       (is (= '(5 4 3 2 1) (-> s2 get-stack))))))
+
+
+(deftest test-has-flags
+  (testing "Main Test"
+    (let [s (-> (new-stack-machine)
+                (push-stack 1)
+                (push-stack 2))]
+      (is (has-flags? (-> s (push-flag :test)))))))
+
+
+(deftest test-process-mode)
+
+
+(deftest test-process-arg)
 
 

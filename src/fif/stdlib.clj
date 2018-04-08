@@ -47,6 +47,22 @@
 (register-stdlib-word! '- op-)
 
 
+(defn op-plus-1
+  [sm]
+  (let [[i] (get-stack sm)
+        result (inc i)]
+    (-> sm pop-stack (push-stack result) dequeue-code)))
+(register-stdlib-word! 'inc op-plus-1)
+
+
+(defn op-minus-1
+  [sm]
+  (let [[i] (get-stack sm)
+        result (dec i)]
+    (-> sm pop-stack (push-stack result) dequeue-code)))
+(register-stdlib-word! 'dec op-minus-1)
+
+
 (defn op*
   "(n n -- n) Multiply top two values of the stack"
   [sm]
@@ -118,16 +134,23 @@
 
 (defn dot [sm]
   (let [top (-> sm get-stack peek)]
-    (println top)
+    (print top)
     (-> sm pop-stack dequeue-code)))
 (register-stdlib-word! '. dot)
 
 
+(defn carriage-return [sm]
+  (print "\n")
+  (-> sm dequeue-code))
+(register-stdlib-word! 'cr carriage-return)
+
+
 (defn dot-stack [sm]
   (let [stack (get-stack sm)
-        result (apply str "<" (count stack) "> " stack)]
-    (println result)
-    sm))
+        result (str "<" (count stack) "> ")]
+    (print (str "<" (count stack) "> "))
+    (prn stack)
+    (-> sm dequeue-code)))
 (register-stdlib-word! '.s dot-stack)
 
 
