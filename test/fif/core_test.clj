@@ -1,17 +1,26 @@
 (ns fif.core-test
   (:require [clojure.test :refer :all]
-            [fif.core :refer :all]))
+            [fif.core :refer :all]
+            [fif.stack :refer [new-stack-machine]]))
 
 
-(deftest test-stackmachine
-  (testing "pushing and popping on the arg stack"
-    (let [s (-> (new-stack-machine)
-                (push-stack 1)
-                (push-stack 2)
-                (push-stack 3))]
-      (is (= '(3 2 1) (get-stack s)))
-      (is (= '(2 1) (-> s pop-stack get-stack)))
-      (is (= '(3) (-> s pop-stack get-ret))))))
+(deftest test-fif-fn
+  (is (= '(2) (-> (fif-fn [1 1 '+]) get-stack))))
 
 
+(deftest test-fif-eval
+  (is (= '(2) (-> (fif-eval 1 1 +) get-stack))))
 
+
+(deftest test-fif-reval
+  (is (= '(2) (-> (fif-reval 1 1 + >r)))))
+
+
+(deftest test-fif-eval-string
+  (is (= '(2) (-> (fif-eval-string "1 1 +") get-stack))))
+
+
+(deftest test-with-stack
+  (is (= '(+ 1 1) (with-stack (new-stack-machine)
+                    (-> (fif-eval 1 1 +)
+                        get-stack)))))

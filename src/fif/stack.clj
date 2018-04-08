@@ -74,11 +74,6 @@
   `(eval-fn ~sm (quote ~body)))
 
 
-#_(macroexpand-1 '(eval (new-stack-machine) 1 2 3 +))
-#_(eval (new-stack-machine) 1 2 3 +)
-#_(-> (edn/read-string "(1 2 3 +)") last symbol?)
-
-
 (defn wrap-eval-string [s]
   (str "[" s "]"))
 
@@ -88,8 +83,6 @@
        wrap-eval-string
        edn/read-string
        (eval-fn sm)))
-
-#_(eval-string (new-stack-machine) "1 2 3")
 
 
 (defn take-to-token [coll token]
@@ -129,27 +122,15 @@
    (rest-at-token coll token)])
 
 
-#_(split-at-token '(1 2 'else 3 4) 'else)
-
-
 (defn replace-token [coll otoken ntoken]
   (->> (for [tok coll]
         (if (= otoken tok) ntoken tok))
       (into '())
       reverse))
 
-#_(replace-token '(if inner-if some-val inner-then then) 'inner-if 'if)
-  
-
 
 (defn push-coll [coll tokens]
   (reduce (fn [coll token] (conj coll token)) coll (reverse tokens)))
-
-
-#_(push-coll '(1 2 3) '(if 1 else 2 then))
-
-
-#_(split-at-token (between-tokens y 'if 'then) 'else)
 
 
 (defrecord StackMachine [arg-stack code-stack ret-stack 

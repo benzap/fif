@@ -14,24 +14,28 @@
       import-compile-mode))
 
 
+(defmacro with-stack [sm & body]
+  `(binding [*default-stack* ~sm]
+     ~@body))
+
+
 (defn fif-fn [args]
   (-> *default-stack*
       (stack/eval-fn args)))
-
-
-#_(fif-fn [1 1 '+])
 
 
 (defmacro fif-eval [& body]
   `(fif-fn (quote ~body)))
 
 
-#_(fif-eval 1 1 + >r)
-#_(fif-reval variable x 100 x ! x at >r)
-
-
 (defmacro fif-reval [& body]
   `(-> (fif-fn (quote ~body)) stack/get-ret))
+
+
+(defn fif-eval-string [s]
+  (-> *default-stack* (stack/eval-string s)))
+
+
 
 
 #_(fif-reval 1 1 + dup >r 1 + >r)

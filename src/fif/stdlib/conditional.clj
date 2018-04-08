@@ -1,4 +1,5 @@
 (ns fif.stdlib.conditional
+  "For the if-else-then fif functionality"
   (:require [fif.stack :as stack]))
 
 
@@ -15,7 +16,15 @@
 (def inner-conditional-flag :inner-conditional-mode)
 
 
-(defn condition-true? [x]
+(defn condition-true?
+  "Determines whether the given value is true or false
+  
+  Notes:
+
+  - is true if it is a non-zero number
+  - is false if it is the number zero
+  - is true if (boolean x) is true"
+  [x]
   (cond
    (and (number? x) (= x 0))
    false
@@ -27,7 +36,12 @@
 
 (defn inner-conditional-mode
   "For handling any inner if-else-then tokens, this tracks and converts
-  them into a representation which won't impede parsing."
+  them into a representation which won't impede parsing.
+
+  Notes:
+
+  - additional nested conditionals are tracked by pushing and popping
+  additional :inner-conditional-mode flags"
   [sm]
   (let [arg (-> sm stack/get-code first)]
     (cond
@@ -55,6 +69,26 @@
 
 
 (defn conditional-mode
+  "Primitive if-else-then statements
+  
+  Implementation Details:
+
+  When the :conditional-mode flag is set, the stack machine will begin
+  pulling everything onto the main stack, until we reach the `then`
+  statement signifying our conditional content. Any nested
+  conditionals trigger the :inner-conditional-mode, which obfuscates
+  the conditionals so as not to interfere with the current
+  conditional.
+
+  After determining the conditional content, we scrub it from the main
+  stack, separate the conditional content into the truthy and falsy
+  content, and clean the content from any :inner-conditional-mode
+  obfuscation.
+
+  The flag is popped from the stack, and upon determining whether the
+  condition and true or false, places either the truthy or falsy
+  content back onto the code stack.
+  "
   [sm]
   (let [arg (-> sm stack/get-code first)]
     (cond
@@ -72,31 +106,17 @@
             conditional-content
             (reverse (stack/take-to-token stack arg-if-token))
 
-            ;;_ (prn "Content: " conditional-content)
-
             [truthy-content falsy-content]
             (stack/split-at-token conditional-content arg-else-token)
-
-            ;;_ (prn "Truthy: " truthy-content)
-            ;;_ (prn "Falsy: " falsy-content)
 
             falsy-content (clean-inner-conditionals falsy-content)
             truthy-content (clean-inner-conditionals truthy-content)
 
-            ;;_ (prn "Clean Truthy: " truthy-content)
-            ;;_ (prn "Clean Falsy: " falsy-content)
-
             clean-stack (clean-inner-conditionals (stack/rest-at-token stack arg-if-token))
-
-            ;;_ (prn "Clean Stack:" (pop clean-stack))
 
             bool-flag (-> clean-stack peek condition-true?)
 
-            ;;_ (prn "Bool Flag: " bool-flag)
-
             new-code (if bool-flag truthy-content falsy-content)]
-
-            ;;_ (prn "New Code: " new-code)]
         (-> sm
             (stack/set-stack (pop clean-stack))
             (stack/set-code (concat new-code (-> sm stack/dequeue-code stack/get-code)))
@@ -104,6 +124,7 @@
 
 
 (defn start-if
+  "Word definition for starting an if condition mode"
   [sm]
   (-> sm
       (stack/push-stack arg-if-token)
@@ -112,6 +133,7 @@
 
 
 (defn import-stdlib-conditional-mode
+  "Stack Machine imports for if-else-then functionality"
   [sm]
   (-> sm
       (stack/set-word arg-if-token start-if)

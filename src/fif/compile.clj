@@ -29,16 +29,6 @@
           (stack/dequeue-code $))))))
 
 
-(compile-mode (-> (stack/new-stack-machine)
-                  (stack/push-flag compile-mode-flag)
-                  (stack/push-stack 1)
-                  (stack/push-stack 'fn)
-                  (stack/push-stack 'square)
-                  (stack/push-stack 'dup)
-                  (stack/push-stack '*)
-                  (stack/enqueue-code 'endfn)))
-
-
 (defn start-defn
   "We retrieved the start-token word, and we push it onto the stack and
    set our compile flag"
@@ -47,7 +37,6 @@
     (stack/push-stack arg-start-token)
     (stack/push-flag compile-mode-flag)
     stack/dequeue-code))
-
 
 
 (defn import-compile-mode [sm]

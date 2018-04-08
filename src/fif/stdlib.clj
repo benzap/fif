@@ -23,10 +23,10 @@
 
 (defn import-stdlib [sm]
   (-> sm
-   (update-in [:words] merge @*stdlib-words)
-   (import-stdlib-conditional-mode)
-   (import-stdlib-variable-mode)
-   (import-stdlib-constant-mode)))
+      (update-in [:words] merge @*stdlib-words)
+      (import-stdlib-conditional-mode)
+      (import-stdlib-variable-mode)
+      (import-stdlib-constant-mode)))
 
 
 (defn op+
@@ -229,9 +229,6 @@
            result# (~fn j# i#)]
        (-> sm#
            pop-stack pop-stack (push-stack result#) dequeue-code))))
-           
-
-(macroexpand-1 '(defstack-arity-2 op-= =))
 
 
 (defstack-arity-2 op-<= <=)
