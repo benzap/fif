@@ -84,11 +84,14 @@
 
 #_(fif-reval
    fn factorial
-   dup 1 > if dup dec factorial * else then
+   dup 1 > if dup dec factorial * then
    endfn
    
    5 factorial
    >r)
+
+
+#_(fif-reval fn add2 2 + endfn 2 add2 >r)
 
 
 #_(fif-eval

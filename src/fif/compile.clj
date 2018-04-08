@@ -20,7 +20,7 @@
     (if-not (= arg arg-end-token)
       (-> sm (stack/push-stack arg) stack/dequeue-code)
       (let [stack (stack/get-stack sm)
-            fn-content (stack/take-to-token stack arg-start-token) 
+            fn-content (reverse (stack/take-to-token stack arg-start-token))
             [wname & wbody] fn-content]
         (as-> sm $
           (stack/set-word $ wname (wrap-compiled-fn wbody))

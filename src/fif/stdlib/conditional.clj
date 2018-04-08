@@ -74,7 +74,7 @@
 
             ;;_ (prn "Content: " conditional-content)
 
-            [falsy-content truthy-content]
+            [truthy-content falsy-content]
             (stack/split-at-token conditional-content arg-else-token)
 
             ;;_ (prn "Truthy: " truthy-content)

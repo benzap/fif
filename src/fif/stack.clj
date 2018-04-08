@@ -93,7 +93,7 @@
 
 
 (defn take-to-token [coll token]
-  (into '() (take-while #(not= % token) coll)))
+  (reverse (into '() (take-while #(not= % token) coll))))
 
 
 (defn strip-token [coll token]
@@ -119,14 +119,14 @@
 
 
 (defn between-tokens [coll start end]
-  (-> coll
-    (reverse (take-to-token end))
-    (rest-at-token start)))
+  (as-> coll $
+    (take-to-token $ end)
+    (rest-at-token $ start)))
 
 
 (defn split-at-token [coll token]
   [(take-to-token coll token)
-   (reverse (rest-at-token coll token))])
+   (rest-at-token coll token)])
 
 
 #_(split-at-token '(1 2 'else 3 4) 'else)
