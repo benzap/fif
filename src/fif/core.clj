@@ -1,7 +1,6 @@
 (ns fif.core
   (:require [fif.stack :as stack]
-            [fif.stdlib :refer [import-stdlib]]
-            [fif.compile :refer [import-compile-mode]]))
+            [fif.stdlib :refer [import-stdlib]]))
 
 
 (def get-stack stack/get-stack)
@@ -10,8 +9,7 @@
 
 (def ^:dynamic *default-stack*
   (-> (stack/new-stack-machine)
-      import-stdlib
-      import-compile-mode))
+      import-stdlib))
 
 
 (defmacro with-stack [sm & body]

@@ -1,4 +1,4 @@
-(ns fif.compile
+(ns fif.stdlib.compile
   "Defines the compile-mode within the fif stack machine"
   (:require [fif.stack :as stack]))
 
@@ -39,7 +39,7 @@
     stack/dequeue-code))
 
 
-(defn import-compile-mode [sm]
+(defn import-stdlib-compile-mode [sm]
   (-> sm
       (stack/set-word arg-start-token start-defn)
       (stack/set-mode compile-mode-flag compile-mode)))
