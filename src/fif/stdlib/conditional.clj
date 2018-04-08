@@ -32,14 +32,18 @@
   (cond
    (= arg arg-if-token)
    (-> sm (stack/push-flag inner-conditional-flag)
-          (stack/push-stack arg-inner-if-token))
+       (stack/push-stack arg-inner-if-token)
+       stack/dequeue-code)
    (= arg arg-else-token)
-   (-> sm (stack/push-stack arg-inner-else-token))
+   (-> sm (stack/push-stack arg-inner-else-token)
+       stack/dequeue-code)
    (= arg arg-then-token)
    (-> sm (stack/pop-flag)
-          (stack/push-stack arg-inner-then-token))
+       (stack/push-stack arg-inner-then-token)
+       stack/dequeue-code)
    :else
-   (stack/push-stack sm arg)))
+   (-> sm (stack/push-stack arg)
+       stack/dequeue-code)))
    
 
 (defn clean-inner-conditionals [stack]
@@ -57,9 +61,10 @@
     ;; We found a nested if, we need to process this later
     (= arg arg-if-token)
     (-> sm (stack/push-flag inner-conditional-flag)
-           (stack/push-stack arg-inner-if-token))
+           (stack/push-stack arg-inner-if-token)
+           stack/dequeue-code)
     (not= arg arg-then-token)
-    (stack/push-stack sm arg)
+    (-> sm (stack/push-stack arg) stack/dequeue-code)
     :else
     (let [stack (stack/get-stack sm)
 
@@ -93,7 +98,7 @@
           _ (prn "New Code: " new-code)]
        (-> sm
          (stack/set-stack (pop clean-stack))
-         (stack/set-code (concat ['nop] new-code (-> sm stack/dequeue-code stack/get-code)))
+         (stack/set-code (concat new-code (-> sm stack/dequeue-code stack/get-code)))
          (stack/pop-flag)))))
 
 
@@ -101,7 +106,8 @@
   [sm]
   (-> sm
       (stack/push-stack arg-if-token)
-      (stack/push-flag conditional-mode-flag)))
+      (stack/push-flag conditional-mode-flag)
+      stack/dequeue-code))
 
 
 (defn import-stdlib-conditional-mode

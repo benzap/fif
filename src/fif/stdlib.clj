@@ -34,7 +34,7 @@
   [sm]
   (let [[i j] (get-stack sm)
         result (clojure.core/+ j i)]
-    (-> sm pop-stack pop-stack (push-stack result))))
+    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
 (register-stdlib-word! '+ op+)
 
 
@@ -43,7 +43,7 @@
   [sm]
   (let [[i j] (get-stack sm)
         result (clojure.core/- j i)]
-    (-> sm pop-stack pop-stack (push-stack result))))
+    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
 (register-stdlib-word! '- op-)
 
 
@@ -52,7 +52,7 @@
   [sm]
   (let [[i j] (get-stack sm)
         result (clojure.core/* j i)]
-    (-> sm pop-stack pop-stack (push-stack result))))
+    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
 (register-stdlib-word! '* op*)
 
 
@@ -61,7 +61,7 @@
   [sm]
   (let [[i j] (get-stack sm)
         result (clojure.core// j i)]
-    (-> sm pop-stack pop-stack (push-stack result))))
+    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
 (register-stdlib-word! '/ op-div)
 
 
@@ -70,7 +70,7 @@
   [sm]
   (let [[i j] (get-stack sm)
         result (clojure.core/mod j i)]
-    (-> sm pop-stack pop-stack (push-stack result))))
+    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
 (register-stdlib-word! 'mod op-mod)
 
 
@@ -79,7 +79,7 @@
   [sm]
   (let [[i] (get-stack sm)
         result (clojure.core/- i)]
-    (-> sm pop-stack (push-stack result))))
+    (-> sm pop-stack (push-stack result) dequeue-code)))
 (register-stdlib-word! 'negate negate)
 
 
@@ -88,7 +88,7 @@
   [sm]
   (let [[i] (get-stack sm)
         result (if (pos? i) i (clojure.core/- i))]
-    (-> sm pop-stack (push-stack result))))
+    (-> sm pop-stack (push-stack result) dequeue-code)))
 (register-stdlib-word! 'abs abs)
 
 
@@ -97,7 +97,7 @@
   [sm]
   (let [[i j] (get-stack sm)
         result (max j i)]
-    (-> sm pop-stack pop-stack (push-stack result))))
+    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
 (register-stdlib-word! 'max op-max)
 
 
@@ -106,20 +106,20 @@
   [sm]
   (let [[i j] (get-stack sm)
         result (min j i)]
-    (-> sm pop-stack pop-stack (push-stack result))))
+    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
 (register-stdlib-word! 'min op-min)
 
 
 (defn dup [sm]
   (let [top (-> sm get-stack peek)]
-    (push-stack sm top)))
+    (-> sm (push-stack top) dequeue-code)))
 (register-stdlib-word! 'dup dup)
 
 
 (defn dot [sm]
   (let [top (-> sm get-stack peek)]
     (println top)
-    (-> sm pop-stack)))
+    (-> sm pop-stack dequeue-code)))
 (register-stdlib-word! '. dot)
 
 
@@ -133,50 +133,50 @@
 
 (defn push-return [sm]
   (let [[i] (get-stack sm)]
-    (-> sm pop-stack (push-ret i))))
+    (-> sm pop-stack (push-ret i) dequeue-code)))
 (register-stdlib-word! '>r push-return)
 
 
 (defn pop-return [sm]
   (let [[i] (get-ret sm)]
-    (-> sm pop-ret (push-stack i))))
+    (-> sm pop-ret (push-stack i) dequeue-code)))
 (register-stdlib-word! 'r> pop-return)
 
 
 (defn swap [sm]
   (let [[i j] (get-stack sm)]
-    (-> sm pop-stack pop-stack (push-stack i) (push-stack j))))
+    (-> sm pop-stack pop-stack (push-stack i) (push-stack j) dequeue-code)))
 (register-stdlib-word! 'swap swap)
 
 
 (defn rot [sm]
   (let [[i j k] (get-stack sm)]
     (-> sm pop-stack pop-stack pop-stack
-      (push-stack j) (push-stack k) (push-stack i))))
+      (push-stack j) (push-stack k) (push-stack i) dequeue-code)))
 (register-stdlib-word! 'rot rot)
 
 
 (defn op-drop [sm]
-  (pop-stack sm))
+  (-> sm pop-stack dequeue-code))
 (register-stdlib-word! 'drop op-drop)
 
 
 (defn nip [sm]
   (let [[i j] (get-stack sm)]
-    (-> sm pop-stack pop-stack (push-stack i))))
+    (-> sm pop-stack pop-stack (push-stack i) dequeue-code)))
 (register-stdlib-word! 'nip nip)
 
 
 (defn tuck [sm]
   (let [[i j] (get-stack sm)]
     (-> sm pop-stack pop-stack
-        (push-stack i) (push-stack j) (push-stack i))))
+        (push-stack i) (push-stack j) (push-stack i) dequeue-code)))
 (register-stdlib-word! 'tuck tuck)
 
 
 (defn over [sm]
   (let [[i j] (get-stack sm)]
-    (push-stack sm j)))
+    (-> sm (push-stack j) dequeue-code)))
 (register-stdlib-word! 'over over)
 
 
@@ -195,7 +195,7 @@
   (let [[i j] (get-stack sm)
         result (clojure.core/< j i)]
    (-> sm
-       pop-stack pop-stack (push-stack result))))
+       pop-stack pop-stack (push-stack result) dequeue-code)))
 (register-stdlib-word! '< op-<)
 
 
@@ -205,7 +205,7 @@
      (let [[i# j#] (get-stack sm#)
            result# (~fn j# i#)]
        (-> sm#
-           pop-stack pop-stack (push-stack result#)))))
+           pop-stack pop-stack (push-stack result#) dequeue-code))))
            
 
 (macroexpand-1 '(defstack-arity-2 op-= =))

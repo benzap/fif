@@ -10,21 +10,26 @@
 
 (defn wrap-compiled-fn [wbody]
   (fn [sm]
-    (stack/set-code sm (concat ['nop] wbody (-> sm stack/dequeue-code stack/get-code)))))
+    (prn "body" (concat wbody (-> sm stack/dequeue-code stack/get-code)))
+    (stack/set-code sm (concat wbody (-> sm stack/dequeue-code stack/get-code)))))
 
 
 (defn compile-mode
   "This should only be called while we are in compile mode."
   [sm arg]
   (if-not (= arg arg-end-token)
-    (stack/push-stack sm arg)
+    (-> sm (stack/push-stack arg) stack/dequeue-code)
     (let [stack (stack/get-stack sm)
-          fn-content (reverse (take-while #(not= % arg-start-token) stack))
+          fn-content (stack/take-to-token stack arg-start-token)
+          
+          _ (prn "Fcn:" fn-content)
+
           [wname & wbody] fn-content]
       (as-> sm $
           (stack/set-word $ wname (wrap-compiled-fn wbody))
           (reduce (fn [sm f] (f sm)) $ (repeat (inc (count fn-content)) stack/pop-stack))
-          (stack/pop-flag $)))))
+          (stack/pop-flag $)
+          (stack/dequeue-code $)))))
 
 
 (compile-mode (-> (stack/new-stack-machine)
@@ -43,7 +48,8 @@
   [sm]
   (-> sm
     (stack/push-stack arg-start-token)
-    (stack/push-flag compile-mode-flag)))
+    (stack/push-flag compile-mode-flag)
+    stack/dequeue-code))
 
 
 

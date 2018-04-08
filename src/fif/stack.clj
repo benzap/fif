@@ -54,9 +54,9 @@
     (symbol? arg)
     (if-let [wfn (-> sm get-words (get arg))]
       (wfn sm)
-      (push-stack sm arg))
+      (-> sm (push-stack arg) dequeue-code))
     :else
-    (push-stack sm arg)))
+    (-> sm (push-stack arg) dequeue-code)))
 
 
 (defn eval-arg [sm arg])
@@ -126,7 +126,10 @@
 
 (defn split-at-token [coll token]
   [(take-to-token coll token)
-   (rest-at-token coll token)])
+   (reverse (rest-at-token coll token))])
+
+
+#_(split-at-token '(1 2 'else 3 4) 'else)
 
 
 (defn replace-token [coll otoken ntoken]
@@ -225,13 +228,12 @@
   (step [this]
     (let [arg (-> this get-code first)]
       (if (has-flags? this)
-        (-> this (process-mode arg) dequeue-code)
-        (-> this (process-arg arg) dequeue-code))))
+        (-> this (process-mode arg))
+        (-> this (process-arg arg)))))
 
   (run [this]
     (loop [sm this]
-      (prn "Args:" (-> sm get-stack))
-      (prn "Code:" (-> sm get-code))
+      (prn (-> sm get-stack) "--" (-> sm get-code))
       (if-let [arg (-> sm get-code first)]
         (recur (step sm))
         sm))))

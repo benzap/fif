@@ -62,3 +62,5 @@
                 (enqueue-code 5))
           s2 (run s)]
       (is (= '(5 4 3 2 1) (-> s2 get-stack))))))
+
+

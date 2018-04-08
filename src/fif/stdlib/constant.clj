@@ -9,7 +9,7 @@
 (defn wrap-word-constant
   [cval]
   (fn [sm]
-    (stack/push-stack sm cval)))
+    (-> sm (stack/push-stack cval) stack/dequeue-code)))
 
 
 (defn constant-mode
@@ -24,7 +24,8 @@
 (defn start-constant
   [sm]
   (-> sm
-      (stack/push-flag constant-mode-flag)))
+      (stack/push-flag constant-mode-flag)
+      stack/dequeue-code))
 
 
 (defn import-stdlib-constant-mode [sm]

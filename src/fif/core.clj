@@ -89,11 +89,15 @@
 
 #_(fif-reval true if 1 else 2 then >r)
 
-(fif-reval
- 12 dup 18 <  if "You are underage"      else
- dup 50 <  if "You are the right age" else
- dup 50 >= if "You are too old"       else
- then then then >r)
+
+#_(fif-eval fn add2 2 + endfn 2 add2)
+
+
+#_(fif-reval
+   12 dup 18 <  if "You are underage"      else
+   dup 50 <  if "You are the right age" else
+   dup 50 >= if "You are too old"       else
+   then then then >r)
 
 #_(fif-reval
    fn check-age
@@ -107,11 +111,13 @@
    24 check-age >r
    51 check-age >r)
 
-#_(fif-reval false
+#_(fif-reval
+
+   1
    if
     2 2 +
    else
-    dup if true else false then
+    2 2 -
    then
 
    >r)
