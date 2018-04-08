@@ -44,3 +44,21 @@
                     (remove-word 'val))]
         (is (nil? (get (-> s get-words) 'val)))))))
          
+(deftest test-stackmachine-run
+  (testing "Test stepping through stackmachine"
+    (let [s (-> (new-stack-machine)
+                (push-stack 1)
+                (push-stack 2)
+                (push-stack 3)
+                (enqueue-code 4))
+          s2 (step s)]
+      (is (= '(4 3 2 1) (-> s2 get-stack))))
+      
+    (let [s (-> (new-stack-machine)
+                (push-stack 1)
+                (push-stack 2)
+                (push-stack 3)
+                (enqueue-code 4)
+                (enqueue-code 5))
+          s2 (run s)]
+      (is (= '(5 4 3 2 1) (-> s2 get-stack))))))

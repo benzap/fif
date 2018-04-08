@@ -82,34 +82,19 @@
 
           clean-stack (clean-inner-conditionals (stack/rest-at-token stack arg-if-token))
 
-          _ (prn "Clean Stack:" clean-stack)
+          _ (prn "Clean Stack:" (pop clean-stack))
 
           bool-flag (-> clean-stack peek condition-true?)
 
           _ (prn "Bool Flag: " bool-flag)
 
-          new-args (if bool-flag truthy-content falsy-content)
+          new-code (if bool-flag truthy-content falsy-content)
 
-          _ (prn "New Args: " new-args)]
+          _ (prn "New Code: " new-code)]
        (-> sm
-         (stack/set-stack clean-stack)
-         (stack/pop-flag)
-         (stack/eval-fn (reverse new-args))))))
-
-
-(conditional-mode (-> (stack/new-stack-machine)
-                      (stack/push-flag conditional-mode-flag)
-                      (stack/push-stack 0)
-                      (stack/push-stack 'if)
-                      (stack/push-stack 'if)
-                      (stack/push-stack true)
-                      (stack/push-stack 'else)
-                      (stack/push-stack false)
-                      (stack/push-stack 'then)
-                      (stack/push-stack 'else)
-                      (stack/push-stack false))
-
-                  'then)
+         (stack/set-stack (pop clean-stack))
+         (stack/set-code (concat ['nop] new-code (-> sm stack/dequeue-code stack/get-code)))
+         (stack/pop-flag)))))
 
 
 (defn start-if

@@ -119,8 +119,7 @@
 (defn dot [sm]
   (let [top (-> sm get-stack peek)]
     (println top)
-    (-> sm
-        pop-stack)))
+    (-> sm pop-stack)))
 (register-stdlib-word! '. dot)
 
 

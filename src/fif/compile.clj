@@ -10,7 +10,7 @@
 
 (defn wrap-compiled-fn [wbody]
   (fn [sm]
-    (stack/eval-fn sm wbody)))
+    (stack/set-code sm (concat ['nop] wbody (-> sm stack/dequeue-code stack/get-code)))))
 
 
 (defn compile-mode

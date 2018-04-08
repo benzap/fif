@@ -37,74 +37,93 @@
 #_(fif-reval 1 1 + dup >r 1 + >r)
 
 
-(-> (stack/new-stack-machine)
-    (import-stdlib)
-    (import-compile-mode)
+#_(-> (stack/new-stack-machine)
+      (import-stdlib)
+      (import-compile-mode)
 
-    (stack/eval
+      (stack/eval
 
-     1 1 + . ;; First Example
-     1 1 + 1 - .
-     fn addtwo
+       1 1 + . ;; First Example
+       1 1 + 1 - .
+       fn addtwo
        2 +
-     endfn
+       endfn
 
-     2 addtwo .
+       2 addtwo .
 
-     2 addtwo addtwo .
+       2 addtwo addtwo .
 
-     fn addfour
+       fn addfour
        addtwo addtwo
-     endfn
+       endfn
 
-     4 addfour .
+       4 addfour .
 
-     2 2 - if 1 1 + else 2 2 + then .
+       2 2 - if 1 1 + else 2 2 + then .
 
-     fn cond1
+       fn cond1
        if true else false then
-     endfn
+       endfn
 
-     fn cond2
+       fn cond2
        if 1 else 2 then
-     endfn
+       endfn
 
-     2 2 - cond1 cond2 .
+       2 2 - cond1 cond2 .
 
-     variable x
-     100 x !
-     x at .
+       variable x
+       100 x !
+       x at .
 
-     9000 constant VAL
+       9000 constant VAL
 
-     VAL .
+       VAL .
 
-     .s))
+       .s))
 
 #_(fif-reval 1 1 + dup >r 1 + >r)
 
-(fif-reval 2 2 - if 1 1 + else 2 2 + then >r)
+#_(fif-reval 2 2 - if 1 1 + else 2 2 + then >r)
 
-(fif-reval 1 1 = >r)
+#_(fif-reval 1 1 = >r)
 
-(fif-reval true if 1 else 2 then >r)
+#_(fif-reval true if 1 else 2 then >r)
 
-(fif-eval
-  23 dup 18 <  if "You are underage"      else
+(fif-reval
+ 12 dup 18 <  if "You are underage"      else
+ dup 50 <  if "You are the right age" else
+ dup 50 >= if "You are too old"       else
+ then then then >r)
+
+#_(fif-reval
+   fn check-age
+     dup 18 <  if "You are underage"      else
      dup 50 <  if "You are the right age" else
      dup 50 >= if "You are too old"       else
-     then then then >r)
+     then then then
+   endfn
 
-(fif-eval false
-  if
+   12 check-age >r
+   24 check-age >r
+   51 check-age >r)
+
+#_(fif-reval false
+   if
     2 2 +
-  else
+   else
     dup if true else false then
-  then
+   then
 
-  >r)
+   >r)
 
-(fif-reval 23 dup 18 < >r)
+#_(fif-reval 23 dup 18 < >r)
 
 
-(fif-eval 2 dup dup 3 4)
+#_(fif-eval 2 dup dup 3 4)
+
+#_(fif-eval
+   fn addtwo
+   2 +
+   endfn
+
+   2 addtwo .s)

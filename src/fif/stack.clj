@@ -27,78 +27,15 @@
 
   (push-flag [this flag])
   (pop-flag [this])
-  (get-flags [this]))
+  (get-flags [this])
 
+  (enqueue-code [this arg])
+  (dequeue-code [this])
+  (set-code [this stack])
+  (get-code [this])
 
-(defrecord StackMachine [arg-stack ret-stack flags words variables modes]
-  IStackMachine
-  (push-stack [this arg]
-    (update-in this [:arg-stack] conj arg))
-
-  (pop-stack [this]
-    (as-> this $
-      (update-in $ [:arg-stack] pop)))
-
-  (get-stack [this]
-    (-> this :arg-stack))
-
-  (set-stack [this stack]
-    (assoc this :arg-stack stack))
-
-  (clear-stack [this]
-    (assoc this :arg-stack (empty (:arg-stack this))))
-
-  (push-ret [this x]
-    (update-in this [:ret-stack] conj x))
-
-  (pop-ret [this]
-    (update-in this [:ret-stack] pop))
- 
-  (get-ret [this]
-    (-> this :ret-stack))
-
-  (clear-ret [this]
-    (assoc this :ret-stack (empty (:ret-stack this))))
-
-  (set-word [this wname wbody]
-    (update-in this [:words] assoc wname wbody))
-
-  (remove-word [this wname]
-    (update-in this [:words] dissoc wname))
-
-  (get-words [this]
-    (-> this :words))
-
-  (set-variable [this vname vval]
-    (update-in this [:variables] assoc vname vval))
-
-  (get-variables [this]
-    (-> this :variables))
-
-  (set-mode [this flag modefn]
-    (update-in this [:modes] assoc flag modefn))
-
-  (remove-mode [this flag]
-    (update-in this [:modes] dissoc flag))
-
-  (push-flag [this flag]
-    (update-in this [:flags] conj flag))
-
-  (pop-flag [this]
-    (update-in this [:flags] pop))
-
-  (get-flags [this]
-    (-> this :flags)))
-
-
-(defn new-stack-machine []
-  (map->StackMachine
-   {:arg-stack '()
-    :ret-stack '()
-    :flags []
-    :words {}
-    :variables {}
-    :modes {}}))
+  (step [this])
+  (run [this]))
 
 
 (defn has-flags? [sm]
@@ -122,16 +59,15 @@
     (push-stack sm arg)))
 
 
-(defn eval-arg [sm arg]
-  (if (has-flags? sm)
-   (process-mode sm arg)
-   (process-arg sm arg)))
+(defn eval-arg [sm arg])
+  
+    
     
 #_(eval-arg (new-stack-machine) (edn/read-string "+"))
 
 
 (defn eval-fn [sm args]
-  (reduce (fn [sm arg] (eval-arg sm arg)) sm args))
+  (-> sm (set-code (vec (concat (get-code sm) args))) run))
 
 
 (defmacro eval [sm & body]
@@ -193,9 +129,6 @@
    (rest-at-token coll token)])
 
 
-
-
-
 (defn replace-token [coll otoken ntoken]
   (->> (for [tok coll]
         (if (= otoken tok) ntoken tok))
@@ -214,3 +147,102 @@
 
 
 #_(split-at-token (between-tokens y 'if 'then) 'else)
+
+
+(defrecord StackMachine [arg-stack code-stack ret-stack 
+                         flags words variables modes]
+  IStackMachine
+  (push-stack [this arg]
+    (update-in this [:arg-stack] conj arg))
+
+  (pop-stack [this]
+    (as-> this $
+      (update-in $ [:arg-stack] pop)))
+
+  (get-stack [this]
+    (-> this :arg-stack))
+
+  (set-stack [this stack]
+    (assoc this :arg-stack stack))
+
+  (clear-stack [this]
+    (assoc this :arg-stack (empty (:arg-stack this))))
+
+  (push-ret [this x]
+    (update-in this [:ret-stack] conj x))
+
+  (pop-ret [this]
+    (update-in this [:ret-stack] pop))
+  
+  (get-ret [this]
+    (-> this :ret-stack))
+
+  (clear-ret [this]
+    (assoc this :ret-stack (empty (:ret-stack this))))
+
+  (set-word [this wname wbody]
+    (update-in this [:words] assoc wname wbody))
+
+  (remove-word [this wname]
+    (update-in this [:words] dissoc wname))
+
+  (get-words [this]
+    (-> this :words))
+
+  (set-variable [this vname vval]
+    (update-in this [:variables] assoc vname vval))
+
+  (get-variables [this]
+    (-> this :variables))
+
+  (set-mode [this flag modefn]
+    (update-in this [:modes] assoc flag modefn))
+
+  (remove-mode [this flag]
+    (update-in this [:modes] dissoc flag))
+
+  (push-flag [this flag]
+    (update-in this [:flags] conj flag))
+
+  (pop-flag [this]
+    (update-in this [:flags] pop))
+
+  (get-flags [this]
+    (-> this :flags))
+
+  (enqueue-code [this arg]
+    (update-in this [:code-stack] conj arg))
+
+  (dequeue-code [this]
+    (update-in this [:code-stack] #(-> % rest vec)))
+
+  (set-code [this args]
+    (assoc this :code-stack args))
+
+  (get-code [this]
+    (-> this :code-stack))
+
+  (step [this]
+    (let [arg (-> this get-code first)]
+      (if (has-flags? this)
+        (-> this (process-mode arg) dequeue-code)
+        (-> this (process-arg arg) dequeue-code))))
+
+  (run [this]
+    (loop [sm this]
+      (prn "Args:" (-> sm get-stack))
+      (prn "Code:" (-> sm get-code))
+      (if-let [arg (-> sm get-code first)]
+        (recur (step sm))
+        sm))))
+
+
+(defn new-stack-machine []
+  (map->StackMachine
+   {:arg-stack '()
+    :code-stack []
+    :ret-stack '()
+    :flags []
+    :words {}
+    :variables {}
+    :modes {}}))
