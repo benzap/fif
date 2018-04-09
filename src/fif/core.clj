@@ -27,6 +27,10 @@
   `(eval-fn (quote ~body)))
 
 
+(defmacro seval [& body]
+  `(-> (eval-fn (quote ~body)) stack/get-stack))
+
+
 (defmacro reval [& body]
   `(-> (eval-fn (quote ~body)) stack/get-ret))
 
@@ -35,6 +39,15 @@
   (-> *default-stack* (stack/eval-string s)))
 
 
+(defmacro dbg-eval [opts & body]
+  `(let [step-max# (get ~opts :step-max 100)]
+     (-> *default-stack*
+         (stack/set-step-max step-max#)
+         (stack/eval-fn (quote ~body)))))
+
+
+#_(-> (dbg-eval {:step-max 100} 1 5 do i loop 2 3 do i loop)
+      stack/get-stack)
 
 
 #_(reval 1 1 + dup >r 1 + >r)

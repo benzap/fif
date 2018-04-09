@@ -40,6 +40,7 @@
   (set-code [this stack])
   (get-code [this])
 
+  (get-step-max [this])
   (set-step-max [this m])
   (inc-step [this])
   (set-step-num [this n])
@@ -206,7 +207,7 @@
     (-> this :stash))
 
   (set-stash [this st]
-    (update this assoc :stash st))
+    (assoc this :stash st))
 
   (pick-stash [this]
     (-> this :stash peek))
@@ -265,6 +266,9 @@
 
 
   ;; Step Tracker
+  (get-step-max [this]
+    (-> this :step-max))
+
   (set-step-max [this m]
     (assoc this :step-max m))
 
@@ -287,9 +291,12 @@
 
   (run [this]
     (loop [sm this]
-      (if-not (empty? (-> sm get-code))
-        (recur (step sm))
-        sm))))
+      (let [step-num (get-step-num sm)
+            step-max (get-step-max sm)]
+        (if (or (empty? (-> sm get-code))
+                (and (> step-max 0) (>= step-num step-max)))
+          sm
+          (recur (step sm)))))))
 
 
 (defn new-stack-machine []
@@ -297,7 +304,7 @@
    {:arg-stack '()
     :code-stack []
     :ret-stack '()
-    :stash []
+    :stash '()
     :flags []
     :words {}
     :variables {}
