@@ -133,9 +133,9 @@
 
 
 (defn rot [sm]
-  (let [[i j k] (get-stack sm)]
+  (let [[k j i] (get-stack sm)]
     (-> sm pop-stack pop-stack pop-stack
-      (push-stack j) (push-stack k) (push-stack i) dequeue-code)))
+        (push-stack j) (push-stack k) (push-stack i) dequeue-code)))
 
 
 (defn op-drop [sm]

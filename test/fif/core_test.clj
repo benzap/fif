@@ -1,26 +1,27 @@
 (ns fif.core-test
+  (:refer-clojure :exclude [eval])
   (:require [clojure.test :refer :all]
             [fif.core :refer :all]
             [fif.stack :refer [new-stack-machine]]))
 
 
-(deftest test-fif-fn
-  (is (= '(2) (-> (fif-fn [1 1 '+]) get-stack))))
+(deftest test-eval-fn
+  (is (= '(2) (-> (eval-fn [1 1 '+]) get-stack))))
 
 
-(deftest test-fif-eval
-  (is (= '(2) (-> (fif-eval 1 1 +) get-stack))))
+(deftest test-eval
+  (is (= '(2) (-> (eval 1 1 +) get-stack))))
 
 
-(deftest test-fif-reval
-  (is (= '(2) (-> (fif-reval 1 1 + >r)))))
+(deftest test-reval
+  (is (= '(2) (-> (reval 1 1 + >r)))))
 
 
-(deftest test-fif-eval-string
-  (is (= '(2) (-> (fif-eval-string "1 1 +") get-stack))))
+(deftest test-eval-string
+  (is (= '(2) (-> (eval-string "1 1 +") get-stack))))
 
 
 (deftest test-with-stack
   (is (= '(+ 1 1) (with-stack (new-stack-machine)
-                    (-> (fif-eval 1 1 +)
+                    (-> (eval 1 1 +)
                         get-stack)))))

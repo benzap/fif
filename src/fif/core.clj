@@ -1,4 +1,5 @@
 (ns fif.core
+  (:refer-clojure :exclude [eval])
   (:require [fif.stack :as stack]
             [fif.stdlib :refer [import-stdlib]]))
 
@@ -17,29 +18,29 @@
      ~@body))
 
 
-(defn fif-fn [args]
+(defn eval-fn [args]
   (-> *default-stack*
       (stack/eval-fn args)))
 
 
-(defmacro fif-eval [& body]
-  `(fif-fn (quote ~body)))
+(defmacro eval [& body]
+  `(eval-fn (quote ~body)))
 
 
-(defmacro fif-reval [& body]
-  `(-> (fif-fn (quote ~body)) stack/get-ret))
+(defmacro reval [& body]
+  `(-> (eval-fn (quote ~body)) stack/get-ret))
 
 
-(defn fif-eval-string [s]
+(defn eval-string [s]
   (-> *default-stack* (stack/eval-string s)))
 
 
 
 
-#_(fif-reval 1 1 + dup >r 1 + >r)
+#_(reval 1 1 + dup >r 1 + >r)
 
 
-#_(fif-reval
+#_(reval
 
    1 1 + . cr ;; First Example
    1 1 + 1 - . cr
@@ -84,7 +85,7 @@
    .s)
 
 
-#_(fif-reval
+#_(reval
    fn factorial
    dup 1 > if dup dec factorial * then
    endfn
@@ -93,34 +94,34 @@
    >r)
 
 
-#_(fif-reval fn add2 2 + endfn 2 add2 >r)
+#_(reval fn add2 2 + endfn 2 add2 >r)
 
 
-#_(fif-eval
+#_(eval
    fn cond1 if true else false then endfn
 
    0 cond1 .s)
 
 
-#_(fif-reval 1 1 + dup >r 1 + >r)
+#_(reval 1 1 + dup >r 1 + >r)
 
-#_(fif-reval 2 2 - if 1 1 + else 2 2 + then >r)
+#_(reval 2 2 - if 1 1 + else 2 2 + then >r)
 
-#_(fif-reval 1 1 = >r)
+#_(reval 1 1 = >r)
 
-#_(fif-reval true if 1 else 2 then >r)
-
-
-#_(fif-eval fn add2 2 + endfn 2 add2)
+#_(reval true if 1 else 2 then >r)
 
 
-#_(fif-reval
+#_(eval fn add2 2 + endfn 2 add2)
+
+
+#_(reval
    12 dup 18 <  if "You are underage"      else
    dup 50 <  if "You are the right age" else
    dup 50 >= if "You are too old"       else
    then then then >r)
 
-#_(fif-reval
+#_(reval
    fn check-age
      dup 18 <  if "You are underage"      else
      dup 50 <  if "You are the right age" else
@@ -132,7 +133,7 @@
    24 check-age >r
    51 check-age >r)
 
-#_(fif-reval
+#_(reval
 
    1
    if
@@ -143,12 +144,12 @@
 
    >r)
 
-#_(fif-reval 23 dup 18 < >r)
+#_(reval 23 dup 18 < >r)
 
 
-#_(fif-eval 2 dup dup 3 4)
+#_(reval 2 dup dup 3 4)
 
-#_(fif-eval
+#_(eval
    fn addtwo
    2 +
    endfn

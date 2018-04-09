@@ -102,15 +102,6 @@
     (reverse (into '() (drop idx-token coll)))))
 
 
-(comment
- (def x '(0 if 1 1 + else 2 2 + then))
- (def y '(1 if 1 then))
-
- (take-to-token x 'then)
-
- (rest-at-token x 'else))
-
-
 (defn between-tokens [coll start end]
   (as-> coll $
     (take-to-token $ end)
