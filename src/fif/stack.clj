@@ -15,6 +15,12 @@
   (get-ret [this])
   (clear-ret [this])
 
+  (push-stash [this x])
+  (pop-stash [this])
+  (get-stash [this])
+  (set-stash [this st])
+  (pick-stash [this])
+
   (set-word [this wname wbody])
   (remove-word [this wname])
   (get-words [this])
@@ -124,10 +130,40 @@
   (reduce (fn [coll token] (conj coll token)) coll (reverse tokens)))
 
 
+(defn create-sub-stack [coll]
+  (conj coll '()))
+
+
+(defn push-sub-stack [coll x]
+  (let [f (conj (peek coll) x)]
+    (-> coll pop (conj f))))
+
+
+(defn pop-sub-stack [coll]
+  (let [f (-> coll peek pop)]
+    (-> coll pop (conj f))))
+
+
+(defn get-sub-stack [coll]
+  (-> coll peek))
+
+
+(defn set-sub-stack [coll x]
+  (-> coll pop (conj x)))
+
+
+(defn remove-sub-stack [coll]
+  (pop coll))
+
+
 (defrecord StackMachine [arg-stack code-stack ret-stack 
+                         stash
                          flags words variables modes
                          step-num step-max]
   IStackMachine
+
+
+  ;; Main Stack
   (push-stack [this arg]
     (update-in this [:arg-stack] conj arg))
 
@@ -144,6 +180,8 @@
   (clear-stack [this]
     (assoc this :arg-stack (empty (:arg-stack this))))
 
+
+  ;; Return Stack
   (push-ret [this x]
     (update-in this [:ret-stack] conj x))
 
@@ -156,6 +194,25 @@
   (clear-ret [this]
     (assoc this :ret-stack (empty (:ret-stack this))))
 
+
+  ;; Stack Stash
+  (push-stash [this x]
+    (update-in this [:stash] conj x))
+
+  (pop-stash [this]
+    (update-in this [:stash] pop))
+
+  (get-stash [this]
+    (-> this :stash))
+
+  (set-stash [this st]
+    (update this assoc :stash st))
+
+  (pick-stash [this]
+    (-> this :stash peek))
+
+
+  ;; Word Dictionary
   (set-word [this wname wbody]
     (update-in this [:words] assoc wname wbody))
 
@@ -165,18 +222,24 @@
   (get-words [this]
     (-> this :words))
 
+
+  ;; Variable Store
   (set-variable [this vname vval]
     (update-in this [:variables] assoc vname vval))
 
   (get-variables [this]
     (-> this :variables))
 
+
+  ;; Mode Functions
   (set-mode [this flag modefn]
     (update-in this [:modes] assoc flag modefn))
 
   (remove-mode [this flag]
     (update-in this [:modes] dissoc flag))
 
+
+  ;; Mode Flags
   (push-flag [this flag]
     (update-in this [:flags] conj flag))
 
@@ -186,6 +249,8 @@
   (get-flags [this]
     (-> this :flags))
 
+
+  ;; Code Queue
   (enqueue-code [this arg]
     (update-in this [:code-stack] conj arg))
 
@@ -198,6 +263,8 @@
   (get-code [this]
     (-> this :code-stack))
 
+
+  ;; Step Tracker
   (set-step-max [this m]
     (assoc this :step-max m))
 
@@ -210,11 +277,13 @@
   (get-step-num [this]
     (-> this :step-num))
 
+
+  ;; Execution
   (step [this]
     (let [arg (-> this get-code first)]
       (if (has-flags? this)
-        (-> this (process-mode) inc-step)
-        (-> this (process-arg) inc-step))))
+        (-> this process-mode inc-step)
+        (-> this process-arg inc-step))))
 
   (run [this]
     (loop [sm this]
@@ -228,6 +297,7 @@
    {:arg-stack '()
     :code-stack []
     :ret-stack '()
+    :stash []
     :flags []
     :words {}
     :variables {}
