@@ -4,7 +4,7 @@
   (:require [fif.stack :as stack]))
 
 
-(def arg-variable-token 'variable)
+(def arg-variable-token 'def)
 (def variable-mode-flag :variable-mode)
 
 
@@ -13,10 +13,18 @@
   manipulated with two provided methods."
   [sm]
   (let [arg (-> sm stack/get-code first)]
-    (-> sm
-        (stack/set-variable arg nil)
-        (stack/pop-flag)
-        stack/dequeue-code)))
+    (cond
+      (symbol? arg)
+      (-> sm
+          (stack/push-stack arg)
+          stack/dequeue-code)
+      :else
+      (let [vname (-> sm stack/get-stack peek)]
+        (-> sm
+            (stack/set-variable vname arg)
+            stack/pop-stack
+            (stack/pop-flag)
+            stack/dequeue-code)))))
 
 
 (defn start-variable
@@ -57,5 +65,7 @@
   (-> sm
       (stack/set-word arg-variable-token start-variable)
       (stack/set-word '! setv)
+      (stack/set-word 'setv setv)
       (stack/set-word 'at getv)
+      (stack/set-word 'getv getv)
       (stack/set-mode variable-mode-flag variable-mode)))

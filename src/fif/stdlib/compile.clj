@@ -6,11 +6,17 @@
 (def arg-start-token 'fn)
 (def arg-end-token 'endfn)
 (def compile-mode-flag :compile-mode)
+(def inner-compile-mode-flag :inner-compile-mode)
 
 
 (defn wrap-compiled-fn [wbody]
   (fn [sm]
     (stack/set-code sm (concat wbody (-> sm stack/dequeue-code stack/get-code)))))
+
+
+(defn inner-compile-mode
+  [sm])
+
 
 
 (defn compile-mode
@@ -42,5 +48,6 @@
 (defn import-stdlib-compile-mode [sm]
   (-> sm
       (stack/set-word arg-start-token start-defn)
-      (stack/set-mode compile-mode-flag compile-mode)))
+      (stack/set-mode compile-mode-flag compile-mode)
+      (stack/set-mode inner-compile-mode-flag inner-compile-mode)))
   

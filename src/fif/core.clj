@@ -32,7 +32,7 @@
 
 
 (defmacro reval [& body]
-  `(-> (eval-fn (quote ~body)) stack/get-ret))
+  `(-> (eval-fn (quote ~body)) stack/get-stack reverse))
 
 
 (defn eval-string [s]
@@ -156,10 +156,10 @@
 
 
 #_(reval
-   12 dup 18 <  if "You are underage"      else
-   dup 50 <  if "You are the right age" else
-   dup 50 >= if "You are too old"       else
-   then then then >r)
+   19 dup  18  <  if drop "You are underage"      else
+      dup 50 <  if drop "You are the right age"   else
+      dup 50 >= if drop "You are too old"         else
+      then then then)
 
 #_(reval
    fn check-age

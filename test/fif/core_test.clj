@@ -10,11 +10,11 @@
 
 
 (deftest test-eval
-  (is (= '(2) (-> (eval 1 1 +) get-stack))))
+  (is (= '(1 2) (-> (eval 1 1 + 1) get-stack))))
 
 
 (deftest test-reval
-  (is (= '(2) (-> (reval 1 1 + >r)))))
+  (is (= '(2 1) (-> (reval 1 1 + 1)))))
 
 
 (deftest test-eval-string
