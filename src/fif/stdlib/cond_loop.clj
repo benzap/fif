@@ -6,8 +6,9 @@
 
 (def arg-do-token 'do)
 (def arg-loop-token 'loop)
-(def arg-plus-loop-token '+loop)
 (def arg-loopend-token 'loopend)
+(def arg-plus-loop-token '+loop)
+(def arg-plus-loopend-token '+loopend)
 (def arg-leave-token 'leave)
 
 ;; end start do ... loop
@@ -66,8 +67,33 @@
 
          ;; Clean up the return stack, remove our loop content from
          ;; the stash, get out of loop mode and continue execution
-
          (-> sm
+             stack/pop-flag
+             (stack/set-stash (stack/remove-sub-stack stash))
+             stack/pop-ret
+             stack/dequeue-code)))
+
+     ;; Finished processing the current loop iteration
+     (= arg arg-plus-loopend-token)
+     (let [start-idx (get-loop-start-index sm)
+           end-idx (get-loop-end-index sm)]
+       (if-not (>= start-idx end-idx)
+
+         ;; Prepare the next loop iteration
+         (let [[loop-step] (stack/get-stack sm)
+               loop-body (stack/get-sub-stack stash)
+               new-code (concat (reverse loop-body)
+                                (list arg-plus-loopend-token)
+                                (-> sm stack/dequeue-code stack/get-code))]
+           (-> sm
+               stack/pop-stack
+               (increment-loop-index loop-step)
+               (stack/set-code new-code)))
+
+         ;; Clean up the return stack, remove our loop content from
+         ;; the stash, get out of loop mode and continue execution
+         (-> sm
+             stack/pop-stack
              stack/pop-flag
              (stack/set-stash (stack/remove-sub-stack stash))
              stack/pop-ret
@@ -77,17 +103,51 @@
      (-> sm stack/process-arg stack/inc-step))))
 
 
+(defn inner-do-mode
+  [sm]
+  (let [arg (-> sm stack/get-code first)
+        stash (stack/get-stash sm)]
+    (cond
+      (or (= arg arg-loop-token)
+          (= arg arg-plus-loop-token))
+      (-> sm
+          stack/pop-flag
+          (stack/set-stash (stack/push-sub-stack stash arg))
+          stack/dequeue-code)
+       
+      (= arg arg-do-token)
+      (-> sm
+          (stack/push-flag inner-do-mode-flag)
+          (stack/set-stash (stack/push-sub-stack stash arg))
+          stack/dequeue-code)
+
+      :else
+      (-> sm
+          (stack/set-stash (stack/push-sub-stack stash arg))
+          stack/dequeue-code))))
+
+
 (defn do-mode
   [sm]
   (let [arg (-> sm stack/get-code first)
         stash (stack/get-stash sm)]
     (cond
-      
+      (= arg arg-do-token)
+      (-> sm
+          (stack/push-flag inner-do-mode-flag)
+          (stack/set-stash (stack/push-sub-stack stash arg))
+          stack/dequeue-code)
+
       ;; Go into loop-mode
-      (= arg arg-loop-token)
+      (or (= arg arg-loop-token)
+          (= arg arg-plus-loop-token))
       (let [loop-body (stack/get-sub-stack stash)
+            end-token (cond (= arg arg-loop-token)
+                            arg-loopend-token
+                            (= arg arg-plus-loop-token)
+                            arg-plus-loopend-token)
             new-code (concat (reverse loop-body)
-                             (list arg-loopend-token)
+                             (list end-token)
                              (-> sm stack/dequeue-code stack/get-code))]
         (-> sm
             
@@ -107,9 +167,9 @@
 
 
 (defn start-do
-  "Do structure is <start> <end> do <body> loop|+loop"
+  "Do structure is <start> <end> do (<body> loop)|(<body ... step> +loop)"
   [sm]
-  (let [[end start] (-> sm stack/get-stack)
+  (let [[start end] (-> sm stack/get-stack)
         stash (stack/get-stash sm)]
     (-> sm
 
@@ -128,11 +188,6 @@
 
         ;; remove code token for next iteration
         stack/dequeue-code)))
-
-
-#_(-> (stack/new-stack-machine)
-      (stack/set-stash (stack/create-sub-stack '()))
-      stack/get-stash)
 
 
 (defn get-loop-index-1
@@ -160,4 +215,5 @@
       (stack/set-word 'j get-loop-index-2)
       (stack/set-word 'k get-loop-index-3)
       (stack/set-mode do-mode-flag do-mode)
+      (stack/set-mode inner-do-mode-flag inner-do-mode)
       (stack/set-mode loop-mode-flag loop-mode)))

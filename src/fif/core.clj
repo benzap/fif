@@ -46,8 +46,25 @@
          (stack/eval-fn (quote ~body)))))
 
 
-#_(-> (dbg-eval {:step-max 100} 1 5 do i loop 2 3 do i loop)
-      stack/get-stack)
+#_(->> (dbg-eval {:step-max 500} 10 1 do 5 1 do j i 2 +loop 1 1 + +loop)
+      stack/get-stack
+      reverse
+      (partition 2))
+
+#_(->> (dbg-eval {:step-max 200} 1 2 do 1 2 do j i loop loop)
+       (stack/get-stack))
+
+#_(->> (dbg-eval {:step-max 200} 1 2 do i 1 +loop)
+       (stack/get-stack))
+
+
+#_(seval
+   3 1 do i loop
+
+   fn square dup * endfn
+   fn squares 0 do i square . cr loop endfn
+
+   10 squares)
 
 
 #_(reval 1 1 + dup >r 1 + >r)
