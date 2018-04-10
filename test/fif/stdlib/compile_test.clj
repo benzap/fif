@@ -30,4 +30,13 @@
                  0 add_num))))
 
 
-(deftest test-inner-fn)
+(deftest test-inner-fn
+  (is (= '(2 0) (reval
+                 fn define_as_inc fn func 1 + endfn endfn
+                 fn define_as_dec fn func 1 - endfn endfn
+                 
+                 define_as_inc
+                 1 func
+                 
+                 define_as_dec
+                 1 func))))
