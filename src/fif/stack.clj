@@ -122,9 +122,9 @@
 
 (defn replace-token [coll otoken ntoken]
   (->> (for [tok coll]
-        (if (= otoken tok) ntoken tok))
-      (into '())
-      reverse))
+         (if (= otoken tok) ntoken tok))
+       (into '())
+       reverse))
 
 
 (defn push-coll [coll tokens]
