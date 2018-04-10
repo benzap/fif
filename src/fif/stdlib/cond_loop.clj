@@ -36,6 +36,7 @@
 (def inner-begin-mode-flag :inner-begin-mode)
 (def begin-until-mode-flag :begin-until-mode)
 (def begin-while-mode-flag :begin-while-mode)
+(def begin-dump-mode-flag :begin-dump-mode)
 
 
 (defn get-loop-start-index [sm]
@@ -215,8 +216,62 @@
     (-> sm (stack/push-stack idx) stack/dequeue-code)))
 
 
+(defn begin-dump-mode
+  [sm]
+  (let [arg (-> sm stack/get-code first)]
+    (cond
+      (= arg arg-begin-token)
+      (-> sm
+          (stack/push-flag begin-dump-mode-flag)
+          stack/dequeue-code)
+
+      (or (= arg arg-until-token)
+          (= arg arg-repeat-token)
+          (= arg arg-repeatend-token))
+      (-> sm 
+          stack/pop-flag
+          stack/dequeue-code)
+
+      :else
+      (-> sm stack/dequeue-code))))
+
+
 (defn begin-while-mode
-  [sm])
+  [sm]
+  (let [arg (-> sm stack/get-code first)
+        stash (stack/get-stash sm)]
+    (cond
+
+      ;; Determine if the rest of the loop content should be
+      ;; processed.  If it can be processed, continue on until we
+      ;; reach the repeat clause If we are not continuing, then we
+      ;; need to dump the loop content and continue.
+      (= arg arg-while-token)
+      (let [[flag] (-> sm stack/get-stack)]
+        (if (condition-true? flag)
+          (-> sm
+              stack/pop-stack
+              stack/dequeue-code)
+          (-> sm
+              stack/pop-stack
+              stack/pop-flag
+              (stack/push-flag begin-dump-mode-flag)
+              (stack/set-stash (stack/remove-sub-stack stash))
+              stack/dequeue-code)))
+
+      ;; Finished processing the current loop iteration
+      (= arg arg-repeatend-token)
+     
+      ;; Prepare the next loop iteration
+      (let [loop-body (stack/get-sub-stack stash)
+            new-code (concat (reverse loop-body)
+                             (list arg-repeatend-token)
+                             (-> sm stack/dequeue-code stack/get-code))]
+        (-> sm
+            (stack/set-code new-code)))
+      
+      :else
+      (-> sm stack/process-arg stack/inc-step))))
 
 (defn begin-until-mode
   [sm]
@@ -357,5 +412,6 @@
       (stack/set-mode begin-mode-flag begin-mode)
       (stack/set-mode inner-begin-mode-flag inner-begin-mode)
       (stack/set-mode begin-until-mode-flag begin-until-mode)
-      (stack/set-mode begin-while-mode-flag begin-while-mode)))
+      (stack/set-mode begin-while-mode-flag begin-while-mode)
+      (stack/set-mode begin-dump-mode-flag begin-dump-mode)))
       

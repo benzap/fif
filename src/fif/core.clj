@@ -60,6 +60,12 @@
 #_(->> (dbg-eval {:step-max 20} begin begin 3 1 until 2 1 until 2)
        (stack/get-stack))
 
+#_(->> (dbg-eval {:step-max 103}
+        begin 1 while
+          begin 1 while 4 repeat 5
+        repeat
+        3)
+       stack/get-stack)
 
 #_(seval
    3 1 do i loop
