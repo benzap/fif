@@ -4,16 +4,17 @@
 
 
 (def arg-if-token 'if)
-(def arg-inner-if-token '!fif--inner-if)
-
 (def arg-else-token 'else)
-(def arg-inner-else-token '!fif--inner-else)
-
 (def arg-then-token 'then)
-(def arg-inner-then-token '!fif--inner-then)
 
 (def conditional-mode-flag :conditional-mode)
 (def inner-conditional-flag :inner-conditional-mode)
+(def truth-condition-mode-flag :truth-condition-mode)
+(def dump-truth-condition-mode-flag :dump-truth-condition-mode)
+(def dump-false-condition-mode-flag :dump-false-condition-mode)
+(def dump-condition-mode-flag :dump-condition-mode)
+(def false-condition-mode-flag :false-condition-mode)
+
 
 
 (defn condition-true?
@@ -34,6 +35,95 @@
    (boolean x)))
 
 
+(defn dump-condition-mode
+  "Dumps the code stack, but stops upon reaching the end of the
+  condition body (then)."
+  [sm]
+  (let [arg (-> sm stack/get-code first)]
+    (cond
+      (= arg arg-if-token)
+      (-> sm
+          (stack/push-flag dump-condition-mode-flag)
+          stack/dequeue-code)
+      
+      (= arg arg-then-token)
+      (-> sm
+          stack/pop-flag
+          stack/dequeue-code)
+      
+      :else
+      (-> sm stack/dequeue-code))))
+
+
+(defn dump-truth-condition-mode
+  "Dumps the code stack, but stops upon reaching an else condition or
+  upon reaching the end of the condition body (then). Nested
+  conditionals are passed to dump-condition-mode.
+
+  Notes:
+
+  - This mode is assumed to be a truth content dump, in order to process the
+  false conditional body"
+  [sm]
+  (let [arg (-> sm stack/get-code first)]
+    (cond
+     
+     (= arg arg-if-token)
+     (-> sm
+         (stack/push-flag dump-condition-mode-flag)
+         stack/dequeue-code)
+     
+     (= arg arg-else-token)
+     (-> sm
+         stack/pop-flag
+         (stack/push-flag false-condition-mode-flag)
+         stack/dequeue-code)
+
+     (= arg arg-then-token)
+     (-> sm
+         stack/pop-flag
+         stack/dequeue-code)
+     
+     :else
+     (-> sm
+         stack/dequeue-code))))
+
+
+(def dump-false-condition-mode dump-condition-mode)
+
+
+(defn truth-condition-mode
+  [sm]
+  (let [arg (-> sm stack/get-code first)]
+    (cond
+      (= arg arg-else-token)
+      (-> sm
+          stack/pop-flag
+          (stack/push-flag dump-false-condition-mode-flag)
+          stack/dequeue-code)
+
+      (= arg arg-then-token)
+      (-> sm
+          stack/pop-flag
+          stack/dequeue-code)
+ 
+      :else
+      (-> sm stack/process-arg))))
+
+
+(defn false-condition-mode
+  [sm]
+  (let [arg (-> sm stack/get-code first)]
+    (cond
+      (= arg arg-then-token)
+      (-> sm
+          stack/pop-flag
+          stack/dequeue-code)
+
+      :else
+      (-> sm stack/process-arg))))
+
+
 (defn inner-conditional-mode
   "For handling any inner if-else-then tokens, this tracks and converts
   them into a representation which won't impede parsing.
@@ -43,29 +133,31 @@
   - additional nested conditionals are tracked by pushing and popping
   additional :inner-conditional-mode flags"
   [sm]
-  (let [arg (-> sm stack/get-code first)]
+  (let [arg (-> sm stack/get-code first)
+        stash (stack/get-stash sm)]
     (cond
-      (= arg arg-if-token)
-      (-> sm (stack/push-flag inner-conditional-flag)
-          (stack/push-stack arg-inner-if-token)
-          stack/dequeue-code)
-      (= arg arg-else-token)
-      (-> sm (stack/push-stack arg-inner-else-token)
-          stack/dequeue-code)
-      (= arg arg-then-token)
-      (-> sm (stack/pop-flag)
-          (stack/push-stack arg-inner-then-token)
-          stack/dequeue-code)
-      :else
-      (-> sm (stack/push-stack arg)
-          stack/dequeue-code))))
-   
 
-(defn clean-inner-conditionals [stack]
-  (-> stack
-      (stack/replace-token arg-inner-if-token arg-if-token)
-      (stack/replace-token arg-inner-then-token arg-then-token)
-      (stack/replace-token arg-inner-else-token arg-else-token)))
+      (= arg arg-if-token)
+      (-> sm
+          (stack/push-flag inner-conditional-flag)
+          (stack/set-stash (stack/push-sub-stack stash arg))
+          stack/dequeue-code)
+
+      (= arg arg-else-token)
+      (-> sm
+          (stack/set-stash (stack/push-sub-stack stash arg))
+          stack/dequeue-code)
+
+      (= arg arg-then-token)
+      (-> sm
+          stack/pop-flag
+          (stack/set-stash (stack/push-sub-stack stash arg))
+          stack/dequeue-code)
+
+      :else
+      (-> sm
+          (stack/set-stash (stack/push-sub-stack stash arg))
+          stack/dequeue-code))))
 
 
 (defn conditional-mode
@@ -90,46 +182,52 @@
   content back onto the code stack.
   "
   [sm]
-  (let [arg (-> sm stack/get-code first)]
+  (let [arg (-> sm stack/get-code first)
+        stash (stack/get-stash sm)]
     (cond
 
       ;; We found a nested if, we need to process this later
       (= arg arg-if-token)
-      (-> sm (stack/push-flag inner-conditional-flag)
-          (stack/push-stack arg-inner-if-token)
+      (-> sm
+          (stack/push-flag inner-conditional-flag)
+          (stack/set-stash (stack/push-sub-stack stash arg))
           stack/dequeue-code)
-      (not= arg arg-then-token)
-      (-> sm (stack/push-stack arg) stack/dequeue-code)
+      (= arg arg-then-token)
+      (let [[flag] (stack/get-stack sm)
+            condition-body (stack/get-sub-stack stash)
+            new-code (concat (reverse condition-body)
+                             (list arg-then-token)
+                             (-> sm stack/dequeue-code stack/get-code))]
+        (if (condition-true? flag)
+          (-> sm
+              stack/pop-stack
+              stack/pop-flag
+              (stack/push-flag truth-condition-mode-flag)
+              (stack/set-code new-code)
+              (stack/set-stash (stack/remove-sub-stack stash)))
+          ;; Need to dump the truth statement before we pass it to
+          ;; false-condition-mode
+          (-> sm
+              stack/pop-stack
+              stack/pop-flag
+              (stack/push-flag dump-truth-condition-mode-flag)
+              (stack/set-code new-code)
+              (stack/set-stash (stack/remove-sub-stack stash)))))
+
       :else
-      (let [stack (stack/get-stack sm)
-
-            conditional-content
-            (reverse (stack/take-to-token stack arg-if-token))
-
-            [truthy-content falsy-content]
-            (stack/split-at-token conditional-content arg-else-token)
-
-            falsy-content (clean-inner-conditionals falsy-content)
-            truthy-content (clean-inner-conditionals truthy-content)
-
-            clean-stack (clean-inner-conditionals (stack/rest-at-token stack arg-if-token))
-
-            bool-flag (-> clean-stack peek condition-true?)
-
-            new-code (if bool-flag truthy-content falsy-content)]
-        (-> sm
-            (stack/set-stack (pop clean-stack))
-            (stack/set-code (concat new-code (-> sm stack/dequeue-code stack/get-code)))
-            (stack/pop-flag))))))
+      (-> sm
+          (stack/set-stash (stack/push-sub-stack stash arg))
+          stack/dequeue-code))))
 
 
 (defn start-if
   "Word definition for starting an if condition mode"
   [sm]
-  (-> sm
-      (stack/push-stack arg-if-token)
+  (let [stash (stack/get-stash sm)]
+    (-> sm
+      (stack/set-stash (stack/create-sub-stack stash))
       (stack/push-flag conditional-mode-flag)
-      stack/dequeue-code))
+      stack/dequeue-code)))
 
 
 (defn import-stdlib-conditional-mode
@@ -138,4 +236,9 @@
   (-> sm
       (stack/set-word arg-if-token start-if)
       (stack/set-mode conditional-mode-flag conditional-mode)
-      (stack/set-mode inner-conditional-flag inner-conditional-mode)))
+      (stack/set-mode inner-conditional-flag inner-conditional-mode)
+      (stack/set-mode truth-condition-mode-flag truth-condition-mode)
+      (stack/set-mode dump-condition-mode-flag dump-condition-mode)
+      (stack/set-mode dump-truth-condition-mode-flag dump-truth-condition-mode)
+      (stack/set-mode dump-false-condition-mode-flag dump-false-condition-mode)
+      (stack/set-mode false-condition-mode-flag false-condition-mode)))

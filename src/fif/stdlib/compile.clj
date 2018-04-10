@@ -59,7 +59,7 @@
             stack/dequeue-code))
 
       :else
-      (-> sm 
+      (-> sm
           (stack/set-stash (stack/push-sub-stack stash arg))
           stack/dequeue-code))))
 

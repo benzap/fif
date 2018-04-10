@@ -108,7 +108,7 @@
              stack/dequeue-code)))
                
      :else
-     (-> sm stack/process-arg stack/inc-step))))
+     (-> sm stack/process-arg))))
 
 
 (defn inner-do-mode
@@ -271,7 +271,7 @@
             (stack/set-code new-code)))
       
       :else
-      (-> sm stack/process-arg stack/inc-step))))
+      (-> sm stack/process-arg))))
 
 (defn begin-until-mode
   [sm]
@@ -302,7 +302,7 @@
               stack/dequeue-code)))
       
       :else
-      (-> sm stack/process-arg stack/inc-step))))
+      (-> sm stack/process-arg))))
 
 
 (defn inner-begin-mode

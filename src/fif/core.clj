@@ -67,6 +67,16 @@
         3)
        stack/get-stack)
 
+
+#_(->> (dbg-eval {:step-max 50}
+
+        true if false if 1 then else true if 1 else 2 then then)
+       stack/get-stack)
+
+
+
+
+
 #_(seval
    3 1 do i loop
 
