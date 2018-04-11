@@ -4,8 +4,10 @@
             [fif.stdlib :refer [import-stdlib]]))
 
 
+(def get-code stack/get-code)
 (def get-stack stack/get-stack)
 (def get-ret stack/get-ret)
+(def get-flags stack/get-flags)
 
 
 (def ^:dynamic
@@ -34,9 +36,9 @@
 
 
 (defmacro eval
-   "Evaluate the values provided in `body` within the fif
+  "Evaluate the values provided in `body` within the fif
    stackmachine, and return the stackmachine"
-   [& body]
+  [& body]
   `(eval-fn (quote ~body)))
 
 
