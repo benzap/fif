@@ -5,11 +5,13 @@
 #+LANGUAGE: en
 #+OPTIONS: H:2 num:t toc:t \n:nil ::t |:t ^:t f:t tex:t
 
-* fif
+[[./doc/logo.svg]]
 
-  *fif* is a Stack-based Programming Language in Clojure. It is
-  intepreted, extensible, safely sandboxed, and simple. The language
-  has no parenthesis after invokation.
+[[https://img.shields.io/clojars/v/fif.svg]]
+
+*fif* is a Stack-based Programming Language in Clojure. It is
+intepreted, extensible, safely sandboxed, and simple. The language
+has no parenthesis after invokation.
 
 * Introduction
 
@@ -17,5 +19,3 @@
   meant to be spelt *fourth*, but had to be reduced in order to fit
   within the restrictions of computers at the time of it's creation,
   and so the name stuck.
-
-  [[https://img.shields.io/clojars/v/fif.svg]]
