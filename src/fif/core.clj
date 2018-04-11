@@ -172,11 +172,11 @@
    fn yeaa!
      #_"(n -- ) Prints yeaa with 'n' a's"
      "yeeee" .
-     0 ?do "a" . loop
+     0 do "a" . loop
      "hhh!" . cr
    endfn
 
-   2 yeaa!)
+   5 yeaa!)
 
 
 #_(->> (dbg-eval {:step-max 50}

@@ -16,7 +16,30 @@ the language is there is no parenthesis after invokation.
 #+BEGIN_SRC clojure
 (require '[fif.core :as fif])
 
-(fif/reval 1 1 +) ;; '(2)
+(fif/reval "Hello World!" . cr) ;; => '()
+;; <stdout>: Hello World!
+
+(fif/reval 1 1 +) ;; => '(2)
+
+(fif/reval
+ fn yeaa!
+   #_"( n -- ) Prints yeeee{n}hhh!"
+   "yeeee" .
+   0 do "a" . loop
+   "hhh!" . cr
+ endfn
+
+ 5 yeaa!) ;; => '()
+;; <stdout>: yeeeeaaaaaahhh!
+
+(fif/reval
+
+ fn factorial
+   dup 1 > if dup dec factorial * then
+ endfn
+   
+ 5 factorial) ;; => '(120)
+
 #+END_SRC
 
 
@@ -26,3 +49,43 @@ the language is there is no parenthesis after invokation.
   meant to be spelt *fourth*, but had to be reduced in order to fit
   within the restrictions of computers at the time of it's creation,
   and so the name stuck.
+
+* Installation
+  
+  Visit [[https://clojars.org/fif][clojars.org]] for the latest version:
+
+  *Leiningen/Boot*
+  
+  #+BEGIN_SRC clojure
+
+  [fif "0.1.0-SNAPSHOT"]
+
+  #+END_SRC
+
+  *Clojure CLI/deps.edn*
+
+  #+BEGIN_SRC clojure
+
+  fif {:mvn/version "0.1.0-SNAPSHOT"}
+
+  #+END_SRC
+
+  *Gradle*
+
+  #+BEGIN_SRC groovy
+
+  compile 'fif:fif:0.1.0-SNAPSHOT'
+
+  #+END_SRC
+
+  *Maven*
+
+  #+BEGIN_SRC xml
+
+  <dependency>
+    <groupId>fif</groupId>
+    <artifactId>fif</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </dependency>
+
+  #+END_SRC
