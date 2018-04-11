@@ -10,8 +10,15 @@
 [[https://img.shields.io/clojars/v/fif.svg]]
 
 *fif* is a Stack-based Programming Language in Clojure. It is
-intepreted, extensible, safely sandboxed, and simple. The language
-has no parenthesis after invokation.
+intepreted, extensible, sandboxed, and simple. One major tradeoff in
+the language is there is no parenthesis after invokation.
+
+#+BEGIN_SRC clojure
+(require '[fif.core :as fif])
+
+(fif/reval 1 1 +) ;; '(2)
+#+END_SRC
+
 
 * Introduction
 
