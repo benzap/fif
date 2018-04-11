@@ -9,9 +9,11 @@
 
 [[https://img.shields.io/clojars/v/fif.svg]]
 
+
 *fif* is a Stack-based Programming Language in Clojure. It is
-intepreted, extensible, sandboxed, and simple. One major tradeoff in
+interpreted, extensible, sandboxed, and simple. One major tradeoff in
 the language is there is no parenthesis after invokation.
+
 
 #+BEGIN_SRC clojure
 (require '[fif.core :as fif])
@@ -42,16 +44,373 @@ the language is there is no parenthesis after invokation.
 
 #+END_SRC
 
-
 * Introduction
+  In stack-based programming, operations are performed on data using
+  *Postfix Notation*: ex. ~1 2 +~. This is the complete opposite of
+  *Polish Notation* used in lisp languages: ex. ~+ 1 2~.
+  
+  The basic principle behind how stack-based programming operates is
+  by pushing values onto a stack, and having defined symbols, called
+  *words* perform operations on the pushed stack values.
 
-  *fif* is meant to be a play on *forth*. The name forth was originally
+  #+BEGIN_SRC clojure
+  (fif/reval 1 2) ;; => '(1 2)
+  (fif/reval 1 2 +) ;; => '(3)
+  #+END_SRC
+
+  *Forth* is one of the more well known languages which uses this
+  approach, and I used it as a baseline for the implementation of
+  *fif*.
+
+  Although *fif* is similar to *forth* in a lot of ways, I like to
+  think that *fif* is less restrictive, but also more
+  error-prone (hopefully less so with later developments). Forth has
+  a compile mode, which only allows certain defined words to be used
+  while defining new words. None of this exists in *fif*. Everything
+  is interpreted the moment a dribble of data appears to the
+  stack-machine.
+
+  #+BEGIN_SRC clojure
+    ;; conditionals are compile-mode only in Forth, but allowed in fif
+    (fif/reval 1 0 = if "Ya else "Nah" then) ;; => '("Nah")
+
+    ;; do loop is compile-mode only in Forth, along with the rest of the
+    ;; conditional-loops. All of this is allowed in fif.
+    (fif/reval 4 0 do i loop) ;; => '(0 1 2 3 4)
+
+    ;; defining functions inside functions doesn't exist in forth, to the
+    ;; best of my knowledge.
+    (fif/reval fn func_define_add
+                 fn add2 2 + endfn
+               endfn
+
+               func_define_add
+               2 add2) ;; => '(4)
+
+  #+END_SRC
+
+** Clojure Language Interoperability and Data Representation
+
+   Although it might look like *fif* can access the base clojure
+   language, it is a completely sandboxed *stack machine* with only
+   primitive functions exposed from the clojure ecosystem.
+   
+   Code is presented to *fif* in the form of clojure values, which
+   means that only valid data values in clojure are allowed within
+   *fif*. This comes as a huge advantage, since it means *fif* has a
+   wealth of data structures at its disposal, and should allow for
+   great interoperability.
+   
+   *NOTE:* functions over collections are not currently implemented.
+   
+   #+BEGIN_SRC clojure
+   
+   (fif/reval 1 has-flag? namespace/value.thing why!?!? {:a 123} [1 2 3] #{:dog :cat})
+   ;; => (1 has-flag? namespace/value.thing why!?!? {:a 123} [1 2 3] #{:cat :dog})
+   
+   (defn self-destruct [])
+   (fif/reval self-destruct) ;; => '(self-destruct)
+
+   #+END_SRC
+
+   For a detailed breakdown on valid data that can be passed to *fif*
+   please refer to the *Built-in elements* section in the [[https://github.com/edn-format/edn][edn format github page]].
+
+** Printing to Standard Output
+
+   *fif* maintains a few operators for displaying to standard output.
+
+   #+BEGIN_SRC clojure
+
+   ;; Drop the Top value and display it on standard output
+   (fif/reval 1 2 .) ;; => '(1)
+   ;; <stdout>: 2
+
+   ;; Carriage return is provided with `cr`
+   (fif/reval "Hello " . cr "There!" . cr) ;; => '()
+   ;; <stdout>: Hello \nThere!\n
+
+   #+END_SRC
+
+** Basic Arithmetic and Stack Manipulation
+
+   Note that these examples are similar to [[https://learnxinyminutes.com/docs/forth/][Learn Forth in Y Minutes]]
+
+   #+BEGIN_SRC clojure
+   
+   ;;
+   ;; Arithmetic
+   ;;
+
+   ;; Addition
+   (fif/reval 5 4 +) ;; => '(9)
+   
+   ;; Subtraction
+   (fif/reval 5 4 -) ;; => '(1)
+
+   ;; Multiplication
+   (fif/reval 6 8 *) ;; => '(48)
+
+   ;; Division
+   (fif/reval 12 4 /) ;; => '(3)
+
+   ;; Modulo
+   (fif/reval 13 2 mod) ;; => '(1)
+
+   ;; Negation
+   (fif/reval 99 negate) ;; => '(-99)
+
+   ;; Absolute Value
+   (fif/reval -99 abs) ;; => '(99)
+
+   ;; Maximum and Minimum Value
+   (fif/reval 52 23 max) ;; => '(52)
+   (fif/reval 52 23 min) ;; => '(23)
+
+   ;; Increment and Decrement Value
+   (fif/reval 1 inc) ;; => '(2)
+   (fif/reval 2 dec) ;; => '(1)
+
+   ;;
+   ;; Stack Manipulation
+   ;;
+
+   ;; Duplicate Stack Value
+   (fif/reval 3 dup dup) ;; => '(3 3 3)
+
+   ;; Swap First and Second Values
+   (fif/reval 2 5 swap) ;; => '(5 2)
+
+   ;; Rotate Top 3 Values
+   (fif/reval 1 2 3 rot) ;; => '(2 3 1)
+
+   ;; Drop Top Value
+   (fif/reval 1 2 drop) ;; => '(1)
+
+   ;; Drop the Second Value
+   (fif/reval 1 2 3 nip) ;; => '(1 3)
+
+   ;;
+   ;; More Advanced Stack Manipulation
+   ;;
+   
+   ;; Duplicate the Top Value, and place it between the Second Value and Third Value
+   (fif/reval 1 2 3 4 tuck) ;; => '(1 2 4 3 4)
+
+   ;; Duplicate the Second Value, and place on the top
+   (fif/reval 1 2 3 4 over) ;; => '(1 2 3 4 3)
+
+   #+END_SRC
+
+** Creating Functions (Word Definitions)
+
+   Functions within *fif* are called *words* and have the syntax:
+
+   ~fn <name> <body...> endfn~
+
+   Few Examples:
+
+   #+BEGIN_SRC clojure
+
+   (fif/reval
+    
+    fn square dup * endfn
+
+    5 square) ;; => (25)
+
+   (fif/reval
+    
+    fn add2 2 + endfn
+    fn add4 add2 add2 endfn
+   
+    4 add4) ;; => '(8)
+
+   #+END_SRC
+
+** Conditional Operators
+   
+   Conditionals produce the clojure equivalent boolean ~true~ and
+   ~false~ values. However, conditional flags within *fif* also treat
+   0 as ~false~ and any non-zero number as ~true~.
+
+   #+BEGIN_SRC clojure
+
+   (fif/reval 5 3 <)    ;; => '(false)
+   (fif/reval 5 5 <=)   ;; => '(true)
+   (fif/reval 1 0 =)    ;; => '(false)
+   (fir/reval 1 0 not=) ;; => '(true)
+   (fif/reval 5 2 >)    ;; => '(true)
+   (fif/reval 3 1 >=)   ;; => '(true)
+
+   #+END_SRC
+
+   The only conditional structures within *fif* are:
+
+   ~<condition> if <true-body> then~
+   ~<condition> if <true-body> else <false-body> then~
+
+   Examples:
+
+   #+BEGIN_SRC clojure
+
+   (fif/reval 0 if 1 then) ;; => '()
+   (fif/reval false if 1 then) ;; => '()
+
+   (fif/reval 1 if 1 then) ;; => '(1)
+   (fif/reval true if 1 then) ;; => '(true)
+
+   (fif/reval 0 if 1 else 2 then) ;; => '(2)
+   (fif/reval 1 1 - if 1 else 2 then) ;; => '(2)
+
+   (reval
+    fn check-age
+      dup 18 <  if drop "You are underage"      else
+      dup 50 <  if drop "You are the right age" else
+      dup 50 >= if drop "You are too old"       else
+      then then then
+    endfn
+
+    12 check-age
+    24 check-age
+    51 check-age) ;; => '("You are underage" "You are the right age" "You are too old")
+
+   #+END_SRC
+
+** Loops
+   
+   There are currently four standard loops in *fif*:
+
+   ~<end> <start> do <body> loop~
+   ~<end> <start> do <body> <step> +loop~
+  
+   ~begin <body> <flag> until~
+   ~begin <flag> while <body> repeat~
+
+   Examples:
+
+   #+BEGIN_SRC clojure
+
+   ;; do loops are inclusive
+   (fif/reval 2 0 do "Hello!" loop) ;; => '("Hello!" "Hello!" "Hello!")
+
+   ;; do loops also have special index words i, j and k
+   (fif/reval 2 0 do i loop) ;; => '(0 1 2)
+
+   ;; These are useful for nested loops
+   (->> (fif/reval 2 0 do 3 0 do j i loop loop)
+        (partition 2))
+   ;; => ((0 0) (0 1) (0 2) (0 3) (1 0) (1 1) (1 2) (1 3) (2 0) (2 1) (2 2) (2 3))
+   
+   ;; do loops have a special increment based loop with +loop
+   (fif/reval 10 0 do i 2 +loop) ;; => '(0 2 4 6 8 10)
+
+   ;; begin-until performs the action until its clause is true
+   (fif/reval begin 1 true until) ;; => '(1)
+   (fif/reval begin 1 false until) ;; => '(1 1 1 1 1 ........
+   (fif/reval 0 begin dup inc dup 5 = until) ;; => '(0 1 2 3 4 5)
+
+   ;; begin-while-repeat performs the action while its while clause is true
+   (fif/reval begin false while 1 repeat) ;; => '()
+   (fif/reval begin true while 1 repeat) ;; => '(1 1 1 1 1 .......
+   (fif/reval 0 begin dup 5 < while dup inc repeat) ;; => '(0 1 2 3 4 5)
+   
+   ;; You can break out of any loop prematurely using `leave`
+   (fif/reval begin true while leave repeat) ;; => '() No Infinite Loop!
+   (fif/reval 0 begin true while dup inc dup 5 = if leave then repeat) ;; => '(0 1 2 3 4 5)
+
+   #+END_SRC
+
+** Variables
+ 
+   Variables within *fif* are declared using ~def~, but it should be
+   pointed out that anything can be a variable. Getting a variable is
+   done via either the commands ~getv~ or ~at~ (@ is restricted in
+   clojure edn data format). Setting a variable is done via either ~!~
+   or ~setv~
+
+   Examples
+
+   #+BEGIN_SRC clojure
+
+   (fif/reval
+    
+    ;; Set x to 10
+    def x 10
+
+    ;; Get x
+    x getv
+
+    ;; Set x to 20 
+    20 x setv
+    
+    ;; Get x
+    x getv) ;; => '(10 20)
+
+   #+END_SRC
+
+** Constants
+
+   *fif* makes use of constants by assigning them as words, and are
+   often more efficient.
+
+   Examples:
+
+   #+BEGIN_SRC clojure
+
+   (fif/reval 100 constant WATER-BOILING-POINT
+              WATER-BOILING-POINT 1 +) ;; => '(101)
+
+   #+END_SRC
+
+** Macros
+   
+   *fif* this is somewhat experimental, but in the future, it would be
+   interesting to see how easily it might be to manipuate the code
+   stack. A very primitive macro system is implemented. As an example,
+   I implemented an incomplete `?do` loop from *Forth*
+
+   Example:
+
+   #+BEGIN_SRC
+
+   (reval
+    macro ?do
+      over over >
+      if
+        _$ inc do $_
+      else
+        _$ do leave $_
+      then
+    endmacro
+
+    fn yeaa!
+      #_"(n -- ) Prints yeaa with 'n' a's"
+      "yeeee" .
+      0 ?do "a" . loop
+      "hhh!" . cr
+    endfn
+ 
+    0 yeaa!
+    5 yeaa!) ;; => '()
+    ;; <stdout>: yeeeehhh!
+    ;; <stdout>: yeeeeaaaaahhh!
+
+   #+END_SRC
+
+* Why fif?
+
+  *fif* is meant to be a play on *forth*. The name *forth* was originally
   meant to be spelt *fourth*, but had to be reduced in order to fit
   within the restrictions of computers at the time of it's creation,
-  and so the name stuck.
+  and so the name stuck. I recommend you check out
+  [[https://en.wikipedia.org/wiki/Forth_(programming_language)][the wiki page]] for an interesting read.
+
+
 
 * Installation
   
+  *Currently in alpha development*
+
   Visit [[https://clojars.org/fif][clojars.org]] for the latest version:
 
   *Leiningen/Boot*
