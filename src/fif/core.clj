@@ -1,7 +1,8 @@
 (ns fif.core
   (:refer-clojure :exclude [eval])
   (:require [fif.stack :as stack]
-            [fif.stdlib :refer [import-stdlib]]))
+            [fif.stdlib :refer [import-stdlib]]
+            :reload-all))
 
 
 (def get-code stack/get-code)
@@ -37,9 +38,19 @@
 
 (defmacro eval
   "Evaluate the values provided in `body` within the fif
-   stackmachine, and return the stackmachine"
+   stackmachine, and returns the stackmachine"
   [& body]
   `(eval-fn (quote ~body)))
+
+
+(defn ieval-fn
+  [sm args]
+  (stack/eval-fn sm args))
+
+
+(defmacro ieval
+  [sm & body]
+  `(ieval-fn ~sm (quote ~body)))
 
 
 (defmacro seval
@@ -62,10 +73,18 @@
 
 
 (defn eval-string
-  "Evaluates the given string as a stream of EDN values within the fif
-  stackmachine, and returns the stackmachine after evaluation."
+  "Safeily evaluates the given string as a stream of EDN values within
+  the fif stackmachine, and returns the stackmachine after evaluation.
+  "
   [s]
   (-> *default-stack* (stack/eval-string s)))
+
+
+(defn reval-string
+  "Evaluates the given string as a stream of EDN values within the fif
+  stackmachine, and returns the stack in a more pleasing orientation."
+  [s]
+  (-> *default-stack* (stack/eval-string s) stack/get-stack reverse))
 
 
 (defmacro dbg-eval
@@ -75,3 +94,6 @@
      (-> *default-stack*
          (stack/set-step-max step-max#)
          (stack/eval-fn (quote ~body)))))
+
+
+#_(reval 2 2 2 = 1 2)

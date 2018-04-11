@@ -7,12 +7,13 @@
 
 [[./doc/logo.svg]]
 
-[[https://img.shields.io/clojars/v/fif.svg]]
+*fif* is a Stack-based Programming Language in Clojure. It is an
+interpreted, extensible, sandboxed, and simple scripting language
+based off of Forth.
 
-
-*fif* is a Stack-based Programming Language in Clojure. It is
-interpreted, extensible, sandboxed, and simple. One major tradeoff in
-the language is there is no parenthesis after invokation.
+I would like to note that one major tradeoff in the language is there
+is very limited parenthesis after invokation and the language is
+motivated and powered by Rich Hickey rolling in his hammock.
 
 
 #+BEGIN_SRC clojure
@@ -92,7 +93,7 @@ the language is there is no parenthesis after invokation.
   *Postfix Notation*: ex. ~1 2 +~. This is the complete opposite of
   *Polish Notation* used in lisp languages: ex. ~+ 1 2~.
   
-  The basic principle behind how stack-based programming operates is
+  The basic principles behind how stack-based programming operates is
   by pushing values onto a stack, and having defined symbols, called
   *words* perform operations on the pushed stack values.
 
@@ -136,7 +137,8 @@ the language is there is no parenthesis after invokation.
 
    Although it might look like *fif* can access the base clojure
    language, it is a completely sandboxed *stack machine* with only
-   primitive functions exposed from the clojure ecosystem.
+   primitive functions exposed from the clojure ecosystem. *fif* works
+   off of EDN (Extensible Data Notation) value types.
    
    Code is presented to *fif* in the form of clojure values, which
    means that only valid data values in clojure are allowed within
@@ -148,11 +150,11 @@ the language is there is no parenthesis after invokation.
    
    #+BEGIN_SRC clojure
    
-   (fif/reval 1 has-flag? namespace/value.thing why!?!? {:a 123} [1 2 3] #{:dog :cat})
-   ;; => (1 has-flag? namespace/value.thing why!?!? {:a 123} [1 2 3] #{:cat :dog})
+   (fif/reval 1 has-flag? namespace/value.thing why!?!? {:a 123} [1 2 3] #{:mental-asylum :ledger})
+   ;; => (1 has-flag? namespace/value.thing why!?!? {:a 123} [1 2 3] #{:ledger :mental-asylum})
    
    (defn self-destruct [])
-   (fif/reval self-destruct) ;; => '(self-destruct)
+   (fif/reval (self-destruct) fn self-destruct "no" endfn self-destruct) ;; => '((self-destruct) "no")
 
    #+END_SRC
 
@@ -353,16 +355,21 @@ the language is there is no parenthesis after invokation.
 
    ;; begin-until performs the action until its clause is true
    (fif/reval begin 1 true until) ;; => '(1)
+
    (fif/reval begin 1 false until) ;; => '(1 1 1 1 1 ........
+
    (fif/reval 0 begin dup inc dup 5 = until) ;; => '(0 1 2 3 4 5)
 
    ;; begin-while-repeat performs the action while its while clause is true
    (fif/reval begin false while 1 repeat) ;; => '()
+
    (fif/reval begin true while 1 repeat) ;; => '(1 1 1 1 1 .......
+
    (fif/reval 0 begin dup 5 < while dup inc repeat) ;; => '(0 1 2 3 4 5)
    
    ;; You can break out of any loop prematurely using `leave`
    (fif/reval begin true while leave repeat) ;; => '() No Infinite Loop!
+
    (fif/reval 0 begin true while dup inc dup 5 = if leave then repeat) ;; => '(0 1 2 3 4 5)
 
    #+END_SRC
@@ -374,6 +381,9 @@ the language is there is no parenthesis after invokation.
    done via either the commands ~getv~ or ~at~ (@ is restricted in
    clojure edn data format). Setting a variable is done via either ~!~
    or ~setv~
+
+   /Note that *anything* being a variable is subject to change, and an
+   example will not be provided./
 
    Examples
 
@@ -411,10 +421,11 @@ the language is there is no parenthesis after invokation.
 
 ** Macros
    
-   *fif* this is somewhat experimental, but in the future, it would be
-   interesting to see how easily it might be to manipuate the code
-   stack. A very primitive macro system is implemented. As an example,
-   I implemented an incomplete `?do` loop from *Forth*
+   *Macros* are somewhat experimental, but for future macros, it would
+   be interesting to see how easily it might be to manipulate the code
+   stack in new and interesting ways. A very primitive macro system is
+   implemented. As an example, I implemented an incomplete `?do` loop
+   from *Forth*
 
    Example:
 
@@ -441,6 +452,194 @@ the language is there is no parenthesis after invokation.
     5 yeaa!) ;; => '()
     ;; <stdout>: yeeeehhh!
     ;; <stdout>: yeeeeaaaaahhh!
+
+   #+END_SRC
+
+* Extending fif within Clojure
+
+  One interesting by-product of creating *fif* within clojure is the
+  amazing extensibility between *fif* and clojure. Ignoring n-arity
+  within clojure, there is a wealth of functionality that can be
+  easily included in *fif* with very little code.
+
+** Extending fif with clojure functions
+
+   As an example, i'm going to make two functions. One function that
+   adds items to a vector, and another which retrieves the vector.
+
+   #+BEGIN_SRC clojure
+
+   (def *secret-notes (atom []))
+   (defn add-note! [s] (swap! *secret-ledger conj s))
+   (defn get-notes [] @*secret-ledger)
+
+   (add-note! "They're in the trees")
+   (add-note! {:date "March 14, 2018" :name "Stephen Hawking"})
+
+   (get-notes) ;; => ["They're in the trees" {:date "March 14, 2018" :name "Stephen Hawking"}]
+
+   #+END_SRC
+   
+   I want two functions in *fif*:
+
+   *add-note!*, which takes one value, and returns nothing
+
+   *get-notes*, which takes no values, and returns the list
+
+   Using the default stack machine `fif.core/*default-stack*`, we can
+   extend it to include this functionality
+
+   #+BEGIN_SRC clojure
+
+   (def *secret-notes (atom []))
+   (defn add-note! [s] (swap! *secret-notes conj s))
+   (defn get-notes [] @*secret-notes)
+
+   (add-note! "They're in the trees")
+   (add-note! {:date "March 14, 2018" :name "Stephen Hawking"})
+   
+   (get-notes) ;; => ["They're in the trees" {:date "March 14, 2018" :name "Stephen Hawking"}]
+ 
+   ;; Wrap add-note! as a procedure which accepts 1 value from the
+   ;; stack. Note that the procedure wrapper does not return the result
+   ;; of our function to the stack.
+   (def op-add-note! (wrap-procedure-with-arity 1 add-note!))
+
+   ;; Wrap get-notes as a function. Note that the function wrapper will
+   ;; return its result to the stack.
+   (def op-get-notes (wrap-function-with-arity 0 get-notes))
+
+   (def extended-stack-machine
+     (-> fif/*default-stack*
+         (stack/set-word 'add-note! op-add-note!)
+         (stack/set-word 'get-notes op-get-notes)))
+
+   ;; Let's take our new functionality for a spin
+   (reset! *secret-notes [])
+   (fif/with-stack extended-stack-machine
+     (fif/reval "I Hate Mondays" add-note!) ;; => '()
+     (fif/eval-string "\"Kill Switch: Pineapple\" add-note!") ;; => '()
+     (fif/reval get-notes)) ;; => '(["I Hate Mondays" "Kill Switch: Pineapple"])
+
+   #+END_SRC
+
+** fif and clojure interoperability
+   
+   Although this might not be taken as a feature, *fif* can have
+   clojure s-exps evaluated within its comfy confines. The default set
+   of evaluators over clojure data subject to the same clojure reader
+   shortfalls that prevent it from being used as a data format.
+
+   *Note that reading in data in string representation does not suffer
+   from these shortfalls as discussed in a later section*
+
+   #+BEGIN_SRC clojure
+
+   (fif/reval 1 #=(+ 1 1) +) ;; => '(3)
+
+   (defn boiling-point-c [] 100)
+
+   (fif/reval #=(boiling-point-c) 1 +) ;; => '(101)
+
+   #+END_SRC
+
+   However, the preferred way to include additional data within *fif*
+   is by either passing values onto the stackmachine, or by setting *fif*
+   variables which can be accessed from within fif.
+
+   #+BEGIN_SRC clojure
+  
+   (defn secret-stack-machine
+     "Returns a stack machine with a `secret` value stored in the fif
+     variable 'secret"
+     [secret]
+     (-> fif.core/*default-stack*
+         (stack/set-variable 'secret secret)))
+   
+   
+   (fif/with-stack (secret-stack-machine :fooey)
+     (fif/reval secret getv)) ;; => (:fooey)
+   
+   
+   (defn pill-popping-stack-machine
+     "Returns a stack machine with the values within `pills` places on
+     the stack"
+     [& pills]
+     (loop [sm fif.core/*default-stack*
+            pills pills]
+       (if-let [pill (first pills)]
+         (recur (stack/push-stack sm pill)
+                (rest pills))
+         sm)))
+   
+   
+   (fif/with-stack (pill-popping-stack-machine :red :black :green :blue)
+     (fif/reval "The pill on the top of the stack is: " . .))
+     ;; => '(:red :black :green)
+     ;; <stdout>: The pill on the top of the stack is: :blue
+
+
+   #+END_SRC
+   
+** Making fif safer, because Russians...?
+
+   Although using *fif* from within clojure might have it's
+   shortfalls, *fif* can avoid the pitfalls of the clojure reader by
+   passing in strings containing EDN data.
+
+   The same unsafe example from before:
+
+   #+BEGIN_SRC
+   
+   (fif/reval-string "1 1 +") ;; => '(2)
+
+   (fif/reval-string "1 #=(+ 1 1) +") ;; ERROR
+   ;; Unhandled clojure.lang.ExceptionInfo
+   ;; No reader function for tag =.
+   ;; {:type :reader-exception, :ex-kind :reader-error}
+
+   #+END_SRC
+
+   This means that *fif* could potentially (without liability on the
+   author's part) be used for remote
+   execution with *fif* used as a sandboxed environment, only
+   extending to clojure functions which are deemed safe.
+
+   This brings me to the issue of erroneous infinite loops. The *fif*
+   stack machine has the ability to limit stack operation to max
+   number of execution steps.
+
+   #+BEGIN_SRC clojure
+
+   (defn limited-stack-machine [step-max]
+     (-> fif/*default-stack*
+         (stack/set-step-max step-max)))
+   
+   
+   (def default-step-max 100)
+   (defn eval-incoming [s]
+     (let [sm (limited-stack-machine default-step-max)
+           evaluated-sm (fif/with-stack sm (fif/eval-string s))
+           max-steps (stack/get-step-max evaluated-sm)
+           num-steps (stack/get-step-num evaluated-sm)]
+       (if (>= num-steps max-steps)
+         "Exceeded Max Step Execution"
+         (-> evaluated-sm stack/get-stack reverse))))
+   
+   
+   (def incoming-fif-eval "3 0 do :data-value i loop")
+   (eval-incoming incoming-fif-eval) ;; => (:data-value 0 :data-value 1 :data-value 2 :data-value 3)
+   
+   
+   (def infinite-fif-eval "begin true while :data-value 1 repeat")
+   (eval-incoming infinite-fif-eval) ;; => "Exceeded Max Step Execution"
+   
+   
+   (def malicious-fif-eval "begin #=(fork-main-thread) false until")
+   (eval-incoming malicious-fif-eval) ;; ERROR
+   ;; Unhandled clojure.lang.ExceptionInfo
+   ;; No reader function for tag =.
+   ;; {:type :reader-exception, :ex-kind :reader-error}
 
    #+END_SRC
 

@@ -1,4 +1,4 @@
-(defproject fif "0.1.0-SNAPSHOT"
+(defproject fif "0.2.0-SNAPSHOT"
   :description "Stack-based Programming in Clojure"
   :url "http://github.com/benzap/fif"
   :license {:name "Eclipse Public License"

@@ -4,7 +4,8 @@
   - Most of the functions listed were taken from the Forth standard library."
   (:refer-clojure :exclude [eval])
   (:require
-   [fif.stack :refer :all]))
+   [fif.stack :refer :all]
+   [fif.def :refer :all]))
 
 
 (defn op+
@@ -175,21 +176,11 @@
        pop-stack pop-stack (push-stack result) dequeue-code)))
 
 
-(defmacro defstack-arity-2 [name fn]
-  `(defn ~name
-     [sm#]
-     (let [[i# j#] (get-stack sm#)
-           result# (~fn j# i#)]
-       (-> sm#
-           pop-stack pop-stack (push-stack result#) dequeue-code))))
-
-
-(defstack-arity-2 op-<= <=)
-(defstack-arity-2 op-= =)
-(defstack-arity-2 op-not= not=)
-(defstack-arity-2 op-> >)
-(defstack-arity-2 op->= >=)
-
+(defstack-func-2 op-<= <=)
+(defstack-func-2 op-= =)
+(defstack-func-2 op-not= not=)
+(defstack-func-2 op-> >)
+(defstack-func-2 op->= >=)
 
 
 (defn import-stdlib-ops [sm]
