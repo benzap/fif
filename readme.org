@@ -44,6 +44,49 @@ the language is there is no parenthesis after invokation.
 
 #+END_SRC
 
+
+* Installation
+  
+  *Currently in alpha development*
+
+  Visit [[https://clojars.org/fif][clojars.org]] for the latest version:
+
+  *Leiningen/Boot*
+  
+  #+BEGIN_SRC clojure
+
+  [fif "0.1.0-SNAPSHOT"]
+
+  #+END_SRC
+
+  *Clojure CLI/deps.edn*
+
+  #+BEGIN_SRC clojure
+
+  fif {:mvn/version "0.1.0-SNAPSHOT"}
+
+  #+END_SRC
+
+  *Gradle*
+
+  #+BEGIN_SRC groovy
+
+  compile 'fif:fif:0.1.0-SNAPSHOT'
+
+  #+END_SRC
+
+  *Maven*
+
+  #+BEGIN_SRC xml
+
+  <dependency>
+    <groupId>fif</groupId>
+    <artifactId>fif</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </dependency>
+
+  #+END_SRC
+
 * Introduction
   In stack-based programming, operations are performed on data using
   *Postfix Notation*: ex. ~1 2 +~. This is the complete opposite of
@@ -72,7 +115,7 @@ the language is there is no parenthesis after invokation.
 
   #+BEGIN_SRC clojure
     ;; conditionals are compile-mode only in Forth, but allowed in fif
-    (fif/reval 1 0 = if "Ya else "Nah" then) ;; => '("Nah")
+    (fif/reval 1 0 = if "Ya" else "Nah" then) ;; => '("Nah")
 
     ;; do loop is compile-mode only in Forth, along with the rest of the
     ;; conditional-loops. All of this is allowed in fif.
@@ -247,6 +290,7 @@ the language is there is no parenthesis after invokation.
    The only conditional structures within *fif* are:
 
    ~<condition> if <true-body> then~
+
    ~<condition> if <true-body> else <false-body> then~
 
    Examples:
@@ -281,9 +325,12 @@ the language is there is no parenthesis after invokation.
    There are currently four standard loops in *fif*:
 
    ~<end> <start> do <body> loop~
+
    ~<end> <start> do <body> <step> +loop~
+
   
    ~begin <body> <flag> until~
+
    ~begin <flag> while <body> repeat~
 
    Examples:
@@ -404,47 +451,3 @@ the language is there is no parenthesis after invokation.
   within the restrictions of computers at the time of it's creation,
   and so the name stuck. I recommend you check out
   [[https://en.wikipedia.org/wiki/Forth_(programming_language)][the wiki page]] for an interesting read.
-
-
-
-* Installation
-  
-  *Currently in alpha development*
-
-  Visit [[https://clojars.org/fif][clojars.org]] for the latest version:
-
-  *Leiningen/Boot*
-  
-  #+BEGIN_SRC clojure
-
-  [fif "0.1.0-SNAPSHOT"]
-
-  #+END_SRC
-
-  *Clojure CLI/deps.edn*
-
-  #+BEGIN_SRC clojure
-
-  fif {:mvn/version "0.1.0-SNAPSHOT"}
-
-  #+END_SRC
-
-  *Gradle*
-
-  #+BEGIN_SRC groovy
-
-  compile 'fif:fif:0.1.0-SNAPSHOT'
-
-  #+END_SRC
-
-  *Maven*
-
-  #+BEGIN_SRC xml
-
-  <dependency>
-    <groupId>fif</groupId>
-    <artifactId>fif</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
-  </dependency>
-
-  #+END_SRC
