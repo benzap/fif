@@ -107,19 +107,6 @@
 #_(->> (dbg-eval {:step-max 500} 10 1 do leave 5 1 do j i 2 +loop 1 1 + +loop)
       stack/get-stack)
 
-#_(->> (dbg-eval {:step-max 60}
-
-         macro some_value
-           true
-           if
-             _$ 3 1 do $_
-           else
-             _$ 2 1 do $_
-           then
-         endmacro
-         some_value 1 loop "end")
-   stack/get-stack)
-
 
 #_(reval
 

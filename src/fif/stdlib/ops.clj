@@ -186,6 +186,7 @@
 
 (defstack-arity-2 op-<= <=)
 (defstack-arity-2 op-= =)
+(defstack-arity-2 op-not= not=)
 (defstack-arity-2 op-> >)
 (defstack-arity-2 op->= >=)
 
@@ -220,5 +221,6 @@
       (set-word '< op-<)
       (set-word '<= op-<=)
       (set-word '= op-=)
+      (set-word 'not= op-not=)
       (set-word '> op->)
       (set-word '>= op->=)))
