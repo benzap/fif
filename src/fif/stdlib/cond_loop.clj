@@ -26,16 +26,18 @@
 
 ;; begin ? while ... repeat
 
-
 (def do-mode-flag :do-mode)
 (def inner-do-mode-flag :inner-do-mode)
 (def loop-mode-flag :loop-mode)
+(def loop-leave-mode-flag :loop-leave-mode)
 (def loop-plus-mode-flag :loop-plus-mode)
 
 (def begin-mode-flag :begin-mode)
 (def inner-begin-mode-flag :inner-begin-mode)
 (def begin-until-mode-flag :begin-until-mode)
+(def begin-until-leave-mode-flag :begin-until-leave-mode)
 (def begin-while-mode-flag :begin-while-mode)
+(def begin-while-leave-mode-flag :begin-while-leave-mode)
 (def begin-dump-mode-flag :begin-dump-mode)
 
 
@@ -52,63 +54,78 @@
     (-> sm stack/pop-ret (stack/push-ret [(+ start i) end]))))
 
 
+(defn loop-leave-mode
+  [sm]
+  (let [arg (-> sm stack/get-code first)
+        stash (stack/get-stash sm)]
+    (cond
+      (or (= arg arg-loopend-token)
+          (= arg arg-plus-loopend-token))
+      (-> sm
+          stack/pop-flag
+          (stack/set-stash (stack/remove-sub-stack stash))
+          stack/pop-ret
+          stack/dequeue-code)
+      :else
+      (-> sm stack/dequeue-code))))
+
+
 (defn loop-mode
   [sm]
   (let [arg (-> sm stack/get-code first)
         stash (stack/get-stash sm)]
     (cond
+      ;; Finished processing the current loop iteration
+      (= arg arg-loopend-token)
+      (let [start-idx (get-loop-start-index sm)
+            end-idx (get-loop-end-index sm)]
+        (if-not (>= start-idx end-idx)
 
-     ;; Finished processing the current loop iteration
-     (= arg arg-loopend-token)
-     (let [start-idx (get-loop-start-index sm)
-           end-idx (get-loop-end-index sm)]
-       (if-not (>= start-idx end-idx)
+          ;; Prepare the next loop iteration
+          (let [loop-body (stack/get-sub-stack stash)
+                new-code (concat (reverse loop-body)
+                                 (list arg-loopend-token)
+                                 (-> sm stack/dequeue-code stack/get-code))]
+            (-> sm
+                (increment-loop-index 1)
+                (stack/set-code new-code)))
 
-         ;; Prepare the next loop iteration
-         (let [loop-body (stack/get-sub-stack stash)
-               new-code (concat (reverse loop-body)
-                                (list arg-loopend-token)
-                                (-> sm stack/dequeue-code stack/get-code))]
-           (-> sm
-               (increment-loop-index 1)
-               (stack/set-code new-code)))
+          ;; Clean up the return stack, remove our loop content from
+          ;; the stash, get out of loop mode and continue execution
+          (-> sm
+              stack/pop-flag
+              (stack/set-stash (stack/remove-sub-stack stash))
+              stack/pop-ret
+              stack/dequeue-code)))
 
-         ;; Clean up the return stack, remove our loop content from
-         ;; the stash, get out of loop mode and continue execution
-         (-> sm
-             stack/pop-flag
-             (stack/set-stash (stack/remove-sub-stack stash))
-             stack/pop-ret
-             stack/dequeue-code)))
+      ;; Finished processing the current loop iteration
+      (= arg arg-plus-loopend-token)
+      (let [start-idx (get-loop-start-index sm)
+            end-idx (get-loop-end-index sm)]
+        (if-not (>= start-idx end-idx)
 
-     ;; Finished processing the current loop iteration
-     (= arg arg-plus-loopend-token)
-     (let [start-idx (get-loop-start-index sm)
-           end-idx (get-loop-end-index sm)]
-       (if-not (>= start-idx end-idx)
+          ;; Prepare the next loop iteration
+          (let [[loop-step] (stack/get-stack sm)
+                loop-body (stack/get-sub-stack stash)
+                new-code (concat (reverse loop-body)
+                                 (list arg-plus-loopend-token)
+                                 (-> sm stack/dequeue-code stack/get-code))]
+            (-> sm
+                stack/pop-stack
+                (increment-loop-index loop-step)
+                (stack/set-code new-code)))
 
-         ;; Prepare the next loop iteration
-         (let [[loop-step] (stack/get-stack sm)
-               loop-body (stack/get-sub-stack stash)
-               new-code (concat (reverse loop-body)
-                                (list arg-plus-loopend-token)
-                                (-> sm stack/dequeue-code stack/get-code))]
-           (-> sm
-               stack/pop-stack
-               (increment-loop-index loop-step)
-               (stack/set-code new-code)))
-
-         ;; Clean up the return stack, remove our loop content from
-         ;; the stash, get out of loop mode and continue execution
-         (-> sm
-             stack/pop-stack
-             stack/pop-flag
-             (stack/set-stash (stack/remove-sub-stack stash))
-             stack/pop-ret
-             stack/dequeue-code)))
-               
-     :else
-     (-> sm stack/process-arg))))
+          ;; Clean up the return stack, remove our loop content from
+          ;; the stash, get out of loop mode and continue execution
+          (-> sm
+              stack/pop-stack
+              stack/pop-flag
+              (stack/set-stash (stack/remove-sub-stack stash))
+              stack/pop-ret
+              stack/dequeue-code)))
+      
+      :else
+      (-> sm stack/process-arg))))
 
 
 (defn inner-do-mode
@@ -214,6 +231,34 @@
   [sm]
   (let [idx (-> sm stack/get-ret (nth 2) first)]
     (-> sm (stack/push-stack idx) stack/dequeue-code)))
+
+
+(defn begin-until-leave-mode
+  [sm]
+  (let [arg (-> sm stack/get-code first)
+        stash (stack/get-stash sm)]
+    (cond
+      (= arg arg-untilend-token)
+      (-> sm
+          stack/pop-flag
+          (stack/set-stash (stack/remove-sub-stack stash))
+          stack/dequeue-code)
+      :else
+      (-> sm stack/dequeue-code))))
+
+
+(defn begin-while-leave-mode
+  [sm]
+  (let [arg (-> sm stack/get-code first)
+        stash (stack/get-stash sm)]
+    (cond
+      (= arg arg-repeatend-token)
+      (-> sm
+          stack/pop-flag
+          (stack/set-stash (stack/remove-sub-stack stash))
+          stack/dequeue-code)
+      :else
+      (-> sm stack/dequeue-code))))
 
 
 (defn begin-dump-mode
@@ -398,20 +443,85 @@
         stack/dequeue-code)))
 
 
+(defn leave-recent-loop
+  "Find the most recent loop flag and replace it with a loop leave
+  mode.
+
+  Notes:
+
+  - Note that any additional conditional modes that are passed need to
+  be also be replaced with a dump to preserve the stash."
+  [sm]
+  (let [flags (-> sm stack/get-flags reverse)
+
+        ;;FIXME: does not handle situations where there is no loop flags.
+        recent-begin-until (concat (stack/take-to-token flags begin-until-mode-flag)
+                                   [begin-until-mode-flag])
+        recent-begin-while (concat (stack/take-to-token flags begin-while-mode-flag)
+                                   [begin-while-mode-flag])
+        recent-loop (concat (stack/take-to-token flags loop-mode-flag)
+                            [loop-mode-flag])
+        
+        recent-listing
+        (->> (sort-by count [recent-begin-until recent-begin-while recent-loop])
+             first)
+
+        leave-loop-tag
+        (condp = (last recent-listing)
+          loop-mode-flag loop-leave-mode-flag
+          begin-until-mode-flag begin-until-leave-mode-flag
+          begin-while-mode-flag begin-while-leave-mode-flag)
+        
+        new-flags 
+        (as-> flags $
+          (drop (count recent-listing) $)
+          (reverse $)
+          (concat $ [leave-loop-tag])
+          (vec $))]
+    (-> sm (stack/set-flags new-flags))))
+
+
+#_(-> (stack/new-stack-machine)
+      (stack/push-flag :test)
+      (stack/push-flag :another-value)
+      (stack/push-flag begin-until-mode-flag)
+      (stack/push-flag begin-while-mode-flag)
+      (stack/push-flag :test2)
+      (stack/push-flag :test3)
+      (stack/push-flag loop-mode-flag)
+      (leave-recent-loop)
+      (stack/get-flags))
+
+
+(defn start-leave
+  "Leaves whatever the current loop is.
+   
+   Goes through the flags, and replaces the most recent loop with a dump-mode"
+  [sm]
+  (let []
+    (-> sm leave-recent-loop stack/dequeue-code)))
+
+
 (defn import-stdlib-cond-loop-mode [sm]
   (-> sm
       (stack/set-word arg-do-token start-do)
       (stack/set-word 'i get-loop-index-1)
       (stack/set-word 'j get-loop-index-2)
       (stack/set-word 'k get-loop-index-3)
+
       (stack/set-mode do-mode-flag do-mode)
       (stack/set-mode inner-do-mode-flag inner-do-mode)
       (stack/set-mode loop-mode-flag loop-mode)
+      (stack/set-mode loop-leave-mode-flag loop-leave-mode)
 
       (stack/set-word arg-begin-token start-begin)
+
       (stack/set-mode begin-mode-flag begin-mode)
       (stack/set-mode inner-begin-mode-flag inner-begin-mode)
       (stack/set-mode begin-until-mode-flag begin-until-mode)
       (stack/set-mode begin-while-mode-flag begin-while-mode)
-      (stack/set-mode begin-dump-mode-flag begin-dump-mode)))
-      
+      (stack/set-mode begin-dump-mode-flag begin-dump-mode)
+      (stack/set-mode begin-while-leave-mode-flag begin-while-leave-mode)
+      (stack/set-mode begin-until-leave-mode-flag begin-until-leave-mode)
+
+      (stack/set-word arg-leave-token start-leave)))

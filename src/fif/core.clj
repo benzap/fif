@@ -62,19 +62,109 @@
 
 #_(->> (dbg-eval {:step-max 103}
         begin 1 while
-          begin 1 while 4 repeat 5
+          begin true if 1 then while 4 repeat 5
         repeat
         3)
        stack/get-stack)
+
+
+#_(->> (dbg-eval {:step-max 500} 10 1 do leave 5 1 do j i 2 +loop 1 1 + +loop)
+      stack/get-stack
+      reverse
+      (partition 2))
+
+#_(->> (dbg-eval {:step-max 500} 10 1 do leave 5 1 do j i 2 +loop 1 1 + +loop)
+      stack/get-stack)
+
+#_(->> (dbg-eval {:step-max 60}
+
+         macro some_value
+           true
+           if
+             _$ 3 1 do $_
+           else
+             _$ 2 1 do $_
+           then
+         endmacro
+         some_value 1 loop "end")
+   stack/get-stack)
+
+
+#_(reval
+
+   def I 0
+   
+   fn incv
+   dup getv inc swap setv
+   endfn
+   
+   begin 1 while
+   I incv
+   I getv 10 > if leave then
+   I getv
+   repeat) 
+
+
+#_(reval def I 1
+         fn incv
+           dup getv inc swap setv
+         endfn
+
+         I incv
+         I getv
+         I incv
+         I getv)
+
+
+
+#_(reval
+   fn hello
+     "Hello " . . "!" . cr
+   endfn
+
+   "Ben" hello)
+
+#_(reval 2 2 +)
+
+
+
+#_(reval
+   macro some_value
+   true
+   if
+   _$ 1 $_
+   else
+   _$ 2 $_
+   then
+   endmacro
+   some_value)
+   
+
+
+#_(reval
+   macro ?do
+     over over >
+     if
+       _$ do $_
+     else
+       _$ do leave $_
+     then
+   endmacro
+
+   fn yeaa!
+     #_"(n -- ) Prints yeaa with 'n' a's"
+     "yeeee" .
+     0 ?do "a" . loop
+     "hhh!" . cr
+   endfn
+
+   0 yeaa!)
 
 
 #_(->> (dbg-eval {:step-max 50}
 
         true if false if 1 then else true if 1 else 2 then then)
        stack/get-stack)
-
-
-
 
 
 #_(seval
@@ -120,11 +210,11 @@
    
    2 2 - cond1 cond2 . cr
    
-   variable x
+   def x 100
    100 x !
    x at . cr
    
-   variable y
+   def y {:x 123}
    {:x 123} y !
    y at . cr
 

@@ -21,6 +21,12 @@
   (set-stash [this st])
   (pick-stash [this])
 
+  (push-temp-macro [this x])
+  (pop-temp-macro [this])
+  (get-temp-macro [this])
+  (set-temp-macro [this st])
+  (pick-temp-macro [this])
+
   (set-word [this wname wbody])
   (remove-word [this wname])
   (get-words [this])
@@ -34,6 +40,7 @@
   (push-flag [this flag])
   (pop-flag [this])
   (get-flags [this])
+  (set-flags [this flags])
 
   (enqueue-code [this arg])
   (dequeue-code [this])
@@ -94,6 +101,9 @@
 
 (defn take-to-token [coll token]
   (reverse (into '() (take-while #(not= % token) coll))))
+
+
+(-> [1 2 3] reverse (take-to-token 1))
 
 
 (defn strip-token [coll token]
@@ -213,6 +223,23 @@
     (-> this :stash peek))
 
 
+  ;; Temp Macro
+  (push-temp-macro [this x]
+    (update-in this [:temp-macro-stack] conj x))
+
+  (pop-temp-macro [this]
+    (update-in this [:temp-macro-stack] pop))
+
+  (get-temp-macro [this]
+    (-> this :temp-macro-stack))
+
+  (set-temp-macro [this st]
+    (assoc this :temp-macro-stack st))
+
+  (pick-temp-macro [this]
+    (-> this :stash peek))
+
+
   ;; Word Dictionary
   (set-word [this wname wbody]
     (update-in this [:words] assoc wname wbody))
@@ -249,6 +276,9 @@
 
   (get-flags [this]
     (-> this :flags))
+
+  (set-flags [this flags]
+    (assoc this :flags flags))
 
 
   ;; Code Queue
@@ -304,6 +334,7 @@
    {:arg-stack '()
     :code-stack []
     :ret-stack '()
+    :temp-macro-stack '()
     :stash '()
     :flags []
     :words {}

@@ -11,7 +11,7 @@
 
 (defn wrap-compiled-fn [wbody]
   (fn [sm]
-    (stack/set-code sm (concat wbody (-> sm stack/dequeue-code stack/get-code)))))
+    (stack/set-code sm (vec (concat wbody (-> sm stack/dequeue-code stack/get-code))))))
 
 
 (defn inner-compile-mode

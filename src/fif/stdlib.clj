@@ -13,7 +13,8 @@
             [fif.stdlib.compile :refer [import-stdlib-compile-mode]]
             [fif.stdlib.conditional :refer [import-stdlib-conditional-mode]]
             [fif.stdlib.variable :refer [import-stdlib-variable-mode]]
-            [fif.stdlib.constant :refer [import-stdlib-constant-mode]]))
+            [fif.stdlib.constant :refer [import-stdlib-constant-mode]]
+            [fif.stdlib.macro :refer [import-stdlib-macro-mode]]))
 
 
 
@@ -24,4 +25,5 @@
       (import-stdlib-conditional-mode)
       (import-stdlib-cond-loop-mode)
       (import-stdlib-variable-mode)
-      (import-stdlib-constant-mode)))
+      (import-stdlib-constant-mode)
+      (import-stdlib-macro-mode)))

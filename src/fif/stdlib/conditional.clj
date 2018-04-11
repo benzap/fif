@@ -41,11 +41,15 @@
   [sm]
   (let [arg (-> sm stack/get-code first)]
     (cond
+
+      ;; Dump any inner conditionals
       (= arg arg-if-token)
       (-> sm
           (stack/push-flag dump-condition-mode-flag)
           stack/dequeue-code)
       
+      ;; we've reach the end of our conditional, leave
+      ;; dump-condition-mode
       (= arg arg-then-token)
       (-> sm
           stack/pop-flag
@@ -68,17 +72,22 @@
   (let [arg (-> sm stack/get-code first)]
     (cond
      
+     ;; Throw any additional inner control structures in the dump
      (= arg arg-if-token)
      (-> sm
          (stack/push-flag dump-condition-mode-flag)
          stack/dequeue-code)
      
+     ;; We've reached the end of the truth content, and there is false
+     ;; content, so pass control onto the false-condition-mode.
      (= arg arg-else-token)
      (-> sm
          stack/pop-flag
          (stack/push-flag false-condition-mode-flag)
          stack/dequeue-code)
 
+     ;; There is no false content, we've reached the end of the
+     ;; conditional, So end the mode.
      (= arg arg-then-token)
      (-> sm
          stack/pop-flag
@@ -93,6 +102,9 @@
 
 
 (defn truth-condition-mode
+  "Called when the code queue contains truthy content within the code
+  queue. This is normally at the beginning of the conditional after
+  the 'if clause."
   [sm]
   (let [arg (-> sm stack/get-code first)]
     (cond
@@ -112,6 +124,8 @@
 
 
 (defn false-condition-mode
+  "Called when the code queue includes falsy content. This is normally
+  called after the 'else clause."
   [sm]
   (let [arg (-> sm stack/get-code first)]
     (cond
@@ -165,21 +179,23 @@
   
   Implementation Details:
 
-  When the :conditional-mode flag is set, the stack machine will begin
-  pulling everything onto the main stack, until we reach the `then`
-  statement signifying our conditional content. Any nested
-  conditionals trigger the :inner-conditional-mode, which obfuscates
-  the conditionals so as not to interfere with the current
-  conditional.
+  - entire control structure is placed in a sub-stack stored on the
+  stash. Any inner control structures are processed by
+  inner-conditional-mode
 
-  After determining the conditional content, we scrub it from the main
-  stack, separate the conditional content into the truthy and falsy
-  content, and clean the content from any :inner-conditional-mode
-  obfuscation.
+  - after being stored, the flag is processed, the stack machine is
+  placed in either truth-condition-mode (flag was true) or
+  dump-truth-condition-mode (flag was false), and the stashed
+  condition body is placed back in the code queue, and the stash is
+  cleared.
 
-  The flag is popped from the stack, and upon determining whether the
-  condition and true or false, places either the truthy or falsy
-  content back onto the code stack.
+  - while in truth-condition-mode, args are processed naturally until
+  a then statement pops it out of truth-condition-mode
+
+  - while in dump-truth-condition-mode, args are dumped until the
+  else (false condition) is reached, which places the stack machine
+  in false-condition-mode.  
+
   "
   [sm]
   (let [arg (-> sm stack/get-code first)
@@ -221,7 +237,9 @@
 
 
 (defn start-if
-  "Word definition for starting an if condition mode"
+  "Word Definition:
+   ? if <truth body> else <false body> then
+   ? if <truth body> then"
   [sm]
   (let [stash (stack/get-stash sm)]
     (-> sm
