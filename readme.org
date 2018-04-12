@@ -57,7 +57,7 @@ motivated by Rich Hickey rolling in his hammock.
   
   #+BEGIN_SRC clojure
 
-  [fif "0.1.0-SNAPSHOT"]
+  [fif "0.2.0-SNAPSHOT"]
 
   #+END_SRC
 
@@ -65,7 +65,7 @@ motivated by Rich Hickey rolling in his hammock.
 
   #+BEGIN_SRC clojure
 
-  fif {:mvn/version "0.1.0-SNAPSHOT"}
+  fif {:mvn/version "0.2.0-SNAPSHOT"}
 
   #+END_SRC
 
@@ -73,7 +73,7 @@ motivated by Rich Hickey rolling in his hammock.
 
   #+BEGIN_SRC groovy
 
-  compile 'fif:fif:0.1.0-SNAPSHOT'
+  compile 'fif:fif:0.2.0-SNAPSHOT'
 
   #+END_SRC
 
@@ -84,7 +84,7 @@ motivated by Rich Hickey rolling in his hammock.
   <dependency>
     <groupId>fif</groupId>
     <artifactId>fif</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
   </dependency>
 
   #+END_SRC
@@ -656,8 +656,7 @@ motivated by Rich Hickey rolling in his hammock.
 
 * Development
   
-  You can pull the project from github. Tests can be run via `lein
-  test`.
+  You can pull the project from github. Tests can be run via ~lein test~.
 
   I welcome any and all pull requests that further improve what is
   currently here, especially things which further improve security and
@@ -669,18 +668,19 @@ motivated by Rich Hickey rolling in his hammock.
 
 * Upcoming Features
   
-  I'm not sure what to bring to the table just yet, but a few things
-  that I thought up just now:
+  A few things to look out for:
 
+  - Additional Standard Library Word Definitions
   - Improved Error Messages
   - A Time Machine Debugger
   - Implementation in Clojurescript
+  - Improved Macros
 
 * Related Readings
 
   - [[https://www.forth.com/starting-forth/][Starting Forth - Online Book]]
   - [[https://nakkaya.com/2010/12/02/a-simple-forth-interpreter-in-clojure/][A Simple Forth Interpreter in Clojure - Blog Post]]
-  - [[https://learnxinyminutes.com/docs/forth/][Learn Forth in Y minutes]]
+  - [[https://learnxinyminutes.com/docs/forth/][Learn Forth In Y Minutes]]
   - [[https://github.com/edn-format/edn][Extensible Data Notation - Github Page]]
   - [[https://www.gnu.org/software/gforth/][GForth - Forth Implementation of the GNU Project]]
 
