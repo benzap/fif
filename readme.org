@@ -443,7 +443,7 @@ motivated by Rich Hickey rolling in his hammock.
 
    Example:
 
-   #+BEGIN_SRC
+   #+BEGIN_SRC clojure
 
    (reval
     macro ?do
@@ -524,7 +524,7 @@ motivated by Rich Hickey rolling in his hammock.
    (reset! *secret-notes [])
    (fif/with-stack extended-stack-machine
      (fif/reval "I Hate Mondays" add-note!) ;; => '()
-     (fif/eval-string "\"Kill Switch: Pineapple\" add-note!") ;; => '()
+     (fif/reval-string "\"Kill Switch: Pineapple\" add-note!") ;; => '()
      (fif/reval get-notes)) ;; => '(["I Hate Mondays" "Kill Switch: Pineapple"])
 
    #+END_SRC
