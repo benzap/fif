@@ -104,7 +104,7 @@ motivated by Rich Hickey rolling in his hammock.
   #+END_SRC
 
   *Forth* is one of the more well known languages which uses this
-  approach, and I used it as a baseline for the implementation of
+  approach, and it is used as a baseline for the implementation of
   *fif*.
 
   Although *fif* is similar to *forth* in a lot of ways, I like to
@@ -133,6 +133,8 @@ motivated by Rich Hickey rolling in his hammock.
                2 add2) ;; => '(4)
 
   #+END_SRC
+
+  
 
 ** Clojure Language Interoperability and Data Representation
    
@@ -466,10 +468,10 @@ motivated by Rich Hickey rolling in his hammock.
 
 * Extending fif within Clojure
 
-  One interesting by-product of creating *fif* within clojure is the
-  amazing extensibility between *fif* and clojure. There is a wealth
-  of functionality that can be easily included in *fif* with very
-  little code.
+  One interesting by-product of creating *fif* within clojure is how
+  easy it is to extend *fif* from within clojure. There is a wealth of
+  functionality that can be easily included in *fif* with only a few
+  lines of code.
 
 ** Extending fif with clojure functions
 
@@ -496,19 +498,10 @@ motivated by Rich Hickey rolling in his hammock.
 
    *get-notes*, which takes no values, and returns the list
 
-   Using the default stack machine `fif.core/*default-stack*`, we can
-   extend it to include this functionality
+   Using the default stack machine ~fif.core/*default-stack*~, we can
+   extend it to include this functionality:
 
    #+BEGIN_SRC clojure
-
-   (def *secret-notes (atom []))
-   (defn add-note! [s] (swap! *secret-notes conj s))
-   (defn get-notes [] @*secret-notes)
-
-   (add-note! "They're in the trees")
-   (add-note! {:date "March 14, 2018" :name "Stephen Hawking"})
-   
-   (get-notes) ;; => ["They're in the trees" {:date "March 14, 2018" :name "Stephen Hawking"}]
  
    ;; Wrap add-note! as a procedure which accepts 1 value from the
    ;; stack. Note that the procedure wrapper does not return the result
@@ -534,7 +527,7 @@ motivated by Rich Hickey rolling in his hammock.
    #+END_SRC
 
    More advanced functions can make use of the full stack machine, and
-   a few of these functions can be seen in the fif.stdlib.ops
+   a few of these functions can be seen in the ~fif.stdlib.ops~
    namespace.
 
 ** fif and clojure interoperability
@@ -580,7 +573,7 @@ motivated by Rich Hickey rolling in his hammock.
    
    
    (defn pill-popping-stack-machine
-     "Returns a stack machine with the values within `pills` places on
+     "Returns a stack machine with the values within `pills` placed on
      the stack"
      [& pills]
      (loop [sm fif.core/*default-stack*
@@ -591,9 +584,9 @@ motivated by Rich Hickey rolling in his hammock.
          sm)))
    
    
-   (fif/with-stack (pill-popping-stack-machine :red :black :green :blue)
+   (fif/with-stack (pill-popping-stack-machine :pink :green :blue)
      (fif/reval "The pill on the top of the stack is: " . .))
-     ;; => '(:red :black :green)
+     ;; => '(:pink :green)
      ;; <stdout>: The pill on the top of the stack is: :blue
 
 
@@ -619,12 +612,12 @@ motivated by Rich Hickey rolling in his hammock.
    #+END_SRC
 
    This means that *fif* could potentially (without liability on the
-   author's part) be used for remote
-   execution with *fif* used as a sandboxed environment, only
-   extending to clojure functions which are deemed safe.
+   author's part) be used for remote execution. It could be used as a
+   sandboxed environment which only extends to clojure functions which
+   are deemed safe.
 
    This brings me to the issue of erroneous infinite loops. The *fif*
-   stack machine has the ability to limit stack operation to max
+   stack machine has the ability to limit stack operation to a max
    number of execution steps.
 
    #+BEGIN_SRC clojure
@@ -634,7 +627,7 @@ motivated by Rich Hickey rolling in his hammock.
          (stack/set-step-max step-max)))
    
    
-   (def default-step-max 100)
+   (def default-step-max 200)
    (defn eval-incoming [s]
      (let [sm (limited-stack-machine default-step-max)
            evaluated-sm (fif/with-stack sm (fif/eval-string s))
