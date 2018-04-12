@@ -46,12 +46,15 @@ motivated by Rich Hickey rolling in his hammock.
 
 #+END_SRC
 
+* Requirements
+ 
+  *fif* requires clojure 1.7, or newer
 
 * Installation
   
   *Currently in alpha development*
 
-  Visit [[https://clojars.org/fif][clojars.org]] for the latest version:
+  For the latest version, please visit [[https://clojars.org/fif][clojars.org]]
 
   *Leiningen/Boot*
   
