@@ -123,7 +123,7 @@ motivated by Rich Hickey rolling in his hammock.
     ;; conditional-loops. All of this is allowed in fif.
     (fif/reval 4 0 do i loop) ;; => '(0 1 2 3 4)
 
-    ;; defining functions inside functions doesn't exist in forth, to the
+    ;; defining functions inside functions doesn't exist in forth to the
     ;; best of my knowledge.
     (fif/reval fn func_define_add
                  fn add2 2 + endfn
@@ -147,7 +147,7 @@ motivated by Rich Hickey rolling in his hammock.
    (fif/reval 1 has-flag? namespace/value.thing why!?!? {:a 123} [1 2 3] #{:mental-asylum :ledger})
    ;; => (1 has-flag? namespace/value.thing why!?!? {:a 123} [1 2 3] #{:ledger :mental-asylum})
    
-   (defn self-destruct [])
+   (defn self-destruct [] "yes")
    (fif/reval (self-destruct) fn self-destruct "no" endfn self-destruct) ;; => '((self-destruct) "no")
 
    #+END_SRC
@@ -167,7 +167,9 @@ motivated by Rich Hickey rolling in his hammock.
 
    ;; Carriage return is provided with `cr`
    (fif/reval "Hello " . cr "There!" . cr) ;; => '()
-   ;; <stdout>: Hello \nThere!\n
+   ;; <stdout>: Hello 
+   :: <stdout>: There!
+   ;; <stdout>: 
 
    #+END_SRC
 
@@ -241,39 +243,13 @@ motivated by Rich Hickey rolling in his hammock.
 
    #+END_SRC
 
-** Creating Functions (Word Definitions)
-
-   Functions within *fif* are called *words* and have the syntax:
-
-   ~fn <name> <body...> endfn~
-
-   Functions are stored as global words within the stack
-   machine. Further developments might change this.
-
-   Few Examples:
-
-   #+BEGIN_SRC clojure
-
-   (fif/reval
-    
-    fn square dup * endfn
-
-    5 square) ;; => (25)
-
-   (fif/reval
-    
-    fn add2 2 + endfn
-    fn add4 add2 add2 endfn
-   
-    4 add4) ;; => '(8)
-
-   #+END_SRC
-
 ** Conditional Operators
    
    Conditionals produce the clojure equivalent boolean ~true~ and
    ~false~ values. However, conditional flags within *fif* also treat
    0 as ~false~ and any non-zero number as ~true~.
+
+   Note: The implementation of this can be found at ~fif.stdlib.conditional/condition-true?~
 
    #+BEGIN_SRC clojure
 
@@ -296,15 +272,23 @@ motivated by Rich Hickey rolling in his hammock.
 
    #+BEGIN_SRC clojure
 
+   ;; zero values are considered false
    (fif/reval 0 if 1 then) ;; => '()
+   (fif/reval nil if 1 then) ;; => '()
    (fif/reval false if 1 then) ;; => '()
 
+   ;; non-zero values are considered true
    (fif/reval 1 if 1 then) ;; => '(1)
-   (fif/reval true if 1 then) ;; => '(true)
+   (fif/reval -1 if 1 then) ;; => '(1)
+   (fif/reval true if 1 then) ;; => '(1)
+
+   ;; Anything else is evaluated by passing to `clojure.core/boolean`
+   (fif/reval [] if 1 then) ;; => '(1)
 
    (fif/reval 0 if 1 else 2 then) ;; => '(2)
    (fif/reval 1 1 - if 1 else 2 then) ;; => '(2)
 
+   ;; if conditions can be nested
    (reval
     fn check-age
       dup 18 <  if drop "You are underage"      else
@@ -316,6 +300,34 @@ motivated by Rich Hickey rolling in his hammock.
     12 check-age
     24 check-age
     51 check-age) ;; => '("You are underage" "You are the right age" "You are too old")
+
+   #+END_SRC
+
+** Creating Functions (Word Definitions)
+
+   Functions within *fif* are called *words* and have the syntax:
+
+   ~fn <name> <body...> endfn~
+
+   Functions are stored as global words within the stack
+   machine. Note that further developments might change this.
+
+   Few Examples:
+
+   #+BEGIN_SRC clojure
+
+   (fif/reval
+    
+    fn square dup * endfn
+
+    5 square) ;; => (25)
+
+   (fif/reval
+    
+    fn add2 2 + endfn
+    fn add4 add2 add2 endfn
+   
+    4 add4) ;; => '(8)
 
    #+END_SRC
 
