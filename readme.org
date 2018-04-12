@@ -13,7 +13,7 @@ based off of Forth.
 
 
 I would like to note that one major tradeoff in the language syntax is
-very limited parenthesis after invokation and the language creation is
+very limited parenthesis after invocation and the language creation is
 motivated by Rich Hickey rolling in his hammock.
 
 
