@@ -11,9 +11,10 @@
 interpreted, extensible, sandboxed, and simple scripting language
 based off of Forth.
 
-I would like to note that one major tradeoff in the language is there
-is very limited parenthesis after invokation and the language is
-motivated and powered by Rich Hickey rolling in his hammock.
+
+I would like to note that one major tradeoff in the language syntax is
+very limited parenthesis after invokation and the language creation is
+motivated by Rich Hickey rolling in his hammock.
 
 
 #+BEGIN_SRC clojure
@@ -134,19 +135,12 @@ motivated and powered by Rich Hickey rolling in his hammock.
   #+END_SRC
 
 ** Clojure Language Interoperability and Data Representation
-
-   Although it might look like *fif* can access the base clojure
-   language, it is a completely sandboxed *stack machine* with only
-   primitive functions exposed from the clojure ecosystem. *fif* works
-   off of EDN (Extensible Data Notation) value types.
    
-   Code is presented to *fif* in the form of clojure values, which
-   means that only valid data values in clojure are allowed within
-   *fif*. This comes as a huge advantage, since it means *fif* has a
-   wealth of data structures at its disposal, and should allow for
-   great interoperability.
-   
-   *NOTE:* functions over collections are not currently implemented.
+   Code is presented to *fif* in the form of the edn data format,
+   which means that only valid data values in clojure are allowed
+   within *fif*. This comes as a huge advantage, since it means *fif*
+   has a wealth of data structures at its disposal, and allows for
+   seamless interoperability within the clojure environment.
    
    #+BEGIN_SRC clojure
    
@@ -252,6 +246,9 @@ motivated and powered by Rich Hickey rolling in his hammock.
    Functions within *fif* are called *words* and have the syntax:
 
    ~fn <name> <body...> endfn~
+
+   Functions are stored as global words within the stack
+   machine. Further developments might change this.
 
    Few Examples:
 
@@ -378,9 +375,9 @@ motivated and powered by Rich Hickey rolling in his hammock.
  
    Variables within *fif* are declared using ~def~, but it should be
    pointed out that anything can be a variable. Getting a variable is
-   done via either the commands ~getv~ or ~at~ (@ is restricted in
-   clojure edn data format). Setting a variable is done via either ~!~
-   or ~setv~
+   done via either the commands ~getv~ or ~at~ (Note that forth uses
+   @, which is restricted in the edn data format). Setting a
+   variable is done via either ~!~ or ~setv~
 
    /Note that *anything* being a variable is subject to change, and an
    example will not be provided./
@@ -408,7 +405,7 @@ motivated and powered by Rich Hickey rolling in his hammock.
 ** Constants
 
    *fif* makes use of constants by assigning them as words, and are
-   often more efficient.
+   often more efficient to retrieve.
 
    Examples:
 
@@ -458,9 +455,9 @@ motivated and powered by Rich Hickey rolling in his hammock.
 * Extending fif within Clojure
 
   One interesting by-product of creating *fif* within clojure is the
-  amazing extensibility between *fif* and clojure. Ignoring n-arity
-  within clojure, there is a wealth of functionality that can be
-  easily included in *fif* with very little code.
+  amazing extensibility between *fif* and clojure. There is a wealth
+  of functionality that can be easily included in *fif* with very
+  little code.
 
 ** Extending fif with clojure functions
 
@@ -480,7 +477,8 @@ motivated and powered by Rich Hickey rolling in his hammock.
 
    #+END_SRC
    
-   I want two functions in *fif*:
+   I want two functions in *fif* to closely resemble the clojure
+   equivalents, notably:
 
    *add-note!*, which takes one value, and returns nothing
 
@@ -523,23 +521,28 @@ motivated and powered by Rich Hickey rolling in his hammock.
 
    #+END_SRC
 
+   More advanced functions can make use of the full stack machine, and
+   a few of these functions can be seen in the fif.stdlib.ops
+   namespace.
+
 ** fif and clojure interoperability
    
    Although this might not be taken as a feature, *fif* can have
    clojure s-exps evaluated within its comfy confines. The default set
-   of evaluators over clojure data subject to the same clojure reader
-   shortfalls that prevent it from being used as a data format.
+   of *fif* evaluators over clojure data are subject to the same
+   clojure reader shortfalls that prevent it from being used as a data
+   format.
 
-   *Note that reading in data in string representation does not suffer
-   from these shortfalls as discussed in a later section*
+   *Note that reading in data as a string representation does not
+   suffer from these shortfalls as discussed in another section*
 
    #+BEGIN_SRC clojure
 
-   (fif/reval 1 #=(+ 1 1) +) ;; => '(3)
+   (fif/reval 1 #=(+ 1 1) +) ;; => '(3) Yikes!
 
    (defn boiling-point-c [] 100)
 
-   (fif/reval #=(boiling-point-c) 1 +) ;; => '(101)
+   (fif/reval #=(boiling-point-c) 1 +) ;; => '(101) Russians!
 
    #+END_SRC
 
@@ -549,11 +552,14 @@ motivated and powered by Rich Hickey rolling in his hammock.
 
    #+BEGIN_SRC clojure
   
+   (require '[fif.core :as fif])
+   (require '[fif.stack :as stack])
+
    (defn secret-stack-machine
      "Returns a stack machine with a `secret` value stored in the fif
      variable 'secret"
      [secret]
-     (-> fif.core/*default-stack*
+     (-> fif/*default-stack*
          (stack/set-variable 'secret secret)))
    
    
@@ -643,10 +649,41 @@ motivated and powered by Rich Hickey rolling in his hammock.
 
    #+END_SRC
 
-* Why fif?
+* Development
+  
+  You can pull the project from github. Tests can be run via `lein
+  test`.
 
-  *fif* is meant to be a play on *forth*. The name *forth* was originally
-  meant to be spelt *fourth*, but had to be reduced in order to fit
-  within the restrictions of computers at the time of it's creation,
-  and so the name stuck. I recommend you check out
-  [[https://en.wikipedia.org/wiki/Forth_(programming_language)][the wiki page]] for an interesting read.
+  I welcome any and all pull requests that further improve what is
+  currently here, especially things which further improve security and
+  improve error messages.
+
+  I'm still not sure where to go with respect to the standard library,
+  and i'm open to suggestions for making manipulation of clojure data
+  as painless as possible.
+
+* Upcoming Features
+  
+  I'm not sure what to bring to the table just yet, but a few things
+  that I thought up just now:
+
+  - Improved Error Messages
+  - A Time Machine Debugger
+  - Implementation in Clojurescript
+
+* Related Readings
+
+  - [[https://www.forth.com/starting-forth/][Starting Forth - Online Book]]
+  - [[https://nakkaya.com/2010/12/02/a-simple-forth-interpreter-in-clojure/][A Simple Forth Interpreter in Clojure - Blog Post]]
+  - [[https://learnxinyminutes.com/docs/forth/][Learn Forth in Y minutes]]
+  - [[https://github.com/edn-format/edn][Extensible Data Notation - Github Page]]
+  - [[https://www.gnu.org/software/gforth/][GForth - Forth Implementation of the GNU Project]]
+
+* FAQ
+** Why fif?
+
+   *fif* is meant to be a play on *forth*. The name *forth* was originally
+   meant to be spelt *fourth*, but had to be reduced in order to fit
+   within the restrictions of computers at the time of it's creation,
+   and so the name stuck. I recommend you check out
+   [[https://en.wikipedia.org/wiki/Forth_(programming_language)][the wiki page]] for an interesting read.
