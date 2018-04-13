@@ -103,9 +103,6 @@
   (reverse (into '() (take-while #(not= % token) coll))))
 
 
-(-> [1 2 3] reverse (take-to-token 1))
-
-
 (defn strip-token [coll token]
   (cond-> coll
    (= (peek coll) token)
