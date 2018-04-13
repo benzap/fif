@@ -1,0 +1,81 @@
+#+TITLE: Programming Tasks
+#+AUTHOR: Benjamin Zaporzan
+#+DATE: 2018-04-12
+#+EMAIL: benzaporzan@gmail.com
+#+LANGUAGE: en
+#+OPTIONS: H:2 num:t toc:t \n:nil ::t |:t ^:t f:t tex:t
+
+
+* Documented Function Convention
+  You'll notice that Forth tends to include a comment consisting of a
+  bracketed list. I'm going to follow the same conventions for naming
+  functions in *fif*
+  
+  - ALL :: fn <name> #_[docstring] <body> endfn
+
+  - name :: EDN Symbol Data Value
+
+  - #_[docstring] :: the "#_" part is a discard dispatch within the
+                     EDN language. Docstring is a string explaining
+                     the function.
+
+  - docstring :: (input values -- output values) [helpful description]
+
+  - values :: Listed are several value types, which are abbreviated as
+              single or double letter lowercase acronymns. This is not
+              not necessary, but useful to keep the documentation
+              small.
+
+* Standard Library API Reference
+  
+** Not Implemented
+
+  - $stack/empty? :: ( -- bool ) Returns true if the main stack is empty.
+
+  - $stack/clear! :: ( -- ) Clears the main stack. Not recommended.
+		     
+  - $stack/pop! :: ( any -- ) Redundant function to 'drop. Drops a
+                    value on the stack.
+
+  - drop? :: ( any -- bool ) Attempts to drop the first item on the
+             stack. If it succeeds, returns true, otherwise returns
+             false.
+
+  - into :: ( collection, ... any -- 'collection ) <-$ <data values> $<-
+
+    (fif/reval () <-$ 1 2 3 $<-) ;; => '((1 2 3))
+  
+    (fif/reval [] <-$ [1 2] [3 4] $<-) ;; => '([ [1 2] [3 4] ])
+
+    (fif/reval {} <-$ :x 1 :y 2 $<-) ;; => '({:x 1 :y 2})
+
+    (fif/reval {} <-$
+      :x [] <-$ 1 2 3 $<-
+      :y [] <-$ 4 0 do i loop $<-
+    $<-) ;; '({:x [1 2 3] :y [0 1 2 3 4]})
+
+    (fif/reval
+     macro gen-end _$ $<- $_ endmacro
+     macro gen-list _$ () <-$ $_ endmacro
+     macro gen-dict _$ {} <-$ $_ endmacro
+     macro gen-vec _$ [] <-$ $_ endmacro
+
+     gen-dict
+      :x gen-vec 1 2 3 gen-end
+      :y gen-list 4 0 do i loop gen-end
+     gen-end) ;; => {:x [1 2 3]
+                     :y (0 1 2 3 4)}
+
+    (fif/reval () <-$ 0 3 do i loop $<-) ;; => '((0 1 2 3))
+
+    (fif/reval 1 2 () 3 4 into) ;; => '(1 2 (3 4))
+
+  - Arrow Functions for pulling data out of collections onto the stack
+
+    (fif/reval (1 2 3) $-> 4 5) ;; => '(1 2 3 4 5)
+    
+    (fif/reval {:x 1 :y 2} $-> :z 3) ;; => '(:x 1 :y 2 :z 3)
+
+** Programming Tasks
+
+   - [ ]
