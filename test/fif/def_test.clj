@@ -36,12 +36,12 @@
           _ (with-stack sm (reval 2 update-val!))]
       (is (= 2 @*test-val*)))))
 
-(comment
-  (def *secret-notes (atom []))
-  (defn add-note! [s] (swap! *secret-ledger conj s))
-  (defn get-notes [] @*secret-ledger)
 
-  (add-note! "They're in the trees")
-  (add-note! {:date "March 14, 2018" :name "Stephen Hawking"})
+(defcode-eval import-add2-library
+  fn add2 2 + endfn)
 
-  (get-notes)) ;; => ["They're in the trees" {:date "March 14, 2018" :name "Stephen Hawking"}]
+
+(deftest test-wrap-code-eval
+  (let [custom-stack-machine (-> fif/*default-stack* import-add2-library)]
+    (with-stack custom-stack-machine
+      (is (= '(4) (reval 2 add2))))))

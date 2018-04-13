@@ -5,6 +5,35 @@
    [fif.stack :refer :all]))
 
 
+(defn wrap-code-eval
+  [args]
+  (fn [sm]
+    (-> sm 
+        (eval-fn args)
+        (set-step-num 0))))
+
+
+(defmacro defcode-eval
+  "Allows you to define functions that contain fif code, which can then
+  be passed through a fif stack machine to be evaluated.
+
+  Example:
+
+  (defcode-eval import-add2-library
+    fn add2
+      + 2
+    endfn)
+
+  (def custom-stack-machine
+    (-> fif.core/*default-stack*
+        import-add2-library))
+
+  (fif.core/with-stack custom-stack-machine
+    (fif.core/reval 2 add2)) ;; => '(4)"
+  [name & body]
+  `(def ~name (wrap-code-eval (quote ~body))))
+
+
 (defn wrap-function-with-arity
   "Wraps a clojure function `f` which accepts `num-args`, and returns
   the function wrapped to be used in a stack machine.
@@ -21,7 +50,7 @@
 
   Examples:
 
-  (defn add2 [x] (+ x 2)
+  (defn add2 [x] (+ x 2))
   (def my-stack-machine (-> (fif.stack/new-stack-machine)
                             (fif.stack/set-word 'add2 (fif.def/wrap-function-with-arity 1 add2))))
   (fif.core/with-stack my-stack-machine
