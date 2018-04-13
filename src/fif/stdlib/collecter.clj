@@ -1,11 +1,14 @@
 (ns fif.stdlib.collecter
   "Mode for collecting values, and placing within a data structure"
-  (:require [fif.stack :as stack]))
+  (:require [fif.stack :as stack]
+            [fif.def :refer [defcode-eval]]
+            [fif.stdlib.macro :refer [import-stdlib-macro-mode]]))
 
 
 (def collecter-mode-flag :collecter-mode)
-(def arg-start-collecter '<-$)
+;; $<- ....
 (def arg-end-collecter '$<-)
+(def arg-start-collecter '<-$)
 
 
 (defn collecter-mode
@@ -34,8 +37,19 @@
       stack/dequeue-code))
 
 
+(defcode-eval import-collection-collector-defaults
+  macro $list _$ () <-$ $_ endmacro
+  macro $map _$ {} <-$ $_ endmacro
+  macro $vec _$ [] <-$ $_ endmacro
+  macro $set _$ #{} <-$ $_ endmacro
+  macro $collect _$ $<- $_ endmacro)
+
+
+
 (defn import-stdlib-collecter-mode
   [sm]
   (-> sm
       (stack/set-mode collecter-mode-flag collecter-mode)
-      (stack/set-word arg-start-collecter start-collecter)))
+      (stack/set-word arg-start-collecter start-collecter)
+      import-stdlib-macro-mode ;; Macro Dependency
+      import-collection-collector-defaults))

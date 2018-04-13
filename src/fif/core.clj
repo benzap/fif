@@ -95,5 +95,14 @@
          (stack/set-step-max step-max#)
          (stack/eval-fn (quote ~body)))))
 
-
-#_(reval 2 2 2 = 1 2)
+#_(reval
+   $vec
+     4 1 do
+       $map
+         :id i pair
+         :options $map
+            :animals $set :cat :dog :mouse $collect pair
+         $collect pair
+       $collect
+     loop
+   $collect)

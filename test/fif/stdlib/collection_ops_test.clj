@@ -11,4 +11,11 @@
   (is (= '(()) (reval () rest))))
 
 
-#_(reval [1 2] unpair)
+(deftest test-pop-op
+  (is (= '((2 3)) (reval (1 2 3) pop)))
+  (is (= '([1 2]) (reval [1 2 3] pop))))
+  
+
+(deftest test-peek-op
+  (is (= '(1) (reval (1 2 3) peek)))
+  (is (= '(3) (reval [1 2 3] peek))))
