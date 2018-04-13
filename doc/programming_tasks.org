@@ -43,16 +43,18 @@
 
   - into :: ( collection, ... any -- 'collection ) <-$ <data values> $<-
 
+    #+BEGIN_SRC clojure
+
     (fif/reval () <-$ 1 2 3 $<-) ;; => '((1 2 3))
   
-    (fif/reval [] <-$ [1 2] [3 4] $<-) ;; => '([ [1 2] [3 4] ])
+    (fif/reval [] <-$ [1 2] [3 4] $<-) ;; => '([[1 2] [3 4]])
 
     (fif/reval {} <-$ :x 1 :y 2 $<-) ;; => '({:x 1 :y 2})
 
     (fif/reval {} <-$
       :x [] <-$ 1 2 3 $<-
       :y [] <-$ 4 0 do i loop $<-
-    $<-) ;; '({:x [1 2 3] :y [0 1 2 3 4]})
+     $<-) ;; '({:x [1 2 3] :y [0 1 2 3 4]})
 
     (fif/reval
      macro gen-end _$ $<- $_ endmacro
@@ -70,11 +72,17 @@
 
     (fif/reval 1 2 () 3 4 into) ;; => '(1 2 (3 4))
 
+    #+END_SRC
+
   - Arrow Functions for pulling data out of collections onto the stack
+
+    #+BEGIN_SRC clojure
 
     (fif/reval (1 2 3) $-> 4 5) ;; => '(1 2 3 4 5)
     
     (fif/reval {:x 1 :y 2} $-> :z 3) ;; => '(:x 1 :y 2 :z 3)
+
+    #+END_SRC
 
 ** Programming Tasks
 
