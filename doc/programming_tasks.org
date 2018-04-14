@@ -99,15 +99,14 @@
 
     (fif/reval (1 2) (3 4) into) ;; => '((2 1 3 4))
 
-    #+END_SRC
-
-  - Arrow Functions for pulling data out of collections onto the stack
-
-    #+BEGIN_SRC clojure
 
     (fif/reval (1 2 3) apply 4 5) ;; => '(1 2 3 4 5)
     
     (fif/reval {:x 1 :y 2} apply :z 3) ;; => '([:x 1] [:y 2] :z 3)
+
+    (fif/reval 4 0 do %i loop) ;; => '(0 1 2 3 4)
+
+    (fif/reval 4 0 do %let! x 1 %get! *x loop) ;; => '(1 1 1 1 1)
 
     #+END_SRC
 
@@ -118,9 +117,16 @@
      using :function-mode-flag
      - add 'return word, to prematurely leave a function
      
+   - implement dollar special form, for stack operations
    - implement asterisk special form, pointer operations
    - implement ampersand special form, concat operations
+   - implement percent special form, for stash operations
    - change how variables are created and queried based on asterisk notation
-   - remove '! for variable setting
+   - remove '! for variable setting, remove 'getv, keep 'setv,
+   - implement 'foreach 'endfor
+     (reval [1 2 3 4] foreach %elem inc endfor) ;; => (2 3 4 5)
 
    - Implement collection construction methods
+   - Implement error handling
+     - system errors
+     - stack errors

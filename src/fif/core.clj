@@ -104,17 +104,13 @@
          :animals set! :cat :dog :mouse ! pair
        ! pair
      !
-     loop !)
+   loop !)
 
 #_(reval (1 2 3) apply) ;; (1 2 3)
 
 #_(reval $ conj (1 2 3) 4 _) ;; ((4 1 2 3))
 
-;; Stack Manipulation (- means leave, < means move)
-;; so $-<< means leave first, move second, move third
 #_(reval $>> a b c) ;; => ( b c a )
-
-#_(reval $-<-<<
 
 #_(reval $>> conj [1 2 3] 4 5) ;; ([1 2 3 4] 5)
 
@@ -134,6 +130,8 @@
 #_(reval ****x) ;; (***x)
 
 #_(reval & * * + _) ;; (*+)
+
+#_(reval & constructing - value _)
 
 #_(reval &plus- 2) ;; (plus-2)
 
@@ -158,3 +156,5 @@
 #_(reval *+ [1 2 3 4] 0 reduce) ;; (10)
 
 #_(reval $>> map *inc [1 2 3 4])
+
+#_(reval $>> map (1 +) [1 2 3 4]) ;; ([2 3 4 5])
