@@ -7,8 +7,8 @@
 
 (def collecter-mode-flag :collecter-mode)
 ;; $<- ....
-(def arg-end-collecter '$<-)
-(def arg-start-collecter '<-$)
+(def arg-end-collecter '|)
+(def arg-start-collecter '<-|)
 
 
 (defn collecter-mode
@@ -38,11 +38,10 @@
 
 
 (defcode-eval import-collection-collector-defaults
-  macro $list _$ () <-$ $_ endmacro
-  macro $map _$ {} <-$ $_ endmacro
-  macro $vec _$ [] <-$ $_ endmacro
-  macro $set _$ #{} <-$ $_ endmacro
-  macro $collect _$ $<- $_ endmacro)
+  macro list<-| $-| () <-| |-$ endmacro
+  macro map<-| $-| {} <-| |-$ endmacro
+  macro vec<-| $-| [] <-| |-$ endmacro
+  macro set<-| $-| #{} <-| |-$ endmacro)
 
 
 

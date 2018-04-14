@@ -11,9 +11,9 @@
            macro some_value
            true
            if 
-             nil drop _$ 3 1 $_ true
+             nil drop $-| 3 1 |-$ true
            else
-             nil drop _$ 2 1 $_ false
+             nil drop $-| 2 1 |-$ false
            then
            endmacro
            "start" some_value "end"))))

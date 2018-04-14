@@ -28,6 +28,19 @@
 
 * Standard Library API Reference
   
+** Special Symbols
+   
+   Asterisk '*' -- Word Pointer. Allows you to place Word definitions
+   on the stack
+   
+   ex.
+
+   #+BEGIN_SRC clojure
+
+   
+
+   #+END_SRC
+
 ** Not Implemented
 
   - $stack/empty? :: ( -- bool ) Returns true if the main stack is empty.
@@ -45,32 +58,46 @@
 
     #+BEGIN_SRC clojure
 
-    (fif/reval () <-$ 1 2 3 $<-) ;; => '((1 2 3))
+    (fif/reval () <-into! 1 2 3 !) ;; => '((1 2 3))
   
-    (fif/reval [] <-$ [1 2] [3 4] $<-) ;; => '([[1 2] [3 4]])
+    (fif/reval [] <-into! [1 2] [3 4] !) ;; => '([[1 2] [3 4]])
 
-    (fif/reval {} <-$ :x 1 :y 2 $<-) ;; => '({:x 1 :y 2})
+    (fif/reval {} <-into! [:x 1] [:y 2] !) ;; => '({:x 1 :y 2})
 
-    (fif/reval {} <-$
-      :x [] <-$ 1 2 3 $<-
-      :y [] <-$ 4 0 do i loop $<-
-     $<-) ;; '({:x [1 2 3] :y [0 1 2 3 4]})
+    (fif/reval {} <-into!
+      :x [] <-into! 1 2 3 !
+      :y [] <-into! 4 0 do i loop !
+     !) ;; '({:x [1 2 3] :y [0 1 2 3 4]})
 
     (fif/reval
-     macro gen-end _$ $<- $_ endmacro
-     macro gen-list _$ () <-$ $_ endmacro
-     macro gen-dict _$ {} <-$ $_ endmacro
-     macro gen-vec _$ [] <-$ $_ endmacro
+     macro list! _! () <-into! !_ endmacro
+     macro dict! _! {} <-into! !_ endmacro
+     macro vec! _! [] <-into! !_ endmacro
+     macro set! _! #{} <-into! !_ endmacro
 
-     gen-dict
-      :x gen-vec 1 2 3 gen-end
-      :y gen-list 4 0 do i loop gen-end
-     gen-end) ;; => {:x [1 2 3]
-                     :y (0 1 2 3 4)}
+     dict!
+      :x vec! 1 2 3 ! pair
+      :y list! 4 0 do i loop ! pair
+     !) ;; => {:x [1 2 3]
+               :y (0 1 2 3 4)}
 
-    (fif/reval () <-$ 0 3 do i loop $<-) ;; => '((0 1 2 3))
+    (fif/reval (0 3 do i loop) apply) ;; => (0 1 2 3)
 
-    (fif/reval 1 2 () 3 4 into) ;; => '(1 2 (3 4))
+    (fif/reval [0 3 do i loop] apply) ;; => (0 1 2 3)
+
+    (fif/reval (0 3 do i loop) realize) ;; => ((0 1 2 3))
+
+    (fif/reval [0 3 do i loop] realize) ;; => ([0 1 2 3])
+
+    (fif/reval [[:a (0 4 do i loop) realize]
+                [:b (1 2 3)]] realize ->map) ;; => ({:a (0 1 2 3 4) :b (1 2 3)})
+
+    (fif/reval [:first-name "ben" pair
+                :last-name "zap" pair] realize ->map) ;; => ({:first-name "ben" :last-name "zap"})
+
+    (fif/reval set! :eggs :bacon :salad !) ;; => (#{:eggs :bacon :salad})
+
+    (fif/reval (1 2) (3 4) into) ;; => '((2 1 3 4))
 
     #+END_SRC
 
@@ -78,12 +105,22 @@
 
     #+BEGIN_SRC clojure
 
-    (fif/reval (1 2 3) $-> 4 5) ;; => '(1 2 3 4 5)
+    (fif/reval (1 2 3) apply 4 5) ;; => '(1 2 3 4 5)
     
-    (fif/reval {:x 1 :y 2} $-> :z 3) ;; => '(:x 1 :y 2 :z 3)
+    (fif/reval {:x 1 :y 2} apply :z 3) ;; => '([:x 1] [:y 2] :z 3)
 
     #+END_SRC
 
 ** Programming Tasks
+   - Refactor stackmachine into separate files (.impl namespace, etc)
+   - Better Test Coverage
+   - Make functions go into a #'function-mode
+     using :function-mode-flag
+     - add 'return word, to prematurely leave a function
+     
+   - implement asterisk special form, pointer operations
+   - implement ampersand special form, concat operations
+   - change how variables are created and queried based on asterisk notation
+   - remove '! for variable setting
 
-   - [ ]
+   - Implement collection construction methods

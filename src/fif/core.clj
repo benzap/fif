@@ -96,13 +96,65 @@
          (stack/eval-fn (quote ~body)))))
 
 #_(reval
-   $vec
-     4 1 do
-       $map
-         :id i pair
-         :options $map
-            :animals $set :cat :dog :mouse $collect pair
-         $collect pair
-       $collect
-     loop
-   $collect)
+   vec! 4 1 do
+     map!
+       :id i pair
+       :options 
+       map!
+         :animals set! :cat :dog :mouse ! pair
+       ! pair
+     !
+     loop !)
+
+#_(reval (1 2 3) apply) ;; (1 2 3)
+
+#_(reval $ conj (1 2 3) 4 _) ;; ((4 1 2 3))
+
+;; Stack Manipulation (- means leave, < means move)
+;; so $-<< means leave first, move second, move third
+#_(reval $>> a b c) ;; => ( b c a )
+
+#_(reval $-<-<<
+
+#_(reval $>> conj [1 2 3] 4 5) ;; ([1 2 3 4] 5)
+
+#_(reval $> first [1 2 3] 5) ;; (1 5)
+
+#_(reval $> a b c) ;; (b a c)
+
+#_(reval $>> pair :id 1 2 3) ;; ([:id 1] 2 3)
+
+#_(reval $>>> + 1 2 3 4) ;; (1 5 4)
+
+#_(reval (1 1 +) apply) ;; (2)
+
+#_(reval *x) ;; (x)
+
+#_(reval **x) ;; (*x)
+#_(reval ****x) ;; (***x)
+
+#_(reval & * * + _) ;; (*+)
+
+#_(reval &plus- 2) ;; (plus-2)
+
+#_(reval &* + 1 1) ;; (+ 1 1)
+
+#_(reval &** + 1 1) ;; (*+ 1 1)
+
+#_(reval def x 10) ;; ()
+
+#_(reval def x 10 x) ;; (10)
+
+#_(reval def x 10 *x 20 set! x) ;; (20)
+
+#_(reval *inc [1 2 3 4] map) ;; ((2 3 4 5))
+
+#_(reval (1 +) [1 2 3 4] map) ;; ((2 3 4 5))
+
+#_(reval *even? [1 2 3 4] filter) ;; ((2 4))
+
+#_(reval (2 mod if true else false then) [1 2 3 4] filter) ;; ((2 4))
+
+#_(reval *+ [1 2 3 4] 0 reduce) ;; (10)
+
+#_(reval $>> map *inc [1 2 3 4])

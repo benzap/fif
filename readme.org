@@ -48,7 +48,7 @@ motivated by Rich Hickey rolling in his hammock.
 
 * Requirements
  
-  *fif* requires clojure 1.7, or newer
+  *fif* requires clojure 1.9+
 
 * Installation
   
