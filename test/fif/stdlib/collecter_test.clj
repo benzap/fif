@@ -1,23 +1,41 @@
 (ns fif.stdlib.collecter-test
   (:require 
    [clojure.test :refer :all]
-   [fif.core :as fif :refer [reval dbg-eval]]
-   [fif.stack :as stack]
    [fif.stdlib.collecter :refer :all]
-   [fif-test.utils :refer [test-eval]]))
+   [fif-test.utils :refer [are-eq* teval]]))
             
 
 (deftest test-collecter-into-list
-  (is (= '((3 2 1)) (reval () <-into! 1 2 3 !)))
-  (is (= '((3 2 1 4 5)) (reval (4 5) <-into! 3 1 do i loop !)))
-  (is (= '((3 2 1)) (reval list! 1 2 3 !)))
-  (is (= (test-eval {} (() <-into! 1 2 3 !)) '((3 2 1)))))
+  (testing "<-into! operator"
+    (are-eq*
+     (teval () <-into! 1 2 3 !) => '((3 2 1))
+     (teval (4 5) <-into! 3 1 do i loop !) => '((3 2 1 4 5))
+     (teval 1 (4 5) <-into! 3 1 do i loop ! true) => '(1 (3 2 1 4 5) true)))
 
+  (testing "list! operator"
+    (are-eq*
+     (teval list! 1 2 3 !) => '((3 2 1))
+     (teval nil list! 1 2 3 ! true) => '(nil (3 2 1) true)))
+
+  (testing "Nested List Values"
+    (are-eq*
+     (teval list! 1 2 3 list! 4 5 6 ! !) => '(((6 5 4) 3 2 1)))))
 
 
 (deftest test-collecter-into-vector
-  (is (= '([1 2 3]) (reval [] <-into! 1 2 3 !)))
-  (is (= '([1 2 3 4 5]) (reval [1 2] <-into! 3 4 5 !)))
-  (is (= '([3 4 5]) (reval vec! 3 4 5 !))))
+  (testing "<-into! operator"
+    (are-eq*
+      (teval [] <-into! 1 2 3 !) => '([1 2 3])
+      (teval [1 2] <-into! 3 4 5 !) => '([1 2 3 4 5])
+      (teval [] <-into! 3 0 do i loop ! 4) => '([0 1 2 3] 4)))
+
+  (testing "vec! operator"
+    (are-eq*
+      (teval vec! 1 2 3 !) => '([1 2 3])
+      (teval 0 vec! [1 2 3] 4 5 ! 6) => '(0 [[1 2 3] 4 5] 6)))
+
+  (testing "Nested Vector values"
+    (are-eq*
+      (teval vec! 2 0 do vec! 0 i ! loop !) => '([[0 0] [0 1] [0 2]]))))
 
 

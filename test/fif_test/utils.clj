@@ -1,27 +1,42 @@
 (ns fif-test.utils
   (:require 
    [clojure.test :refer :all]
-   [fif.core :as fif]
+   [fif.core :as fif :refer [reval]]
    [fif.stack :as stack]))
 
 
-(defmacro test-eval
-  [{:keys [step-max] :or {step-max 9001}} body]
-  `(let [test-sm# (-> fif/*default-stack*
-                      (stack/set-step-max ~step-max))
-         sm-result# (fif/with-stack test-sm#
-                      (-> (fif/eval-fn (quote ~body))
-                          stack/get-stack
-                          reverse))]
-     sm-result#))
+(def ^:dynamic *test-step-max* 10000)
+(def max-step-exceeded-keyword ::max-step-exceeded)
+
+(defn teval-fn
+  ([args]
+   (let [test-sm (-> fif/*default-stack*
+                     (stack/set-step-max *test-step-max*))
+         sm-result (fif/with-stack test-sm (fif/eval-fn args))
+         step-num (stack/get-step-num sm-result)]
+     (if-not (>= step-num *test-step-max*)
+       (-> sm-result stack/get-stack reverse)
+       max-step-exceeded-keyword))))
 
 
-#_(test-eval {} (2 2 +))
+(deftest test-teval-fn
+  (is (= '(4) (teval-fn '(2 2 +)))))
 
 
-(defmacro are-test-eval [])
+(defmacro teval [& body]
+  `(teval-fn (quote ~body)))
 
 
-#_(are-test-eval 
-   (2 2 +) => (4)
-   (1 1 -) => (1))
+(deftest test-teval
+  (is (= '(4) (teval 2 2 +))))
+
+
+(defmacro are-eq* [& body]
+  `(are [x# _sep# y#] (= x# y#)
+     ~@body))
+
+
+(deftest test-are-eq*
+  (testing "Simple Addition"
+    (are-eq*
+     (teval 2 2 +) => '(4))))
