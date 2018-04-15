@@ -139,11 +139,11 @@
 
 #_(reval &** + 1 1) ;; (*+ 1 1)
 
-#_(reval def x 10) ;; ()
+#_(reval def! x 10) ;; ()
 
-#_(reval def x 10 x) ;; (10)
+#_(reval def! x 10 x) ;; (10)
 
-#_(reval def x 10 *x 20 set! x) ;; (20)
+#_(reval def! x 10 *x 20 set! x) ;; (20)
 
 #_(reval *inc [1 2 3 4] map) ;; ((2 3 4 5))
 
@@ -155,6 +155,17 @@
 
 #_(reval *+ [1 2 3 4] 0 reduce) ;; (10)
 
-#_(reval $>> map *inc [1 2 3 4])
+#_(reval $>> map inc [1 2 3 4])
 
 #_(reval $>> map (1 +) [1 2 3 4]) ;; ([2 3 4 5])
+
+#_(reval 2 $-< 3 1) ;; '(1 2 3)
+#_(reval 2 $< 1 3) ;; '(1 2 3)
+
+#_(reval
+   *even? *inc [0 4 do i loop] ? map filter) ;; ([2 4])
+
+#_(reval
+   [0 4 do i loop] ?
+   $-< map inc
+   $-< filter even?) ;; ([2 4])

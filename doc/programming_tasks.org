@@ -89,6 +89,9 @@
 
     (fif/reval [0 3 do i loop] realize) ;; => ([0 1 2 3])
 
+    ;; '? is the same as 'realize
+    (fif/reval [0 3 do i loop] ?) ;; => ([0 1 2 3])
+
     (fif/reval [[:a (0 4 do i loop) realize]
                 [:b (1 2 3)]] realize ->map) ;; => ({:a (0 1 2 3 4) :b (1 2 3)})
 
@@ -130,3 +133,4 @@
    - Implement error handling
      - system errors
      - stack errors
+   - Add even? operator and odd? operator
