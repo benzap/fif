@@ -40,3 +40,21 @@
 
 (deftest test-push-coll
   (is (= '(4 3 2 1) (push-coll '(2 1) '(4 3)))))
+
+
+(deftest test-symbol-starts-with?
+  (are [x y z] (= x (symbol-starts-with? y z))
+    true  '*value "*"
+    true  '*value '*
+    false 'value* '*
+    false 'value* "*"))
+
+
+(deftest test-symbol-ltrim-once
+  (are [x y] (= x (symbol-ltrim-once (first y) (second y)))
+    'x   ['x   '*]
+    'x   ['*x  '*]
+    '*x  ['**x '*]
+    '**x ['***x '*]
+    'x   ["*x" "*"]
+    'x*  ['x* '*]))
