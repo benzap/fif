@@ -167,8 +167,22 @@
    *even? *inc [0 4 do i loop] ? map filter) ;; ([2 4])
 
 #_(reval
-   [0 4 do i loop] ?
+   [4 0 do i loop] ?
    $-< map *inc
    $-< filter *even?) ;; ([2 4])
 
-'ERR#
+#_(reval [4 0 do i loop] ?) ;; => '([0 1 2 3 4])
+
+#_(reval [2 0 do [i 0] ? loop] ?) ;; => '([[0 0] [0 1] [0 2]])
+
+#_(reval
+   $>> range 0 5
+   $-< map *inc
+   $-< filter *even?
+   apply) ;; (2 4)
+
+#_(->> (range 0 5)
+       (map inc)
+       (filter even?))
+
+(comment 'ERR#)
