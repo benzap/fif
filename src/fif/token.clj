@@ -4,7 +4,7 @@
 
 (defn take-to-token
   [coll token]
-  (reverse (into '() (take-while #(not= % token) coll))))
+  (apply list (take-while #(not= % token) coll)))
 
 
 (defn strip-token [coll token]
@@ -17,7 +17,7 @@
 
 (defn rest-at-token [coll token]
   (let [idx-token (inc (count (take-to-token coll token)))]
-    (reverse (into '() (drop idx-token coll)))))
+    (apply list (drop idx-token coll))))
 
 
 (defn between-tokens [coll start end]
@@ -34,8 +34,7 @@
 (defn replace-token [coll otoken ntoken]
   (->> (for [tok coll]
          (if (= otoken tok) ntoken tok))
-       (into '())
-       reverse))
+       (apply list)))
 
 
 (defn push-coll [coll tokens]
