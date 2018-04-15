@@ -1,6 +1,7 @@
 (ns fif.stdlib.cond-loop
   (:require
     [fif.stack :as stack]
+    [fif.token :as token]
     [fif.stdlib.conditional :refer [condition-true?]]))
 
 
@@ -455,11 +456,11 @@
   (let [flags (-> sm stack/get-flags reverse)
 
         ;;FIXME: does not handle situations where there is no loop flags.
-        recent-begin-until (concat (stack/take-to-token flags begin-until-mode-flag)
+        recent-begin-until (concat (token/take-to-token flags begin-until-mode-flag)
                                    [begin-until-mode-flag])
-        recent-begin-while (concat (stack/take-to-token flags begin-while-mode-flag)
+        recent-begin-while (concat (token/take-to-token flags begin-while-mode-flag)
                                    [begin-while-mode-flag])
-        recent-loop (concat (stack/take-to-token flags loop-mode-flag)
+        recent-loop (concat (token/take-to-token flags loop-mode-flag)
                             [loop-mode-flag])
         
         recent-listing

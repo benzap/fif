@@ -7,8 +7,8 @@
 (def arg-end-macro 'endmacro)
 
 (def macro-store-mode-flag :macro-store-mode)
-(def arg-start-macro-store '$-|)
-(def arg-end-macro-store '|-$)
+(def arg-start-macro-store '_!)
+(def arg-end-macro-store '!_)
 
 (def arg-create-macro-stack '$macro/stack-create)
 (def arg-transfer-macro-stack '$macro/stack->code-stack)

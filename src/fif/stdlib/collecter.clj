@@ -2,13 +2,14 @@
   "Mode for collecting values, and placing within a data structure"
   (:require [fif.stack :as stack]
             [fif.def :refer [defcode-eval]]
+            [fif.token :as token]
             [fif.stdlib.macro :refer [import-stdlib-macro-mode]]))
 
 
 (def collecter-mode-flag :collecter-mode)
 ;; $<- ....
-(def arg-end-collecter '|)
-(def arg-start-collecter '<-|)
+(def arg-start-collecter '<-into!)
+(def arg-end-collecter '!)
 
 
 (defn collecter-mode
@@ -17,7 +18,7 @@
         arg (-> sm stack/get-code first)]
     (cond
       (= arg arg-end-collecter)
-      (let [[new-collection-values new-stack] (stack/split-at-token stack arg-start-collecter)
+      (let [[new-collection-values new-stack] (token/split-at-token stack arg-start-collecter)
             collection (into (peek new-stack) (reverse new-collection-values))
             new-stack (rest new-stack)]
         (-> sm
@@ -38,10 +39,10 @@
 
 
 (defcode-eval import-collection-collector-defaults
-  macro list<-| $-| () <-| |-$ endmacro
-  macro map<-| $-| {} <-| |-$ endmacro
-  macro vec<-| $-| [] <-| |-$ endmacro
-  macro set<-| $-| #{} <-| |-$ endmacro)
+  macro list! _! () <-into! !_ endmacro
+  macro map! _! {} <-into! !_ endmacro
+  macro vec! _! [] <-into! !_ endmacro
+  macro set! _! #{} <-into! !_ endmacro)
 
 
 

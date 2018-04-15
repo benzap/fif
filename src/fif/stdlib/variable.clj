@@ -64,8 +64,6 @@
   [sm]
   (-> sm
       (stack/set-word arg-variable-token start-variable)
-      (stack/set-word '! setv)
       (stack/set-word 'setv setv)
-      (stack/set-word 'at getv)
       (stack/set-word 'getv getv)
       (stack/set-mode variable-mode-flag variable-mode)))
