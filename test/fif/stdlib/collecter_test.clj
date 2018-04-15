@@ -3,13 +3,16 @@
    [clojure.test :refer :all]
    [fif.core :as fif :refer [reval dbg-eval]]
    [fif.stack :as stack]
-   [fif.stdlib.collecter :refer :all]))
+   [fif.stdlib.collecter :refer :all]
+   [fif-test.utils :refer [test-eval]]))
             
 
 (deftest test-collecter-into-list
   (is (= '((3 2 1)) (reval () <-into! 1 2 3 !)))
   (is (= '((3 2 1 4 5)) (reval (4 5) <-into! 3 1 do i loop !)))
-  (is (= '((3 2 1)) (reval list! 1 2 3 !))))
+  (is (= '((3 2 1)) (reval list! 1 2 3 !)))
+  (is (= (test-eval {} (() <-into! 1 2 3 !)) '((3 2 1)))))
+
 
 
 (deftest test-collecter-into-vector
