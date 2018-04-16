@@ -1,6 +1,7 @@
 (ns fif.stdlib.cond-loop
   (:require
     [fif.stack :as stack]
+    [fif.stack.sub-stack :as sub-stack]
     [fif.token :as token]
     [fif.stdlib.conditional :refer [condition-true?]]))
 
@@ -64,7 +65,7 @@
           (= arg arg-plus-loopend-token))
       (-> sm
           stack/pop-flag
-          (stack/set-stash (stack/remove-sub-stack stash))
+          (stack/set-stash (sub-stack/remove-sub-stack stash))
           stack/pop-ret
           stack/dequeue-code)
       :else
@@ -83,7 +84,7 @@
         (if-not (>= start-idx end-idx)
 
           ;; Prepare the next loop iteration
-          (let [loop-body (stack/get-sub-stack stash)
+          (let [loop-body (sub-stack/get-sub-stack stash)
                 new-code (concat (reverse loop-body)
                                  (list arg-loopend-token)
                                  (-> sm stack/dequeue-code stack/get-code))]
@@ -95,7 +96,7 @@
           ;; the stash, get out of loop mode and continue execution
           (-> sm
               stack/pop-flag
-              (stack/set-stash (stack/remove-sub-stack stash))
+              (stack/set-stash (sub-stack/remove-sub-stack stash))
               stack/pop-ret
               stack/dequeue-code)))
 
@@ -107,7 +108,7 @@
 
           ;; Prepare the next loop iteration
           (let [[loop-step] (stack/get-stack sm)
-                loop-body (stack/get-sub-stack stash)
+                loop-body (sub-stack/get-sub-stack stash)
                 new-code (concat (reverse loop-body)
                                  (list arg-plus-loopend-token)
                                  (-> sm stack/dequeue-code stack/get-code))]
@@ -121,7 +122,7 @@
           (-> sm
               stack/pop-stack
               stack/pop-flag
-              (stack/set-stash (stack/remove-sub-stack stash))
+              (stack/set-stash (sub-stack/remove-sub-stack stash))
               stack/pop-ret
               stack/dequeue-code)))
       
@@ -138,18 +139,18 @@
           (= arg arg-plus-loop-token))
       (-> sm
           stack/pop-flag
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code)
        
       (= arg arg-do-token)
       (-> sm
           (stack/push-flag inner-do-mode-flag)
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code)
 
       :else
       (-> sm
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code))))
 
 
@@ -161,13 +162,13 @@
       (= arg arg-do-token)
       (-> sm
           (stack/push-flag inner-do-mode-flag)
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code)
 
       ;; Go into loop-mode
       (or (= arg arg-loop-token)
           (= arg arg-plus-loop-token))
-      (let [loop-body (stack/get-sub-stack stash)
+      (let [loop-body (sub-stack/get-sub-stack stash)
             end-token (cond (= arg arg-loop-token)
                             arg-loopend-token
                             (= arg arg-plus-loop-token)
@@ -188,7 +189,7 @@
       ;; Push the loop body into the stash sub-stack
       :else
       (-> sm
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code))))
 
 
@@ -210,7 +211,7 @@
         (stack/push-flag do-mode-flag)
 
         ;; create and stash a sub-stack to hold our loop body
-        (stack/set-stash (stack/create-sub-stack stash))
+        (stack/set-stash (sub-stack/create-sub-stack stash))
 
         ;; remove code token for next iteration
         stack/dequeue-code)))
@@ -242,7 +243,7 @@
       (= arg arg-untilend-token)
       (-> sm
           stack/pop-flag
-          (stack/set-stash (stack/remove-sub-stack stash))
+          (stack/set-stash (sub-stack/remove-sub-stack stash))
           stack/dequeue-code)
       :else
       (-> sm stack/dequeue-code))))
@@ -256,7 +257,7 @@
       (= arg arg-repeatend-token)
       (-> sm
           stack/pop-flag
-          (stack/set-stash (stack/remove-sub-stack stash))
+          (stack/set-stash (sub-stack/remove-sub-stack stash))
           stack/dequeue-code)
       :else
       (-> sm stack/dequeue-code))))
@@ -302,14 +303,14 @@
               stack/pop-stack
               stack/pop-flag
               (stack/push-flag begin-dump-mode-flag)
-              (stack/set-stash (stack/remove-sub-stack stash))
+              (stack/set-stash (sub-stack/remove-sub-stack stash))
               stack/dequeue-code)))
 
       ;; Finished processing the current loop iteration
       (= arg arg-repeatend-token)
      
       ;; Prepare the next loop iteration
-      (let [loop-body (stack/get-sub-stack stash)
+      (let [loop-body (sub-stack/get-sub-stack stash)
             new-code (concat (reverse loop-body)
                              (list arg-repeatend-token)
                              (-> sm stack/dequeue-code stack/get-code))]
@@ -331,7 +332,7 @@
         (if-not (condition-true? flag)
           
           ;; Prepare the next loop iteration
-          (let [loop-body (stack/get-sub-stack stash)
+          (let [loop-body (sub-stack/get-sub-stack stash)
                 new-code (concat (reverse loop-body)
                                  (list arg-untilend-token)
                                  (-> sm stack/dequeue-code stack/get-code))]
@@ -344,7 +345,7 @@
           (-> sm
               stack/pop-stack
               stack/pop-flag
-              (stack/set-stash (stack/remove-sub-stack stash))
+              (stack/set-stash (sub-stack/remove-sub-stack stash))
               stack/dequeue-code)))
       
       :else
@@ -360,18 +361,18 @@
           (= arg arg-repeat-token))
       (-> sm
           stack/pop-flag
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code)
        
       (= arg arg-begin-token)
       (-> sm
           (stack/push-flag inner-do-mode-flag)
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code)
 
       :else
       (-> sm
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code))))
 
 (defn begin-mode
@@ -382,12 +383,12 @@
       (= arg arg-begin-token)
       (-> sm
           (stack/push-flag inner-begin-mode-flag)
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code)
 
       ;; Go into begin-until-mode
       (= arg arg-until-token)
-      (let [loop-body (stack/get-sub-stack stash)
+      (let [loop-body (sub-stack/get-sub-stack stash)
             new-code (concat (reverse loop-body)
                              (list arg-untilend-token)
                              (-> sm stack/dequeue-code stack/get-code))]
@@ -404,7 +405,7 @@
 
       ;; Go into begin-until-mode
       (= arg arg-repeat-token)
-      (let [loop-body (stack/get-sub-stack stash)
+      (let [loop-body (sub-stack/get-sub-stack stash)
             new-code (concat (reverse loop-body)
                              (list arg-repeatend-token)
                              (-> sm stack/dequeue-code stack/get-code))]
@@ -422,7 +423,7 @@
       ;; Push the loop body into the stash sub-stack
       :else
       (-> sm
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code))))
 
 
@@ -438,7 +439,7 @@
         (stack/push-flag begin-mode-flag)
 
         ;; create and stash a sub-stack to hold our loop body
-        (stack/set-stash (stack/create-sub-stack stash))
+        (stack/set-stash (sub-stack/create-sub-stack stash))
 
         ;; remove code token for next iteration
         stack/dequeue-code)))

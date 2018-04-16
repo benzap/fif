@@ -1,6 +1,7 @@
 (ns fif.stdlib.conditional
   "For the if-else-then fif functionality"
-  (:require [fif.stack :as stack]))
+  (:require [fif.stack :as stack]
+            [fif.stack.sub-stack :as sub-stack]))
 
 
 (def arg-if-token 'if)
@@ -154,23 +155,23 @@
       (= arg arg-if-token)
       (-> sm
           (stack/push-flag inner-conditional-flag)
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code)
 
       (= arg arg-else-token)
       (-> sm
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code)
 
       (= arg arg-then-token)
       (-> sm
           stack/pop-flag
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code)
 
       :else
       (-> sm
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code))))
 
 
@@ -206,11 +207,11 @@
       (= arg arg-if-token)
       (-> sm
           (stack/push-flag inner-conditional-flag)
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code)
       (= arg arg-then-token)
       (let [[flag] (stack/get-stack sm)
-            condition-body (stack/get-sub-stack stash)
+            condition-body (sub-stack/get-sub-stack stash)
             new-code (concat (reverse condition-body)
                              (list arg-then-token)
                              (-> sm stack/dequeue-code stack/get-code))]
@@ -220,7 +221,7 @@
               stack/pop-flag
               (stack/push-flag truth-condition-mode-flag)
               (stack/set-code new-code)
-              (stack/set-stash (stack/remove-sub-stack stash)))
+              (stack/set-stash (sub-stack/remove-sub-stack stash)))
           ;; Need to dump the truth statement before we pass it to
           ;; false-condition-mode
           (-> sm
@@ -228,11 +229,11 @@
               stack/pop-flag
               (stack/push-flag dump-truth-condition-mode-flag)
               (stack/set-code new-code)
-              (stack/set-stash (stack/remove-sub-stack stash)))))
+              (stack/set-stash (sub-stack/remove-sub-stack stash)))))
 
       :else
       (-> sm
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code))))
 
 
@@ -243,7 +244,7 @@
   [sm]
   (let [stash (stack/get-stash sm)]
     (-> sm
-      (stack/set-stash (stack/create-sub-stack stash))
+      (stack/set-stash (sub-stack/create-sub-stack stash))
       (stack/push-flag conditional-mode-flag)
       stack/dequeue-code)))
 

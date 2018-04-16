@@ -1,6 +1,7 @@
 (ns fif.stdlib.compile
   "Defines the compile-mode within the fif stack machine"
   (:require [fif.stack :as stack]
+            [fif.stack.sub-stack :as sub-stack]
             [fif.stdlib.reserved :as reserved]))
 
 
@@ -23,18 +24,18 @@
      (= arg arg-start-token)
      (-> sm
          (stack/push-flag inner-compile-mode-flag)
-         (stack/set-stash (stack/push-sub-stack stash arg))
+         (stack/set-stash (sub-stack/push-sub-stack stash arg))
          stack/dequeue-code)
 
      (= arg arg-end-token)
      (-> sm
          stack/pop-flag
-         (stack/set-stash (stack/push-sub-stack stash arg))
+         (stack/set-stash (sub-stack/push-sub-stack stash arg))
          stack/dequeue-code)
 
      :else
      (-> sm
-         (stack/set-stash (stack/push-sub-stack stash arg))
+         (stack/set-stash (sub-stack/push-sub-stack stash arg))
          stack/dequeue-code))))
 
 
@@ -46,22 +47,22 @@
     (cond
       (= arg arg-start-token)
       (-> sm
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           (stack/push-flag inner-compile-mode-flag)
           stack/dequeue-code)
 
       (= arg arg-end-token)
-      (let [fn-content (reverse (stack/get-sub-stack stash))
+      (let [fn-content (reverse (sub-stack/get-sub-stack stash))
             [wname & wbody] fn-content]
         (-> sm
             (stack/set-word wname (wrap-compiled-fn wbody))
-            (stack/set-stash (stack/remove-sub-stack stash))
+            (stack/set-stash (sub-stack/remove-sub-stack stash))
             stack/pop-flag
             stack/dequeue-code))
 
       :else
       (-> sm
-          (stack/set-stash (stack/push-sub-stack stash arg))
+          (stack/set-stash (sub-stack/push-sub-stack stash arg))
           stack/dequeue-code))))
 
 
@@ -72,7 +73,7 @@
   (let [stash (stack/get-stash sm)]
     (-> sm
         (stack/push-flag compile-mode-flag)
-        (stack/set-stash (stack/create-sub-stack stash))
+        (stack/set-stash (sub-stack/create-sub-stack stash))
         stack/dequeue-code)))
 
 
