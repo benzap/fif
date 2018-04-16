@@ -53,6 +53,12 @@
   (set-step-num [this n])
   (get-step-num [this])
 
+  (enable-debug [this])
+  (disable-debug [this])
+
+  (get-system-error-handler [this])
+  (set-system-error-handler [this err-handler])
+
   (halt [this])
   (step [this])
   (run [this]))
@@ -61,6 +67,10 @@
 (defn has-flags? [sm]
   (not (empty? (get-flags sm))))
   
+
+(defn debug-mode? [sm]
+  (-> sm :debug?))
+
 
 (defn process-mode [sm]
   (let [arg (-> sm get-code first)
@@ -126,13 +136,21 @@
   (pop coll))
 
 
-(defrecord StackMachine [arg-stack code-stack ret-stack 
-                         stash
-                         flags words variables modes
-                         step-num step-max halt?]
+(defn handle-system-error [sm ex]
+  (if-let [system-error-handler (get-system-error-handler sm)]
+    (system-error-handler sm ex)
+    (throw ex)))
+
+
+(defrecord StackMachine
+  [arg-stack code-stack ret-stack stash
+   flags words variables modes
+   step-num step-max
+   system-error-handler
+   halt? debug?]
+  
   IStackMachine
-
-
+  
   ;; Main Stack
   (push-stack [this arg]
     (update-in this [:arg-stack] conj arg))
@@ -271,6 +289,22 @@
     (-> this :step-num))
 
 
+  ;; Debugging
+  (enable-debug [this]
+    (assoc this :debug? true))
+
+  (disable-debug [this]
+    (assoc this :debug? false))
+
+
+  ;; Error Handling
+  (get-system-error-handler [this]
+    (:system-error-handler this))
+
+  (set-system-error-handler [this err-handler]
+    (assoc this :system-error-handler err-handler))
+
+
   ;; Execution
   (halt [this]
     (assoc this :halt? true))
@@ -278,8 +312,14 @@
   (step [this]
     (let [arg (-> this get-code first)]
       (if (has-flags? this)
-        (-> this process-mode inc-step)
-        (-> this process-arg inc-step))))
+        (try
+          (-> this process-mode inc-step)
+          (catch Exception ex
+            (handle-system-error this ex)))
+        (try
+          (-> this process-arg inc-step)
+          (catch Exception ex
+            (handle-system-error this ex))))))
 
   (run [this]
     (loop [sm this]
@@ -305,4 +345,6 @@
     :modes {}
     :step-num 0
     :step-max 0
-    :halt? false}))
+    :system-error-handler nil
+    :halt? false
+    :debug? true}))

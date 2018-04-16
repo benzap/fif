@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [eval])
   (:require [fif.stack :as stack]
             [fif.stdlib :refer [import-stdlib]]
+            [fif.error-handling :refer [default-system-error-handler]]
             :reload-all))
 
 
@@ -17,6 +18,7 @@
   libraries. Can be used with `with-stack` in order to rebind for
   `eval`, `seval` and `reval`"
   (-> (stack/new-stack-machine)
+      (stack/set-system-error-handler default-system-error-handler)
       import-stdlib))
 
 
@@ -186,3 +188,5 @@
        (filter even?))
 
 #_(reval println 1 2)
+
+#_(reval 1 {} conj)

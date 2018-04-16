@@ -40,7 +40,7 @@
   [sm num-args]
   (let [word-name (-> sm get-code first)
         errmsg (str "Not enough values on the main stack to satisfy word function")
-        errextra {:word-name word-name :word-arity num-args}
+        errextra {:word-function-name word-name :word-function-arity num-args}
         errobj (error-handling/stack-error sm errmsg errextra)]
     (-> sm
         (error-handling/set-error errobj))))
