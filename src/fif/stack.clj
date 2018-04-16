@@ -53,6 +53,7 @@
   (set-step-num [this n])
   (get-step-num [this])
 
+  (halt [this])
   (step [this])
   (run [this]))
 
@@ -128,7 +129,7 @@
 (defrecord StackMachine [arg-stack code-stack ret-stack 
                          stash
                          flags words variables modes
-                         step-num step-max]
+                         step-num step-max halt?]
   IStackMachine
 
 
@@ -271,6 +272,9 @@
 
 
   ;; Execution
+  (halt [this]
+    (assoc this :halt? true))
+
   (step [this]
     (let [arg (-> this get-code first)]
       (if (has-flags? this)
@@ -282,7 +286,8 @@
       (let [step-num (get-step-num sm)
             step-max (get-step-max sm)]
         (if (or (empty? (-> sm get-code))
-                (and (> step-max 0) (>= step-num step-max)))
+                (and (> step-max 0) (>= step-num step-max))
+                (:halt? sm))
           sm
           (recur (step sm)))))))
 
@@ -299,4 +304,5 @@
     :variables {}
     :modes {}
     :step-num 0
-    :step-max 0}))
+    :step-max 0
+    :halt? false}))
