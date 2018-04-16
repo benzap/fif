@@ -1,4 +1,5 @@
 (ns fif.error-handling
+  "Functions for handling errors within the fif stackmachine."
   (:require
    [fif.stack :as stack]))
 

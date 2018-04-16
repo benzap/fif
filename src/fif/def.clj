@@ -2,7 +2,9 @@
   (:refer-clojure :exclude [eval])
   (:require
    [clojure.string :as str]
-   [fif.stack :refer :all]))
+   [fif.stack :refer :all]
+   [fif.error-handling :as error-handling]
+   [fif.verification :as verification]))
 
 
 (defn wrap-code-eval
@@ -34,6 +36,16 @@
   `(def ~name (wrap-code-eval (quote ~body))))
 
 
+(defn- handle-arity-error
+  [sm num-args]
+  (let [word-name (-> sm get-code first)
+        errmsg (str "Not enough values on the main stack to satisfy word function")
+        errextra {:word-name word-name :word-arity num-args}
+        errobj (error-handling/stack-error sm errmsg errextra)]
+    (-> sm
+        (error-handling/set-error errobj))))
+
+
 (defn wrap-function-with-arity
   "Wraps a clojure function `f` which accepts `num-args`, and returns
   the function wrapped to be used in a stack machine.
@@ -57,18 +69,24 @@
      (fif.core/reval 1 add2)) ;; => '(3)"
   [num-args f]
   (fn [sm]
-     (let [args (take num-args (get-stack sm))
-           ;; TODO: raise error if (count args) < num-args
-           result (apply f (reverse args))
-           new-stack (-> sm
-                         get-stack
-                         (as-> $ (drop num-args $))
-                         (conj result)
-                         (as-> $ (into '() $))
-                         reverse)]
-       (-> sm
-           (set-stack new-stack)
-           dequeue-code))))
+    (cond
+      ;; Check to see if the main stack has enough arguments to
+      ;; satisfy the word operation.
+      (not (verification/stack-satisfies-arity? sm num-args))
+      (handle-arity-error sm num-args)
+
+      :else
+      (let [args (take num-args (get-stack sm))
+            result (apply f (reverse args))
+            new-stack (-> sm
+                          get-stack
+                          (as-> $ (drop num-args $))
+                          (conj result)
+                          (as-> $ (into '() $))
+                          reverse)]
+        (-> sm
+            (set-stack new-stack)
+            dequeue-code)))))
 
 
 (defn wrap-procedure-with-arity
@@ -96,13 +114,19 @@
   "
   [num-args f]
   (fn [sm]
-     (let [args (take num-args (get-stack sm))
-           ;;TODO: raise error if (count args) < num-args
-           _ (apply f (reverse args))
-           new-stack (->> sm get-stack (drop num-args))]
-       (-> sm
-           (set-stack (into '() new-stack))
-           dequeue-code))))
+    (cond
+      ;; Check to see if the main stack has enough arguments to
+      ;; satisfy the word function.
+      (not (verification/stack-satisfies-arity? sm num-args))
+      (handle-arity-error sm num-args)
+
+      :else
+      (let [args (take num-args (get-stack sm))
+            _ (apply f (reverse args))
+            new-stack (->> sm get-stack (drop num-args))]
+        (-> sm
+            (set-stack (into '() new-stack))
+            dequeue-code)))))
 
 ;;
 ;; Define Stack Functions
