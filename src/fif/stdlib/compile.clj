@@ -1,10 +1,11 @@
 (ns fif.stdlib.compile
   "Defines the compile-mode within the fif stack machine"
-  (:require [fif.stack :as stack]))
+  (:require [fif.stack :as stack]
+            [fif.stdlib.reserved :as reserved]))
 
 
-(def arg-start-token 'fn)
-(def arg-end-token 'endfn)
+(def arg-start-token reserved/function-begin-definition-token)
+(def arg-end-token reserved/function-end-definition-token)
 (def compile-mode-flag :compile-mode)
 (def inner-compile-mode-flag :inner-compile-mode)
 
