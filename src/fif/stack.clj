@@ -260,7 +260,7 @@
 
   ;; Code Queue
   (enqueue-code [this arg]
-    (update-in this [:code-stack] conj arg))
+    (update-in this [:code-stack] concat (list arg)))
 
   (dequeue-code [this]
     (update-in this [:code-stack] #(-> % rest vec)))
@@ -335,7 +335,7 @@
 (defn new-stack-machine []
   (map->StackMachine
    {:arg-stack '()
-    :code-stack []
+    :code-stack '()
     :ret-stack '()
     :temp-macro-stack '()
     :stash '()
