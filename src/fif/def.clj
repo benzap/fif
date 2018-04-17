@@ -2,10 +2,10 @@
   (:refer-clojure :exclude [eval])
   (:require
    [clojure.string :as str]
-   [fif.stack :refer :all]
-   [fif.stack.evaluators :as evaluators]
-   [fif.stack.error-handling :as error-handling]
-   [fif.stack.verification :as verification]))
+   [fif.stack-machine :refer :all]
+   [fif.stack-machine.evaluators :as evaluators]
+   [fif.stack-machine.error-handling :as error-handling]
+   [fif.stack-machine.verification :as verification]))
 
 
 (defn wrap-code-eval

@@ -1,8 +1,8 @@
-(ns fif.stack.verification
+(ns fif.stack-machine.verification
   "Functions for ensuring certain guarantees within the stack machine
   before running operations."
   (:require
-   [fif.stack :as stack]))
+   [fif.stack-machine :as stack]))
 
 
 (defn stack-satisfies-arity?

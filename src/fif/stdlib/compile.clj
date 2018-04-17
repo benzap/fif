@@ -1,9 +1,9 @@
 (ns fif.stdlib.compile
   "Defines the compile-mode within the fif stack machine"
-  (:require [fif.stack :as stack]
-            [fif.stack.scope :as stack.scope]
-            [fif.stack.stash :as stack.stash]
-            [fif.stack.processor :as stack.processor]
+  (:require [fif.stack-machine :as stack]
+            [fif.stack-machine.scope :as stack.scope]
+            [fif.stack-machine.stash :as stack.stash]
+            [fif.stack-machine.processor :as stack.processor]
             [fif.stdlib.reserved :as reserved]))
 
 

@@ -1,9 +1,9 @@
-(ns fif.stack.verification-test
+(ns fif.stack-machine.verification-test
   (:require
    [clojure.test :refer :all]
-   [fif.stack.verification :refer :all]
-   [fif.stack :as stack]
-   [fif.impl.stack :refer [new-stack-machine]]))
+   [fif.stack-machine.verification :refer :all]
+   [fif.stack-machine :as stack]
+   [fif.impl.stack-machine :refer [new-stack-machine]]))
 
 
 (deftest test-stack-satisfies-arity?

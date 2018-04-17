@@ -1,7 +1,7 @@
-(ns fif.stack.processor
+(ns fif.stack-machine.processor
   (:require
-   [fif.stack :refer :all]
-   [fif.stack.pointer :as pointer]))
+   [fif.stack-machine :refer :all]
+   [fif.stack-machine.pointer :as pointer]))
 
 
 (defn has-flags? [sm]

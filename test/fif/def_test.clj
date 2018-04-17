@@ -2,8 +2,8 @@
   (:refer-clojure :exclude [eval])
   (:require
     [clojure.test :refer :all]
-    [fif.stack :as stack]
-    [fif.impl.stack :refer [new-stack-machine]]
+    [fif.stack-machine :as stack]
+    [fif.impl.stack-machine :refer [new-stack-machine]]
     [fif.def :refer :all]
     [fif.core :as fif :refer [dbg-eval reval with-stack]]))
 

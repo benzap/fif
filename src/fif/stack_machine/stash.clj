@@ -1,7 +1,7 @@
-(ns fif.stack.stash
+(ns fif.stack-machine.stash
   "Functions for manipulating the stack machine stash"
   (:require
-   [fif.stack :as stack]
+   [fif.stack-machine :as stack]
    [fif.utils.stash :as utils.stash]))
 
 

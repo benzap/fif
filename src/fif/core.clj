@@ -1,11 +1,11 @@
 (ns fif.core
   (:refer-clojure :exclude [eval])
   (:require
-   [fif.stack :as stack]
-   [fif.stack.evaluators :as stack.evaluators]
-   [fif.stack.error-handling :refer [default-system-error-handler]]
+   [fif.stack-machine :as stack]
+   [fif.stack-machine.evaluators :as stack.evaluators]
+   [fif.stack-machine.error-handling :refer [default-system-error-handler]]
    [fif.stdlib :refer [import-stdlib]]
-   [fif.impl.stack :refer [new-stack-machine]]
+   [fif.impl.stack-machine :refer [new-stack-machine]]
    :reload-all))
 
 

@@ -1,8 +1,8 @@
 (ns fif.stdlib.conditional
   "For the if-else-then fif functionality"
-  (:require [fif.stack :as stack]
-            [fif.stack.sub-stack :as sub-stack]
-            [fif.stack.processor :as stack.processor]))
+  (:require [fif.stack-machine :as stack]
+            [fif.stack-machine.sub-stack :as sub-stack]
+            [fif.stack-machine.processor :as stack.processor]))
 
 
 (def arg-if-token 'if)

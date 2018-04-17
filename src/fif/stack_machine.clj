@@ -1,4 +1,4 @@
-(ns fif.stack
+(ns fif.stack-machine
   (:refer-clojure :exclude [eval]))
 
 

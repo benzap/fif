@@ -1,10 +1,10 @@
-(ns fif.stack.error-handling-test
+(ns fif.stack-machine.error-handling-test
   (:require
    [clojure.test :refer :all]
-   [fif.stack :as stack]
-   [fif.impl.stack :refer [new-stack-machine]]
+   [fif.stack-machine :as stack]
+   [fif.impl.stack-machine :refer [new-stack-machine]]
    [fif-test.utils :refer [teval are-eq*]]
-   [fif.stack.error-handling :refer :all]))
+   [fif.stack-machine.error-handling :refer :all]))
 
 
 (deftest test-error?

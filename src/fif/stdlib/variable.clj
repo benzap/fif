@@ -1,7 +1,7 @@
 (ns fif.stdlib.variable
   "Includes the variable-mode, for creating mutable variables within a
   stack machine."
-  (:require [fif.stack :as stack]))
+  (:require [fif.stack-machine :as stack]))
 
 
 (def arg-variable-token 'def)

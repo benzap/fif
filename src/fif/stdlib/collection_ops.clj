@@ -1,7 +1,7 @@
 (ns fif.stdlib.collection-ops
   (:refer-clojure :exclude [eval])
   (:require
-   [fif.stack :refer :all]
+   [fif.stack-machine :refer :all]
    [fif.def :refer :all]))
 
 

@@ -1,7 +1,7 @@
-(ns fif.stack.error-handling
+(ns fif.stack-machine.error-handling
   "Functions for handling errors within the fif stackmachine."
   (:require
-   [fif.stack :as stack]))
+   [fif.stack-machine :as stack]))
 
 
 (def error-symbol 'ERR##)

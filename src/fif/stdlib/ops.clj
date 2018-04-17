@@ -5,7 +5,7 @@
   (:refer-clojure :exclude [eval])
   (:require
    [clojure.string :as str]
-   [fif.stack :refer :all]
+   [fif.stack-machine :refer :all]
    [fif.def :refer :all]))
 
 

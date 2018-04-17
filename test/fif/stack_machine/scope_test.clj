@@ -1,10 +1,10 @@
-(ns fif.stack.scope-test
+(ns fif.stack-machine.scope-test
  (:require
   [clojure.test :refer :all]
   [fif-test.utils :refer [are-eq* teval]]
-  [fif.stack :as stack]
-  [fif.impl.stack :refer [new-stack-machine]]
-  [fif.stack.scope :refer :all]))
+  [fif.stack-machine :as stack]
+  [fif.impl.stack-machine :refer [new-stack-machine]]
+  [fif.stack-machine.scope :refer :all]))
   
 
 (deftest test-scope

@@ -1,9 +1,9 @@
-(ns fif.stack.evaluators
+(ns fif.stack-machine.evaluators
   "Functions for running and evaluating fif code within a stack machine."
   (:refer-clojure :exclude [eval])
   (:require 
    [clojure.tools.reader.edn :as edn]
-   [fif.stack :as stack]))
+   [fif.stack-machine :as stack]))
 
 
 (defn eval-fn

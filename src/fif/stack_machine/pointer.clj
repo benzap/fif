@@ -1,4 +1,4 @@
-(ns fif.stack.pointer
+(ns fif.stack-machine.pointer
   (:require
    [fif.utils.token :as utils.token]
    [fif.stdlib.reserved :as reserved]))

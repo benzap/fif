@@ -2,7 +2,7 @@
   (:require 
    [clojure.test :refer :all]
    [fif.core :as fif :refer [reval]]
-   [fif.stack :as stack]))
+   [fif.stack-machine :as stack]))
 
 
 (def ^:dynamic *test-step-max* 10000)

@@ -1,7 +1,7 @@
-(ns fif.stack.sub-stack-test
+(ns fif.stack-machine.sub-stack-test
   (:require
    [clojure.test :refer :all]
-   [fif.stack.sub-stack :refer :all]))
+   [fif.stack-machine.sub-stack :refer :all]))
 
 
 (deftest test-create-sub-stack

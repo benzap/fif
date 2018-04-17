@@ -1,7 +1,7 @@
-(ns fif.stack.flags
+(ns fif.stack-machine.flags
   "Functions for manipulating the stack machine flags"
   (:require
-   [fif.stack :as stack]))
+   [fif.stack-machine :as stack]))
 
 
 (defn has-flags?

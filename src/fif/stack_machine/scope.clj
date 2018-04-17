@@ -1,7 +1,7 @@
-(ns fif.stack.scope
+(ns fif.stack-machine.scope
   "Stack machine functions for manipulating the scope."
   (:require
-   [fif.stack :as stack]
+   [fif.stack-machine :as stack]
    [fif.utils.scope :as utils.scope]))
 
 (defn get-scope [sm]

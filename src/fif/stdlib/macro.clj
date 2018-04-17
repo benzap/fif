@@ -1,6 +1,6 @@
 (ns fif.stdlib.macro
-  (:require [fif.stack :as stack]
-            [fif.stack.sub-stack :as sub-stack]))
+  (:require [fif.stack-machine :as stack]
+            [fif.stack-machine.sub-stack :as sub-stack]))
 
 (def macro-define-mode-flag :macro-define-mode)
 (def arg-start-macro 'macro)

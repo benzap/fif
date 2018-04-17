@@ -2,7 +2,6 @@
   (:require
    [clojure.test :refer :all]
    [fif.utils.stash :refer :all]
-   [fif.stack :as stack]
    [fif-test.utils :refer [are-eq* teval]]))
 
 

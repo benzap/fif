@@ -1,13 +1,13 @@
 (ns fif.stdlib.macro-test
   (:require
    [clojure.test :refer :all]
-   [fif.core :refer [reval]]
-   [fif.stdlib.macro :refer :all]))
+   [fif.stdlib.macro :refer :all]
+   [fif-test.utils :refer [teval are-eq*]]))
 
 
 (deftest test-macro-creation
    (is (= '("start" true 3 1 "end")
-          (reval
+          (teval
            macro some_value
            true
            if 

@@ -1,6 +1,6 @@
 (ns fif.stdlib.constant
   "Allows defining words which return a constant value"
-  (:require [fif.stack :as stack]))
+  (:require [fif.stack-machine :as stack]))
 
 
 (def arg-constant-token 'constant)

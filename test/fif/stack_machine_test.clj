@@ -1,9 +1,9 @@
-(ns fif.stack-test
+(ns fif.stack-machine-test
   (:require [clojure.test :refer :all]
-            [fif.stack :refer :all]
-            [fif.stack.evaluators :as evaluators]
-            [fif.stack.flags :as stack.flags]
-            [fif.impl.stack :refer [new-stack-machine]]))
+            [fif.stack-machine :refer :all]
+            [fif.stack-machine.evaluators :as evaluators]
+            [fif.stack-machine.flags :as stack.flags]
+            [fif.impl.stack-machine :refer [new-stack-machine]]))
 
 
 (deftest test-stackmachine-stacks

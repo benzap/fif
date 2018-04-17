@@ -1,8 +1,8 @@
-(ns fif.stack.processor-test
+(ns fif.stack-machine.processor-test
   (:require
    [clojure.test :refer :all]
-   [fif.stack :as stack]
-   [fif.stack.processor :refer :all]
+   [fif.stack-machine :as stack]
+   [fif.stack-machine.processor :refer :all]
    [fif-test.utils :refer [are-eq* teval]]))
 
 

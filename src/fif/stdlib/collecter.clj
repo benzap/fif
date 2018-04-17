@@ -2,8 +2,8 @@
   "Mode for collecting values, and placing within a data structure"
   (:require
    [fif.def :refer [defcode-eval]]
-   [fif.stack :as stack]
-   [fif.stack.processor :as stack.processor]
+   [fif.stack-machine :as stack]
+   [fif.stack-machine.processor :as stack.processor]
    [fif.utils.token :as token]
    [fif.stdlib.macro :refer [import-stdlib-macro-mode]]))
 

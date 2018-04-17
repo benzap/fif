@@ -1,10 +1,10 @@
-(ns fif.impl.stack
+(ns fif.impl.stack-machine
   "Main implementation of IStackMachine"
-  (:require [fif.stack :refer :all]
-            [fif.stack.flags :as stack.flags]
-            [fif.stack.stash :as stack.stash]
-            [fif.stack.processor :as stack.processor]
-            [fif.stack.error-handling :as error-handling]
+  (:require [fif.stack-machine :refer :all]
+            [fif.stack-machine.flags :as stack.flags]
+            [fif.stack-machine.stash :as stack.stash]
+            [fif.stack-machine.processor :as stack.processor]
+            [fif.stack-machine.error-handling :as error-handling]
             [fif.utils.scope :as utils.scope]
             [fif.utils.stash :as utils.stash]))
 
@@ -16,7 +16,7 @@
    system-error-handler
    halt? debug?]
   
-  fif.stack/IStackMachine
+  fif.stack-machine/IStackMachine
   
   ;; Main Stack
   (push-stack [this arg]

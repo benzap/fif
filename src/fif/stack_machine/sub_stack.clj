@@ -1,4 +1,4 @@
-(ns fif.stack.sub-stack)
+(ns fif.stack-machine.sub-stack)
 
 
 (defn create-sub-stack [coll]
