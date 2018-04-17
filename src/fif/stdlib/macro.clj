@@ -10,8 +10,8 @@
 (def arg-start-macro-store '_!)
 (def arg-end-macro-store '!_)
 
-(def arg-create-macro-stack '$macro/stack-create)
-(def arg-transfer-macro-stack '$macro/stack->code-stack)
+(def arg-create-macro-stack 'macro/stack-create)
+(def arg-transfer-macro-stack 'macro/stack->code-stack)
 
 
 (defn wrap-compiled-macro [wbody]

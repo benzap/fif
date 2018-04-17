@@ -18,7 +18,7 @@
   libraries. Can be used with `with-stack` in order to rebind for
   `eval`, `seval` and `reval`"
   (-> (stack/new-stack-machine)
-      (stack/set-system-error-handler default-system-error-handler)
+      ;;(stack/set-system-error-handler default-system-error-handler)
       import-stdlib))
 
 

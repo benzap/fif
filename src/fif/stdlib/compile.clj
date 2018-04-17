@@ -2,19 +2,27 @@
   "Defines the compile-mode within the fif stack machine"
   (:require [fif.stack :as stack]
             [fif.stack.sub-stack :as sub-stack]
+            [fif.stack.scope :as stack.scope]
             [fif.stdlib.reserved :as reserved]))
 
 
 (def arg-start-token reserved/function-begin-definition-token)
 (def arg-end-token reserved/function-end-definition-token)
+(def arg-end-function-token 'compile/end-function)
 (def compile-mode-flag :compile-mode)
 (def inner-compile-mode-flag :inner-compile-mode)
+(def function-mode-flag :function-mode)
 
 
 (defn wrap-compiled-fn [wbody]
   (fn [sm]
-    (stack/set-code sm (vec (concat wbody (-> sm stack/dequeue-code stack/get-code))))))
-
+    (-> sm
+        (stack/push-flag function-mode-flag)
+        (stack.scope/new-scope)
+        (stack/set-code
+         (concat wbody [arg-end-function-token]
+                 (-> sm stack/dequeue-code stack/get-code))))))
+                 
 
 (defn inner-compile-mode
   [sm]
@@ -66,6 +74,20 @@
           stack/dequeue-code))))
 
 
+(defn function-mode
+  [sm]
+  (let [arg (-> sm stack/get-code first)]
+    (cond
+     (= arg arg-end-function-token)
+     (-> sm
+         (stack/pop-flag)
+         (stack.scope/remove-scope)
+         (stack/dequeue-code))
+
+     :else
+     (-> sm stack/process-arg))))
+
+
 (defn start-defn
   "We retrieved the start-token word, and we push it onto the stack and
    set our compile flag"
@@ -81,5 +103,6 @@
   (-> sm
       (stack/set-word arg-start-token start-defn)
       (stack/set-mode compile-mode-flag compile-mode)
-      (stack/set-mode inner-compile-mode-flag inner-compile-mode)))
+      (stack/set-mode inner-compile-mode-flag inner-compile-mode)
+      (stack/set-mode function-mode-flag function-mode)))
   
