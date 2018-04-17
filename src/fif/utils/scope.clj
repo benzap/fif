@@ -1,4 +1,4 @@
-(ns fif.scope
+(ns fif.utils.scope
   "Implements a container system which allows for retrieval of values
   within a hierarchy of containers, where each container is a separate
   scope.")

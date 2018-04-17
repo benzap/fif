@@ -2,7 +2,7 @@
   (:require
     [fif.stack :as stack]
     [fif.stack.sub-stack :as sub-stack]
-    [fif.token :as token]
+    [fif.utils.token :as token]
     [fif.stdlib.conditional :refer [condition-true?]]))
 
 

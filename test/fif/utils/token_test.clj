@@ -1,7 +1,7 @@
-(ns fif.token-test
+(ns fif.utils.token-test
   (:require
    [clojure.test :refer :all]
-   [fif.token :refer :all]
+   [fif.utils.token :refer :all]
    [fif.stack :as stack]))
     
 

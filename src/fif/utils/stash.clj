@@ -1,4 +1,4 @@
-(ns fif.stash
+(ns fif.utils.stash
   "Functions for manipulating stashes, not to be confused with stacks.
   A stash in this case is collection of containers. The containers are
   sequenced fifo-style, with operations performed on the latest

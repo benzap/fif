@@ -1,4 +1,4 @@
-(ns fif.token
+(ns fif.utils.token
   "Includes functions for manipulating tokens/symbols."
   (:require [clojure.string :as str]))
 

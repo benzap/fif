@@ -1,7 +1,7 @@
-(ns fif.scope-test
+(ns fif.utils.scope-test
   (:require
    [clojure.test :refer :all]
-   [fif.scope :refer :all]
+   [fif.utils.scope :refer :all]
    [fif-test.utils :refer [teval are-eq*]]))
 
 
