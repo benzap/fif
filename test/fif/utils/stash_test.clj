@@ -31,7 +31,7 @@
         (update-stash assoc :test 123)
         (new-stash)
         (update-stash assoc :test 345)
-        (get-stash))
+        (peek-stash))
 
     => {:test 345}
 
@@ -41,7 +41,7 @@
         (new-stash)
         (update-stash assoc :test 345)
         (remove-stash)
-        (get-stash))
+        (peek-stash))
 
     => {:test 123}
 
@@ -53,7 +53,7 @@
         (remove-stash)
         (new-stash [])
         (update-stash conj 1)
-        (get-stash))
+        (peek-stash))
 
     => [1]))
 

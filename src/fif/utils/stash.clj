@@ -28,4 +28,4 @@
 (defn remove-stash [stash] (pop stash))
 
 
-(defn get-stash [stash] (peek stash))
+(defn peek-stash [stash] (peek stash))
