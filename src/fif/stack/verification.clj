@@ -1,6 +1,6 @@
-(ns fif.verification
+(ns fif.stack.verification
   "Functions for ensuring certain guarantees within the stack machine
-  before running certain operations."
+  before running operations."
   (:require
    [fif.stack :as stack]))
 

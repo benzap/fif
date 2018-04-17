@@ -3,15 +3,16 @@
   (:require
    [clojure.string :as str]
    [fif.stack :refer :all]
-   [fif.error-handling :as error-handling]
-   [fif.verification :as verification]))
+   [fif.stack.evaluators :as evaluators]
+   [fif.stack.error-handling :as error-handling]
+   [fif.stack.verification :as verification]))
 
 
 (defn wrap-code-eval
   [args]
   (fn [sm]
     (-> sm 
-        (eval-fn args)
+        (evaluators/eval-fn args)
         (set-step-num 0))))
 
 

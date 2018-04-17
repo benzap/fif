@@ -67,7 +67,7 @@
   
 
 (defn symbol-ltrim-once
-  "Trim the subsymbol `s` from the start of `sym`"
+  "Trim the subsymbol `s` from the start of `sym` once."
   [sym s]
   (if (symbol-starts-with? sym s)
     (-> sym

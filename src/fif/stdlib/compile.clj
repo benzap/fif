@@ -3,11 +3,12 @@
   (:require [fif.stack :as stack]
             [fif.stack.scope :as stack.scope]
             [fif.stack.stash :as stack.stash]
+            [fif.stack.processor :as stack.processor]
             [fif.stdlib.reserved :as reserved]))
 
 
-(def arg-start-token reserved/function-begin-definition-token)
-(def arg-end-token reserved/function-end-definition-token)
+(def arg-start-token reserved/function-begin-definition-word)
+(def arg-end-token reserved/function-end-definition-word)
 (def arg-end-function-token 'compile/end-function)
 (def compile-mode-flag :compile-mode)
 (def inner-compile-mode-flag :inner-compile-mode)
@@ -83,7 +84,7 @@
          (stack/dequeue-code))
 
      :else
-     (-> sm stack/process-arg))))
+     (-> sm stack.processor/process-arg))))
 
 
 (defn start-defn

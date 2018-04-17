@@ -1,4 +1,4 @@
-(ns fif.error-handling
+(ns fif.stack.error-handling
   "Functions for handling errors within the fif stackmachine."
   (:require
    [fif.stack :as stack]))
@@ -76,9 +76,15 @@
   
   - System error is re-thrown if the stackmachine is not in debug-mode."
   [sm ex]
-  (if (stack/debug-mode? sm)
+  (if (stack/is-debug-mode? sm)
     (let [errmsg (str "System Error")
           errobj (system-error sm ex errmsg)]
       (-> sm
           (set-error errobj)))
+    (throw ex)))
+
+
+(defn handle-system-error [sm ex]
+  (if-let [system-error-handler (stack/get-system-error-handler sm)]
+    (system-error-handler sm ex)
     (throw ex)))

@@ -3,11 +3,12 @@
   (:require
     [clojure.test :refer :all]
     [fif.stack :as stack]
+    [fif.impl.stack :refer [new-stack-machine]]
     [fif.def :refer :all]
     [fif.core :as fif :refer [dbg-eval reval with-stack]]))
 
 
-(def test-stack-machine (stack/new-stack-machine))
+(def test-stack-machine (new-stack-machine))
 
 
 (defmacro deval

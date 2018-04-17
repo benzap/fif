@@ -12,8 +12,6 @@
 
 (defn update-scope
   [scope f & args]
-  (let [last-scope (dec (count scope))])
-    
   (apply update-in scope [(dec (count scope))] f args))
 
 
@@ -30,3 +28,8 @@
          (reverse $)
          (if (empty? $) default (first $))))
   ([scope attrs] (get-in-scope scope attrs nil)))
+
+
+(defn update-global-scope
+  [scope f & args]
+  (apply update-in scope [0] f args))

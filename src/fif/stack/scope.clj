@@ -39,3 +39,10 @@
    (let [scope (stack/get-scope sm)]
      (utils.scope/get-in-scope scope attrs default)))
   ([scope attrs] (get-in-scope scope attrs nil)))
+
+
+(defn update-global-scope
+  "Update the current scope environment within the stack machine."
+  [sm f & args]
+  (let [scope (stack/get-scope sm)]  
+    (stack/set-scope sm (apply utils.scope/update-global-scope scope f args))))

@@ -1,7 +1,8 @@
 (ns fif.stdlib.conditional
   "For the if-else-then fif functionality"
   (:require [fif.stack :as stack]
-            [fif.stack.sub-stack :as sub-stack]))
+            [fif.stack.sub-stack :as sub-stack]
+            [fif.stack.processor :as stack.processor]))
 
 
 (def arg-if-token 'if)
@@ -121,7 +122,7 @@
           stack/dequeue-code)
  
       :else
-      (-> sm stack/process-arg))))
+      (-> sm stack.processor/process-arg))))
 
 
 (defn false-condition-mode
@@ -136,7 +137,7 @@
           stack/dequeue-code)
 
       :else
-      (-> sm stack/process-arg))))
+      (-> sm stack.processor/process-arg))))
 
 
 (defn inner-conditional-mode

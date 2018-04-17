@@ -1,7 +1,9 @@
 (ns fif.stack-test
-  (:refer-clojure :exclude [eval])
   (:require [clojure.test :refer :all]
-            [fif.stack :refer :all]))
+            [fif.stack :refer :all]
+            [fif.stack.evaluators :as evaluators]
+            [fif.stack.flags :as stack.flags]
+            [fif.impl.stack :refer [new-stack-machine]]))
 
 
 (deftest test-stackmachine-stacks
@@ -71,7 +73,7 @@
     (let [s (-> (new-stack-machine)
                 (push-stack 1)
                 (push-stack 2))]
-      (is (has-flags? (-> s (push-flag :test)))))))
+      (is (stack.flags/has-flags? (-> s (push-flag :test)))))))
 
 
 (deftest test-process-mode)
@@ -85,7 +87,7 @@
               (push-stack 1)
               (enqueue-code 2)
               (enqueue-code 3)
-              (eval-fn ['val]))]
+              (evaluators/eval-fn ['val]))]
     (is (= (get-stack s) '(val 3 2 1)))))
 
 
@@ -93,17 +95,17 @@
   (let [s (-> (new-stack-machine)
               (push-stack 1)
               (enqueue-code 2)
-              (eval val))]
+              (evaluators/eval val))]
     (is (= (get-stack s) '(val 2 1)))))
 
 
 (deftest test-wrap-eval-string
-  (is (= "[test]" (wrap-eval-string "test"))))
+  (is (= "[test]" (evaluators/wrap-eval-string "test"))))
 
 
 (deftest test-eval-string
   (let [s (-> (new-stack-machine)
               (push-stack 1)
               (enqueue-code 2)
-              (eval-string "3 val"))]
+              (evaluators/eval-string "3 val"))]
     (is (= (get-stack s) '(val 3 2 1)))))

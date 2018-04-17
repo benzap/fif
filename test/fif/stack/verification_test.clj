@@ -1,12 +1,13 @@
-(ns fif.verification-test
+(ns fif.stack.verification-test
   (:require
    [clojure.test :refer :all]
-   [fif.verification :refer :all]
-   [fif.stack :as stack]))
+   [fif.stack.verification :refer :all]
+   [fif.stack :as stack]
+   [fif.impl.stack :refer [new-stack-machine]]))
 
 
 (deftest test-stack-satisfies-arity?
-  (let [sm (-> (stack/new-stack-machine)
+  (let [sm (-> (new-stack-machine)
                (stack/push-stack 1)
                (stack/push-stack 2))]
     (is (not (stack-satisfies-arity? sm 3)))

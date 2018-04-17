@@ -32,7 +32,7 @@
 
 
 (defmacro are-eq* [& body]
-  `(are [x# _sep# y#] (= x# y#)
+  `(are [x# _sep# y#] (= y# x#)
      ~@body))
 
 

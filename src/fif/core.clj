@@ -1,9 +1,12 @@
 (ns fif.core
   (:refer-clojure :exclude [eval])
-  (:require [fif.stack :as stack]
-            [fif.stdlib :refer [import-stdlib]]
-            [fif.error-handling :refer [default-system-error-handler]]
-            :reload-all))
+  (:require
+   [fif.stack :as stack]
+   [fif.stack.evaluators :as stack.evaluators]
+   [fif.stack.error-handling :refer [default-system-error-handler]]
+   [fif.stdlib :refer [import-stdlib]]
+   [fif.impl.stack :refer [new-stack-machine]]
+   :reload-all))
 
 
 (def get-code stack/get-code)
@@ -17,7 +20,7 @@
   "Default Stack Machine, containing all of the standard
   libraries. Can be used with `with-stack` in order to rebind for
   `eval`, `seval` and `reval`"
-  (-> (stack/new-stack-machine)
+  (-> (new-stack-machine)
       ;;(stack/set-system-error-handler default-system-error-handler)
       import-stdlib))
 
@@ -35,7 +38,7 @@
   the stackmachine as a result."
   [args]
   (-> *default-stack*
-      (stack/eval-fn args)))
+      (stack.evaluators/eval-fn args)))
 
 
 (defmacro eval
@@ -47,7 +50,7 @@
 
 (defn ieval-fn
   [sm args]
-  (stack/eval-fn sm args))
+  (stack.evaluators/eval-fn sm args))
 
 
 (defmacro ieval
@@ -79,14 +82,14 @@
   the fif stackmachine, and returns the stackmachine after evaluation.
   "
   [s]
-  (-> *default-stack* (stack/eval-string s)))
+  (-> *default-stack* (stack.evaluators/eval-string s)))
 
 
 (defn reval-string
   "Evaluates the given string as a stream of EDN values within the fif
   stackmachine, and returns the stack in a more pleasing orientation."
   [s]
-  (-> *default-stack* (stack/eval-string s) stack/get-stack reverse))
+  (-> *default-stack* (stack.evaluators/eval-string s) stack/get-stack reverse))
 
 
 (defmacro dbg-eval
@@ -95,7 +98,7 @@
   `(let [step-max# (get ~opts :step-max 100)]
      (-> *default-stack*
          (stack/set-step-max step-max#)
-         (stack/eval-fn (quote ~body)))))
+         (stack.evaluators/eval-fn (quote ~body)))))
 
 #_(reval
    vec! 4 1 do

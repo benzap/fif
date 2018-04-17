@@ -76,3 +76,16 @@
        (get-in-scope [:test] ::test))
 
    => 123))
+
+
+(deftest test-update-global-scope
+  (are-eq*
+   (-> (new-scope)
+       (update-scope assoc :test 123)
+       (new-scope)
+       (update-scope assoc :test 123)
+       (update-global-scope assoc :test 345))
+
+   => [{:test 345} {:test 123}]))
+
+

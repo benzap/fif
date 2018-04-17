@@ -1,22 +1,15 @@
 (ns fif.stdlib
-  "Includes all of the primitive standard library functions for
-  fif.
-
-  Notes:
-
-  - Most of the functionality was taken from the Forth standard library."
-  (:refer-clojure :exclude [eval])
-  (:require [fif.stack :as stack :refer :all]
-            [fif.def :refer []]
-            [fif.stdlib.ops :refer [import-stdlib-ops]]
-            [fif.stdlib.cond-loop :refer [import-stdlib-cond-loop-mode]]
-            [fif.stdlib.compile :refer [import-stdlib-compile-mode]]
-            [fif.stdlib.conditional :refer [import-stdlib-conditional-mode]]
-            [fif.stdlib.variable :refer [import-stdlib-variable-mode]]
-            [fif.stdlib.constant :refer [import-stdlib-constant-mode]]
-            [fif.stdlib.macro :refer [import-stdlib-macro-mode]]
-            [fif.stdlib.collecter :refer [import-stdlib-collecter-mode]]
-            [fif.stdlib.collection-ops :refer [import-stdlib-collection-ops]]))
+  "Includes all of the standard library functions and modes for fif."
+  (:require
+   [fif.stdlib.ops :refer [import-stdlib-ops]]
+   [fif.stdlib.cond-loop :refer [import-stdlib-cond-loop-mode]]
+   [fif.stdlib.compile :refer [import-stdlib-compile-mode]]
+   [fif.stdlib.conditional :refer [import-stdlib-conditional-mode]]
+   [fif.stdlib.variable :refer [import-stdlib-variable-mode]]
+   [fif.stdlib.constant :refer [import-stdlib-constant-mode]]
+   [fif.stdlib.macro :refer [import-stdlib-macro-mode]]
+   [fif.stdlib.collecter :refer [import-stdlib-collecter-mode]]
+   [fif.stdlib.collection-ops :refer [import-stdlib-collection-ops]]))
 
 
 

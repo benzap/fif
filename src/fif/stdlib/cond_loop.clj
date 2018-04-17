@@ -3,7 +3,8 @@
     [fif.stack :as stack]
     [fif.stack.sub-stack :as sub-stack]
     [fif.utils.token :as token]
-    [fif.stdlib.conditional :refer [condition-true?]]))
+    [fif.stdlib.conditional :refer [condition-true?]]
+    [fif.stack.processor :as stack.processor]))
 
 
 (def arg-do-token 'do)
@@ -127,7 +128,7 @@
               stack/dequeue-code)))
       
       :else
-      (-> sm stack/process-arg))))
+      (-> sm stack.processor/process-arg))))
 
 
 (defn inner-do-mode
@@ -318,7 +319,7 @@
             (stack/set-code new-code)))
       
       :else
-      (-> sm stack/process-arg))))
+      (-> sm stack.processor/process-arg))))
 
 (defn begin-until-mode
   [sm]
@@ -347,9 +348,9 @@
               stack/pop-flag
               (stack/set-stash (sub-stack/remove-sub-stack stash))
               stack/dequeue-code)))
-      
+
       :else
-      (-> sm stack/process-arg))))
+      (-> sm stack.processor/process-arg))))
 
 
 (defn inner-begin-mode

@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [eval])
   (:require [clojure.test :refer :all]
             [fif.core :refer :all]
-            [fif.stack :refer [new-stack-machine]]))
+            [fif.impl.stack :refer [new-stack-machine]]))
 
 
 (deftest test-eval-fn
