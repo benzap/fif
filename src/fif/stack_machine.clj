@@ -3,7 +3,7 @@
 
 
 (defprotocol IStackMachine
-  (push-stack [this arg])
+  (push-stack* [this arg])
   (pop-stack [this])
   (get-stack [this])
   (set-stack [this stack])
@@ -14,16 +14,18 @@
   (get-ret [this])
   (clear-ret [this])
 
-  ;; Deprecated
+  ;; Old Functionality
   (get-stash [this])
   (set-stash [this st])
 
+  ;; Will Replace Old Functionality
   (get-stash2 [this])
   (set-stash2 [this stash])
 
   (get-scope [this])
   (set-scope [this scope])
 
+  ;; Soon-to-be Deprecated
   (push-temp-macro [this x])
   (pop-temp-macro [this])
   (get-temp-macro [this])
@@ -63,6 +65,28 @@
   (get-system-error-handler [this])
   (set-system-error-handler [this err-handler])
 
-  (halt [this])
   (step [this])
-  (run [this]))
+  (run [this])
+  (halt [this])
+  (continue [this]))
+
+
+(defn push-stack
+  ([sm x] (push-stack* sm x))
+  ([sm x1 x2]
+   (-> sm
+       (push-stack* x1)
+       (push-stack* x2)))
+  ([sm x1 x2 x3]
+   (-> sm
+       (push-stack* x1)
+       (push-stack* x2)
+       (push-stack* x3)))
+  ([sm x1 x2 x3 & xs]
+   (-> sm
+       (push-stack* x1)
+       (push-stack* x2)
+       (push-stack* x3)
+       (as-> $ (reduce push-stack* $ xs)))))
+       
+  

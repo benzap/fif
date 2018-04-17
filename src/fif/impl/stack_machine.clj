@@ -19,7 +19,7 @@
   fif.stack-machine/IStackMachine
   
   ;; Main Stack
-  (push-stack [this arg]
+  (push-stack* [this arg]
     (update-in this [:arg-stack] conj arg))
 
   (pop-stack [this]
