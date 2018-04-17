@@ -19,14 +19,14 @@
   (clear-ret [this])
 
   ;; Deprecated
-  (push-stash [this x])
-  (pop-stash [this])
   (get-stash [this])
   (set-stash [this st])
-  (pick-stash [this])
 
   (get-stash2 [this])
   (set-stash2 [this stash])
+
+  (get-scope [this])
+  (set-scope [this scope])
 
   (push-temp-macro [this x])
   (pop-temp-macro [this])
@@ -166,14 +166,6 @@
 
   ;; Stack Stash
 
-  ;; Deprecated
-  (push-stash [this x]
-    (update-in this [:stash2] conj x))
-
-  ;; Deprecated
-  (pop-stash [this]
-    (update-in this [:stash2] pop))
-
   ;; Deprecated, replaced
   (get-stash [this]
     (-> this :stash2))
@@ -182,10 +174,6 @@
   (set-stash [this st]
     (assoc this :stash2 st))
 
-  ;; Deprecated
-  (pick-stash [this]
-    (-> this :stash2 peek))
-
   ;; will replace get-stash
   (get-stash2 [this]
     (-> this :stash))
@@ -193,6 +181,14 @@
   ;; will replace set-stash
   (set-stash2 [this stash]
     (assoc this :stash stash))
+
+
+  ;; Scope
+  (get-scope [this]
+    (:scope this))
+
+  (set-scope [this scope]
+    (assoc this :scope scope))
 
 
   ;; Temp Macro

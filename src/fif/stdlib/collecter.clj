@@ -7,7 +7,6 @@
 
 
 (def collecter-mode-flag :collecter-mode)
-;; $<- ....
 (def arg-start-collecter '<-into!)
 (def arg-end-collecter '!)
 
