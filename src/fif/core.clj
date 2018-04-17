@@ -108,6 +108,11 @@
      !
    loop !)
 
+#_(reval
+   [4 1 do
+    {:id i :options {:animals #{:cat :dog :mouse}}} ?
+    loop] ?)
+
 #_(reval (1 2 3) apply) ;; (1 2 3)
 
 #_(reval $ conj (1 2 3) 4 _) ;; ((4 1 2 3))
@@ -176,6 +181,8 @@
 #_(reval [4 0 do i loop] ?) ;; => '([0 1 2 3 4])
 
 #_(reval [2 0 do [i 0] ? loop] ?) ;; => '([[0 0] [0 1] [0 2]])
+
+#_(reval 2 0 do {:id i} ? loop) ;; => '({:id 0} {:id 1} {:id 2})
 
 #_(reval
    $>> range 0 5
