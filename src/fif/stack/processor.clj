@@ -22,6 +22,10 @@
       (symbol? arg)
       (if-let [wfn (-> sm get-words (get arg))]
         (wfn sm)
-        (-> sm (push-stack arg) dequeue-code))
+        (-> sm
+            (push-stack (pointer/trim-pointer-once arg))
+            dequeue-code))
       :else
-      (-> sm (push-stack arg) dequeue-code))))
+      (-> sm
+          (push-stack arg)
+          dequeue-code))))

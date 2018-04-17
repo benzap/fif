@@ -9,8 +9,11 @@
   any symbol which begins with reserved/pointer-subtoken."
   [arg]
   (and (symbol? arg)
+       (not= arg reserved/pointer-subtoken)
        (utils.token/symbol-starts-with? arg reserved/pointer-subtoken)))
 
 
 (defn trim-pointer-once [arg]
-  (utils.token/symbol-ltrim-once arg reserved/pointer-subtoken))
+  (if (arg-is-pointer? arg)
+    (utils.token/symbol-ltrim-once arg reserved/pointer-subtoken)
+    arg))
