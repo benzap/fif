@@ -1,8 +1,8 @@
 (ns fif.stdlib.compile
   "Defines the compile-mode within the fif stack machine"
   (:require [fif.stack :as stack]
-            [fif.stack.sub-stack :as sub-stack]
             [fif.stack.scope :as stack.scope]
+            [fif.stack.stash :as stack.stash]
             [fif.stdlib.reserved :as reserved]))
 
 
@@ -26,51 +26,49 @@
 
 (defn inner-compile-mode
   [sm]
-  (let [arg (-> sm stack/get-code first)
-        stash (stack/get-stash sm)]
+  (let [arg (-> sm stack/get-code first)]
     (cond
      (= arg arg-start-token)
      (-> sm
          (stack/push-flag inner-compile-mode-flag)
-         (stack/set-stash (sub-stack/push-sub-stack stash arg))
+         (stack.stash/update-stash conj arg)
          stack/dequeue-code)
 
      (= arg arg-end-token)
      (-> sm
          stack/pop-flag
-         (stack/set-stash (sub-stack/push-sub-stack stash arg))
+         (stack.stash/update-stash conj arg)
          stack/dequeue-code)
 
      :else
      (-> sm
-         (stack/set-stash (sub-stack/push-sub-stack stash arg))
+         (stack.stash/update-stash conj arg)
          stack/dequeue-code))))
 
 
 (defn compile-mode
   "This should only be called while we are in compile mode."
   [sm]
-  (let [arg (-> sm stack/get-code first)
-        stash (stack/get-stash sm)]
+  (let [arg (-> sm stack/get-code first)]
     (cond
       (= arg arg-start-token)
       (-> sm
-          (stack/set-stash (sub-stack/push-sub-stack stash arg))
+          (stack.stash/update-stash conj arg)
           (stack/push-flag inner-compile-mode-flag)
           stack/dequeue-code)
 
       (= arg arg-end-token)
-      (let [fn-content (reverse (sub-stack/get-sub-stack stash))
+      (let [fn-content (stack.stash/peek-stash sm)
             [wname & wbody] fn-content]
         (-> sm
             (stack/set-word wname (wrap-compiled-fn wbody))
-            (stack/set-stash (sub-stack/remove-sub-stack stash))
+            (stack.stash/remove-stash)
             stack/pop-flag
             stack/dequeue-code))
 
       :else
       (-> sm
-          (stack/set-stash (sub-stack/push-sub-stack stash arg))
+          (stack.stash/update-stash conj arg)
           stack/dequeue-code))))
 
 
@@ -92,11 +90,10 @@
   "We retrieved the start-token word, and we push it onto the stack and
    set our compile flag"
   [sm]
-  (let [stash (stack/get-stash sm)]
-    (-> sm
-        (stack/push-flag compile-mode-flag)
-        (stack/set-stash (sub-stack/create-sub-stack stash))
-        stack/dequeue-code)))
+  (-> sm
+      (stack/push-flag compile-mode-flag)
+      (stack.stash/new-stash [])
+      stack/dequeue-code))
 
 
 (defn import-stdlib-compile-mode [sm]
