@@ -34,3 +34,19 @@
     
   
    => '(10)))
+
+
+(deftest test-variable-let2
+  (are-eq*
+   (teval
+    let x 1
+    
+    fn push2
+    let x 2
+    x
+    endfn
+
+    x push2)
+    
+  
+   => '(1 2)))
