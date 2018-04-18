@@ -51,6 +51,33 @@
        (update-global-scope assoc :words {})
        (get-scope))
 
-   => [{:words {}} {:words {'+ true}}]))
+   => [{:words {}} {:words {'+ true}}]
+
+   (-> (new-stack-machine)
+       (new-scope)
+       (update-scope assoc-in [:words 'test] 123)
+       (update-scope update-in [:words] assoc '+ true)
+       (new-scope)
+       (update-scope assoc :words {})
+       (update-scope update-in [:words] assoc '+ false)
+       (update-scope assoc-in [:words 'test] 456)
+       (get-in-scope [:words 'test]))
+       
+
+   => 456
+
+   (-> (new-stack-machine)
+       (new-scope)
+       (update-global-scope assoc-in [:words 'test] 789)
+       (update-scope assoc-in [:words 'test] 123)
+       (update-scope update-in [:words] assoc '+ true)
+       (new-scope)
+       (update-scope assoc :words {})
+       (update-scope update-in [:words] assoc '+ false)
+       (update-scope assoc-in [:words 'test] 456)
+       (get-in-global-scope [:words 'test]))
+       
+
+   => 789))
 
 

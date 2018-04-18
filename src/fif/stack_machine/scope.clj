@@ -4,6 +4,7 @@
    [fif.stack-machine :as stack]
    [fif.utils.scope :as utils.scope]))
 
+
 (defn get-scope [sm]
   (stack/get-scope sm))
 
@@ -34,7 +35,7 @@
   
 
 (defn get-in-scope
-  "Retrieve within the earliest scope, the given nested attribute."
+  "Retrieve within the latest scope, the given nested attribute."
   ([sm attrs default]
    (let [scope (stack/get-scope sm)]
      (utils.scope/get-in-scope scope attrs default)))
@@ -46,3 +47,11 @@
   [sm f & args]
   (let [scope (stack/get-scope sm)]  
     (stack/set-scope sm (apply utils.scope/update-global-scope scope f args))))
+
+
+(defn get-in-global-scope
+  "Retrieves from the earliest scope"
+  ([sm attrs default]
+   (let [fscope (-> sm stack/get-scope first)]
+     (get-in fscope attrs default)))
+  ([sm attrs] (get-in-global-scope sm attrs nil)))

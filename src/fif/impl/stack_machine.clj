@@ -5,6 +5,7 @@
             [fif.stack-machine.stash :as stack.stash]
             [fif.stack-machine.processor :as stack.processor]
             [fif.stack-machine.error-handling :as error-handling]
+            [fif.stack-machine.scope :as stack.scope]
             [fif.utils.scope :as utils.scope]
             [fif.utils.stash :as utils.stash]))
 

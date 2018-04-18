@@ -211,7 +211,7 @@
          *+ <> reduce .s)
 
 
-#_(reval {:a :test} apply)
+#_(reval [[:a] [:test]] flatten vec [] <> conj {} <> into)
 
 
 #_(->> (range 0 5)
@@ -243,5 +243,29 @@
 
 #_(-> (dbg-eval {:step-max 50}
                 (1 2 3 4 +) ? apply)
+                get-stack
+                reverse)
+
+
+#_(-> (dbg-eval {:step-max 300}
+
+                (5 0 do i loop) ?
+
+                [5 0 do i loop] ?
+
+                {:a test :c later} ?
+
+                list! 5 0 do i loop :eggs !)
+
+                get-stack
+                reverse)
+
+#_(-> (dbg-eval {:step-max 300}
+
+                set! (1 2 3 4) apply !
+                (1 2 3 4) set
+
+                )
+
                 get-stack
                 reverse)
