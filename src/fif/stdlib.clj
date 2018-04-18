@@ -10,20 +10,21 @@
    [fif.stdlib.macro :refer [import-stdlib-macro-mode]]
    [fif.stdlib.collecter :refer [import-stdlib-collecter-mode]]
    [fif.stdlib.collection-ops :refer [import-stdlib-collection-ops]]
-   [fif.stdlib.functional-ops :refer [import-stdlib-functional-ops]]))
-
+   [fif.stdlib.functional-ops :refer [import-stdlib-functional-ops]]
+   [fif.stdlib.realizer :refer [import-stdlib-realize-mode]]))
 
 
 (defn import-stdlib [sm]
   (-> sm
-      (import-stdlib-ops)
-      (import-stdlib-compile-mode)
-      (import-stdlib-conditional-mode)
-      (import-stdlib-cond-loop-mode)
-      (import-stdlib-variable-mode)
-      (import-stdlib-constant-mode)
-      (import-stdlib-macro-mode)
-      (import-stdlib-collecter-mode)
-      (import-stdlib-collection-ops)
-      (import-stdlib-functional-ops)))
+      import-stdlib-ops
+      import-stdlib-compile-mode
+      import-stdlib-conditional-mode
+      import-stdlib-cond-loop-mode
+      import-stdlib-variable-mode
+      import-stdlib-constant-mode
+      import-stdlib-macro-mode
+      import-stdlib-collecter-mode
+      import-stdlib-collection-ops
+      import-stdlib-functional-ops
+      import-stdlib-realize-mode))
 

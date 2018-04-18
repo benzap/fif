@@ -239,5 +239,9 @@
 #_(-> (dbg-eval {:step-max 50}
                 *int? [1 2 3.4] filter)
                 get-stack)
-      
 
+
+#_(-> (dbg-eval {:step-max 50}
+                (1 2 3 4 +) ? apply)
+                get-stack
+                reverse)
