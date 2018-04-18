@@ -220,7 +220,6 @@
     :stash2 '()
     :stash (utils.stash/create-stash)
     :flags []
-    :words {}
     :variables {}
     :modes {}
     :step-num 0

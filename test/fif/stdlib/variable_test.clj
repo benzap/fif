@@ -6,10 +6,27 @@
 
 
 (deftest test-variable-creation
-  (is (= '(20) (teval def x 20 x getv))))
+  (are-eq*
+
+   (teval def x 20 x)
+   
+   => '(20)))
+
+
+(deftest test-variable-creation
+  (are-eq*
+
+   (teval def x 20 x)
+   
+   => '(20)))
 
 
 (deftest test-variable-set
-  (is (= '(2) (teval def x 1
-                     def y 2
-                     x dup dup getv inc swap setv getv))))
+  (are-eq*
+   (teval
+    def x 1
+    def y 2
+
+    *x 10 setg x)
+  
+   => '(10)))
