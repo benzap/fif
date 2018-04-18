@@ -76,4 +76,6 @@
       (set-word 'interpose (wrap-function-with-arity 2 interpose))
       (set-word 'vec (wrap-function-with-arity 1 vec))
       (set-word 'set (wrap-function-with-arity 1 set))
-      (set-word 'seq (wrap-function-with-arity 1 seq))))
+      (set-word 'seq (wrap-function-with-arity 1 seq))
+      (set-word 'range (wrap-function-with-arity 2 range))))
+

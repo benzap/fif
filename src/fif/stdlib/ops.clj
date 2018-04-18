@@ -253,6 +253,8 @@
       (set-word 'bytes? (wrap-function-with-arity 1 bytes?))
       (set-word 'keyword? (wrap-function-with-arity 1 keyword?))
       (set-word 'int? (wrap-function-with-arity 1 int?))
+      (set-word 'even? (wrap-function-with-arity 1 even?))
+      (set-word 'odd? (wrap-function-with-arity 1 odd?))
       (set-word 'nat-int? (wrap-function-with-arity 1 nat-int?))
       (set-word 'neg-int? (wrap-function-with-arity 1 neg-int?))
       (set-word 'pos-int? (wrap-function-with-arity 1 pos-int?))

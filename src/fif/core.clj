@@ -195,13 +195,45 @@
    $-< filter *even?
    apply) ;; (2 4)
 
+#_(reval
+   0 5 range *inc swap map *even? swap filter apply) ;; (2 4)
+
+#_(reval
+   0 5 range
+       *inc swap map
+       *even? swap filter
+       apply) ;; (2 4)
+
+
+#_(reval 0 5 range
+         *inc swap map
+         *even? swap filter
+         *+ swap reduce)
+
 #_(->> (range 0 5)
        (map inc)
        (filter even?))
 
 #_(reval println 1 2)
 
+
 #_(reval 1 {} conj)
 
-#_(-> (dbg-eval {:step-max 20} *- [1 2 3] reduce)
+
+#_(-> (dbg-eval {:step-max 50})
+      fn conj2 conj endfn
+
+      *conj2 [[] 1 2 3] reduce
       (get-stack))
+
+
+#_(-> (dbg-eval {:step-max 50})
+      *inc [1 2 3] map vec
+      (get-stack))
+
+
+#_(-> (dbg-eval {:step-max 50})
+      *int? [1 2 3.4] filter
+      get-stack)
+      
+
