@@ -200,15 +200,19 @@
 
 #_(reval
    0 5 range
-       *inc swap map
-       *even? swap filter
+       *inc <> map
+       *even? <> filter
        apply) ;; (2 4)
 
 
-#_(reval 0 5 range
-         *inc swap map
-         *even? swap filter
-         *+ swap reduce)
+#_(reval 0 5 range .s
+         *inc <> map .s
+         *even? <> filter .s
+         *+ <> reduce .s)
+
+
+#_(reval {:a :test} apply)
+
 
 #_(->> (range 0 5)
        (map inc)
@@ -232,8 +236,8 @@
       (get-stack))
 
 
-#_(-> (dbg-eval {:step-max 50})
-      *int? [1 2 3.4] filter
-      get-stack)
+#_(-> (dbg-eval {:step-max 50}
+                *int? [1 2 3.4] filter)
+                get-stack)
       
 

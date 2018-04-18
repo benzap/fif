@@ -224,6 +224,7 @@
       (set-word '>r push-return)
       (set-word 'r> pop-return)
       (set-word 'swap swap)
+      (set-word '<> swap)
       (set-word 'rot rot)
       (set-word 'drop op-drop)
       (set-word 'nip nip)
