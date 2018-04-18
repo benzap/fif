@@ -1,6 +1,7 @@
 (ns fif.stack-machine.processor
   (:require
    [fif.stack-machine :refer :all]
+   [fif.stack-machine.words :as stack-machine.words]
    [fif.stack-machine.pointer :as pointer]))
 
 
@@ -20,11 +21,12 @@
   (let [arg (-> sm get-code first)]
     (cond
       (symbol? arg)
-      (if-let [wfn (-> sm get-words (get arg))]
-        (wfn sm)
-        (-> sm
-            (push-stack (pointer/trim-pointer-once arg))
-            dequeue-code))
+      (let [wfn (get-word sm arg)]
+        (if-not (= wfn stack-machine.words/not-found)
+          (wfn sm)
+          (-> sm
+              (push-stack (pointer/trim-pointer-once arg))
+              dequeue-code)))
       :else
       (-> sm
           (push-stack arg)

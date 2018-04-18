@@ -33,8 +33,7 @@
   (pick-temp-macro [this])
 
   (set-word [this wname wbody])
-  (remove-word [this wname])
-  (get-words [this])
+  (get-word [this wname])
 
   (set-variable [this vname vval])
   (get-variables [this])

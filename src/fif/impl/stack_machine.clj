@@ -3,6 +3,7 @@
   (:require [fif.stack-machine :refer :all]
             [fif.stack-machine.flags :as stack.flags]
             [fif.stack-machine.stash :as stack.stash]
+            [fif.stack-machine.words :as stack.words]
             [fif.stack-machine.processor :as stack.processor]
             [fif.stack-machine.error-handling :as error-handling]
             [fif.stack-machine.scope :as stack.scope]
@@ -97,13 +98,10 @@
 
   ;; Word Dictionary
   (set-word [this wname wbody]
-    (update-in this [:words] assoc wname wbody))
+    (stack.words/set-global-word this wname wbody))
 
-  (remove-word [this wname]
-    (update-in this [:words] dissoc wname))
-
-  (get-words [this]
-    (-> this :words))
+  (get-word [this wname]
+    (stack.words/get-word this wname))
 
 
   ;; Variable Store
