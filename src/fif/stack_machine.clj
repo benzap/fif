@@ -88,5 +88,9 @@
        (push-stack* x2)
        (push-stack* x3)
        (as-> $ (reduce push-stack* $ xs)))))
-       
-  
+
+
+(defn update-code
+  [sm f & args]
+  (let [code (get-code sm)]
+    (set-code sm (apply f code args))))

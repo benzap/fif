@@ -3,6 +3,7 @@
   (:require
    [fif.stack-machine :as stack]
    [fif.stack-machine.evaluators :as stack.evaluators]
+   [fif.stack-machine.stash :as stack-machine.stash]
    [fif.stack-machine.error-handling :refer [default-system-error-handler]]
    [fif.stdlib :refer [import-stdlib]]
    [fif.impl.stack-machine :refer [new-stack-machine]]
@@ -13,6 +14,7 @@
 (def get-stack stack/get-stack)
 (def get-ret stack/get-ret)
 (def get-flags stack/get-flags)
+(def get-stash stack-machine.stash/get-stash)
 
 
 (def ^:dynamic
@@ -200,3 +202,6 @@
 #_(reval println 1 2)
 
 #_(reval 1 {} conj)
+
+#_(-> (dbg-eval {:step-max 20} *- [1 2 3] reduce)
+      (get-stack))
