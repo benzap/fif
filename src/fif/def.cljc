@@ -1,7 +1,7 @@
 (ns fif.def
   (:require
    [clojure.string :as str]
-   [fif.stack-machine :as stack :refer :all]
+   [fif.stack-machine :as stack]
    [fif.stack-machine.evaluators :as evaluators]
    [fif.stack-machine.error-handling :as error-handling]
    [fif.stack-machine.verification :as verification]))
@@ -12,12 +12,12 @@
   (fn [sm]
     (-> sm 
         (evaluators/eval-fn args)
-        (set-step-num 0))))
+        (stack/set-step-num 0))))
 
 
 (defn- handle-arity-error
   [sm num-args]
-  (let [word-name (-> sm get-code first)
+  (let [word-name (-> sm stack/get-code first)
         errmsg (str "Not enough values on the main stack to satisfy word function")
         errextra {:word-function-name word-name :word-function-arity num-args}
         errobj (error-handling/stack-error sm errmsg errextra)]
@@ -55,17 +55,17 @@
       (handle-arity-error sm num-args)
 
       :else
-      (let [args (take num-args (get-stack sm))
+      (let [args (take num-args (stack/get-stack sm))
             result (apply f (reverse args))
             new-stack (-> sm
-                          get-stack
+                          stack/get-stack
                           (as-> $ (drop num-args $))
                           (conj result)
                           (as-> $ (into '() $))
                           reverse)]
         (-> sm
-            (set-stack new-stack)
-            dequeue-code)))))
+            (stack/set-stack new-stack)
+            stack/dequeue-code)))))
 
 
 (defn wrap-procedure-with-arity
@@ -100,12 +100,12 @@
       (handle-arity-error sm num-args)
 
       :else
-      (let [args (take num-args (get-stack sm))
+      (let [args (take num-args (stack/get-stack sm))
             _ (apply f (reverse args))
-            new-stack (->> sm get-stack (drop num-args))]
+            new-stack (->> sm stack/get-stack (drop num-args))]
         (-> sm
-            (set-stack (into '() new-stack))
-            dequeue-code)))))
+            (stack/set-stack (into '() new-stack))
+            stack/dequeue-code)))))
 
 
 (defmacro defcode-eval
