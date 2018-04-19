@@ -1,10 +1,15 @@
 (ns fif.stack-machine.error-handling-test
   (:require
-   [clojure.test :refer :all]
+   [clojure.test :refer [deftest testing is are]]
    [fif.stack-machine :as stack]
    [fif.impl.stack-machine :refer [new-stack-machine]]
    [fif-test.utils :refer [teval are-eq*]]
-   [fif.stack-machine.error-handling :refer :all]))
+   [fif.stack-machine.error-handling :refer [error-object?
+                                             new-error-object
+                                             stack-error
+                                             stack-error-object?
+                                             system-error
+                                             system-error-object?]]))
 
 
 (deftest test-error?

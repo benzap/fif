@@ -1,7 +1,11 @@
 (ns fif.utils.scope-test
   (:require
-   [clojure.test :refer :all]
-   [fif.utils.scope :refer :all]
+   [clojure.test :refer [deftest testing is are]]
+   [fif.utils.scope :refer [new-scope
+                            update-scope
+                            get-in-scope
+                            remove-scope
+                            update-global-scope]]
    [fif-test.utils :refer [teval are-eq*]]))
 
 

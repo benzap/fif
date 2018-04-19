@@ -1,10 +1,14 @@
 (ns fif.stack-machine.stash-test
   (:require
-   [clojure.test :refer :all]
+   [clojure.test :refer [deftest testing is are]]
    [fif.stack-machine :as stack]
    [fif.impl.stack-machine :refer [new-stack-machine]]
    [fif-test.utils :refer [are-eq* teval]]
-   [fif.stack-machine.stash :refer :all]))
+   [fif.stack-machine.stash :refer [get-stash
+                                    new-stash
+                                    update-stash
+                                    peek-stash
+                                    remove-stash]]))
 
 
 (deftest test-stash

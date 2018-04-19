@@ -1,6 +1,21 @@
 (ns fif.stack-machine-test
-  (:require [clojure.test :refer :all]
-            [fif.stack-machine :refer :all]
+  (:require [clojure.test :refer [deftest testing is are]]
+            [fif.stack-machine :refer [push-stack
+                                       get-stack
+                                       pop-stack
+                                       push-ret
+                                       get-ret
+                                       clear-stack
+                                       set-stack
+                                       pop-ret
+                                       push-flag
+                                       pop-flag
+                                       enqueue-code
+                                       dequeue-code
+                                       get-code
+                                       set-code
+                                       step
+                                       run]]
             [fif.stack-machine.evaluators :as evaluators]
             [fif.stack-machine.flags :as stack.flags]
             [fif.stack-machine.words :as stack.words]
