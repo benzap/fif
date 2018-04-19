@@ -1,12 +1,12 @@
 (ns fif.utils.stash-test
   (:require
-   [clojure.test :refer [deftest testing is are]]
+   [clojure.test :refer [deftest testing is are] :include-macros true]
    [fif.utils.stash :refer [create-stash
                             new-stash
                             update-stash
                             remove-stash
                             peek-stash]]
-   [fif-test.utils :refer [are-eq* teval]]))
+   [fif-test.utils :refer [are-eq* teval] :include-macros true]))
 
 
 (deftest test-create-stash

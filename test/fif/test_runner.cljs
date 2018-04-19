@@ -6,4 +6,7 @@
    [fif.stdlib.ops-test]))
 
 
-(doo-all-tests)
+;;(doo-all-tests)
+
+(doo-tests
+ 'fif.stdlib.ops-test)

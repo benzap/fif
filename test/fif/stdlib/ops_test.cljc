@@ -1,10 +1,10 @@
 (ns fif.stdlib.ops-test
   (:require
-   [clojure.test :refer [deftest testing is are]]
+   [clojure.test :refer [deftest testing is are] :include-macros true]
    [fif.stdlib.ops]
    [fif.stack-machine :as stack]
    [fif.core :as fif]
-   [fif-test.utils :refer [teval are-eq*]]))
+   [fif-test.utils :refer [teval are-eq*] :include-macros true]))
 
 
 (deftest test-op+
