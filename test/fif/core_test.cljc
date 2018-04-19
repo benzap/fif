@@ -1,7 +1,12 @@
 (ns fif.core-test
   (:refer-clojure :exclude [eval])
-  (:require [clojure.test :refer :all]
-            [fif.core :refer :all]
+  (:require [clojure.test :refer [deftest testing is are]]
+            [fif.core :refer [eval-fn
+                              eval
+                              reval
+                              eval-string
+                              with-stack
+                              get-stack]]
             [fif.impl.stack-machine :refer [new-stack-machine]]))
 
 

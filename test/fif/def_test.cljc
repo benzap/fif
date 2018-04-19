@@ -1,10 +1,12 @@
 (ns fif.def-test
   (:refer-clojure :exclude [eval])
   (:require
-    [clojure.test :refer :all]
+    [clojure.test :refer [deftest testing is are]]
     [fif.stack-machine :as stack]
     [fif.impl.stack-machine :refer [new-stack-machine]]
-    [fif.def :refer :all]
+    [fif.def :refer [wrap-function-with-arity
+                     wrap-procedure-with-arity
+                     defcode-eval]]
     [fif.core :as fif :refer [dbg-eval reval with-stack]]))
 
 
