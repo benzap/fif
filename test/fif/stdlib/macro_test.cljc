@@ -1,7 +1,7 @@
 (ns fif.stdlib.macro-test
   (:require
-   [clojure.test :refer :all]
-   [fif.stdlib.macro :refer :all]
+   [clojure.test :refer [deftest testing is are]]
+   [fif.stdlib.macro]
    [fif-test.utils :refer [teval are-eq*]]))
 
 
