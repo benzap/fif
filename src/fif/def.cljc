@@ -10,7 +10,7 @@
 (defn wrap-code-eval
   [args]
   (fn [sm]
-    (-> sm 
+    (-> sm
         (evaluators/eval-fn args)
         (stack/set-step-num 0))))
 
