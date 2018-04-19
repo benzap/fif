@@ -12,14 +12,13 @@
   :repositories [["clojars" {:sign-releases true}]]
   :cljsbuild {:builds {:dev
                        {:source-paths ["src"]
-                        :compiler {:output-dir "resources/public/js"
-                                   :output-to "resources/public/js/fif.js"
-                                   :jar true
+                        :compiler {:output-dir "resources/public/js/compiled/out"
+                                   :output-to "resources/public/js/compiled/fif.js"
                                    :optimizations :whitespace
                                    :pretty-print true
-                                   :source-map "resources/public/js/fif.js.map"}}
+                                   :source-map "resources/public/js/compiled/fif.js.map"}}
                        :prod
                        {:source-paths ["src"]
-                        :compiler {:output-to "resources/public/js/fif.min.js"
+                        :compiler {:output-to "resources/public/js/compiled/fif.min.js"
                                    :optimizations :advanced
                                    :pretty-print false}}}})

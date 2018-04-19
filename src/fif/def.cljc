@@ -89,7 +89,7 @@
                                                 (fif.def/wrap-procedure-with-arity 1 set-val!))))
   (fif.core/with-stack my-stack-machine
      (fif.core/reval 1 set-val!)
-     @val) ;; => 1
+     (deref val)) ;; => 1
   "
   [num-args f]
   (fn [sm]

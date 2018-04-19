@@ -193,11 +193,11 @@
       (if (stack.flags/has-flags? this)
         (try
           (-> this stack.processor/process-mode stack/inc-step)
-          (catch Exception ex
+          (catch #?(:clj Exception :cljs js/Error) ex
             (error-handling/handle-system-error this ex)))
         (try
           (-> this stack.processor/process-arg stack/inc-step)
-          (catch Exception ex
+          (catch #?(:clj Exception :cljs js/Error) ex
             (error-handling/handle-system-error this ex))))))
 
   (run [this]
