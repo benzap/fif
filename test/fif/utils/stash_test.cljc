@@ -1,7 +1,11 @@
 (ns fif.utils.stash-test
   (:require
-   [clojure.test :refer :all]
-   [fif.utils.stash :refer :all]
+   [clojure.test :refer [deftest testing is are]]
+   [fif.utils.stash :refer [create-stash
+                            new-stash
+                            update-stash
+                            remove-stash
+                            peek-stash]]
    [fif-test.utils :refer [are-eq* teval]]))
 
 
