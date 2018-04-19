@@ -2,168 +2,170 @@
   "Standard Library Word Definitions for common operators
 
   - Most of the functions listed were taken from the Forth standard library."
-  (:refer-clojure :exclude [eval])
   (:require
    [clojure.string :as str]
-   [fif.stack-machine :refer :all]
-   [fif.def :refer :all]))
+   [fif.stack-machine :as stack]
+   [fif.def :as def
+    :refer [wrap-function-with-arity
+            wrap-procedure-with-arity]
+    :include-macros true]))
 
 
 (defn op+
   "(n n -- n) Add top two values of stack"
   [sm]
-  (let [[i j] (get-stack sm)
+  (let [[i j] (stack/get-stack sm)
         result (clojure.core/+ j i)]
-    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
+    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
 
 
 (defn op-
   "(n n -- n) Subtract top two values of stack"
   [sm]
-  (let [[i j] (get-stack sm)
+  (let [[i j] (stack/get-stack sm)
         result (clojure.core/- j i)]
-    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
+    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
 
 
 (defn op-plus-1
   [sm]
-  (let [[i] (get-stack sm)
+  (let [[i] (stack/get-stack sm)
         result (inc i)]
-    (-> sm pop-stack (push-stack result) dequeue-code)))
+    (-> sm stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
 
 
 (defn op-minus-1
   [sm]
-  (let [[i] (get-stack sm)
+  (let [[i] (stack/get-stack sm)
         result (dec i)]
-    (-> sm pop-stack (push-stack result) dequeue-code)))
+    (-> sm stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
 
 
 (defn op*
   "(n n -- n) Multiply top two values of the stack"
   [sm]
-  (let [[i j] (get-stack sm)
+  (let [[i j] (stack/get-stack sm)
         result (clojure.core/* j i)]
-    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
+    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
 
 
 (defn op-div
   "(n n -- n) Divide top two values of the stack"
   [sm]
-  (let [[i j] (get-stack sm)
+  (let [[i j] (stack/get-stack sm)
         result (clojure.core// j i)]
-    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
+    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
 
 
 (defn op-mod
   "(n n -- n) Get the modulo of the top two values"
   [sm]
-  (let [[i j] (get-stack sm)
+  (let [[i j] (stack/get-stack sm)
         result (clojure.core/mod j i)]
-    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
+    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
 
 
 (defn negate
   "(n -- n) Negates the top value"
   [sm]
-  (let [[i] (get-stack sm)
+  (let [[i] (stack/get-stack sm)
         result (clojure.core/- i)]
-    (-> sm pop-stack (push-stack result) dequeue-code)))
+    (-> sm stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
 
 
 (defn abs
   "(n -- n) Gets the absolute of the top value"
   [sm]
-  (let [[i] (get-stack sm)
+  (let [[i] (stack/get-stack sm)
         result (if (pos? i) i (clojure.core/- i))]
-    (-> sm pop-stack (push-stack result) dequeue-code)))
+    (-> sm stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
 
 
 (defn op-max
   "(n n -- n) Gets the max value between the top two values"
   [sm]
-  (let [[i j] (get-stack sm)
+  (let [[i j] (stack/get-stack sm)
         result (max j i)]
-    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
+    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
 
 
 (defn op-min
   "(n n -- n) Gets teh min value between the top two values"
   [sm]
-  (let [[i j] (get-stack sm)
+  (let [[i j] (stack/get-stack sm)
         result (min j i)]
-    (-> sm pop-stack pop-stack (push-stack result) dequeue-code)))
+    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
 
 
 (defn dup [sm]
-  (let [top (-> sm get-stack peek)]
-    (-> sm (push-stack top) dequeue-code)))
+  (let [top (-> sm stack/get-stack peek)]
+    (-> sm (stack/push-stack top) stack/dequeue-code)))
 
 
 (defn dot [sm]
-  (let [top (-> sm get-stack peek)]
+  (let [top (-> sm stack/get-stack peek)]
     (print top)
-    (-> sm pop-stack dequeue-code)))
+    (-> sm stack/pop-stack stack/dequeue-code)))
 
 
 (defn carriage-return [sm]
   (print "\n")
-  (-> sm dequeue-code))
+  (-> sm stack/dequeue-code))
 
 
 (defn dot-stack [sm]
-  (let [stack (get-stack sm)
+  (let [stack (stack/get-stack sm)
         result (str "<" (count stack) "> ")]
     (print (str "<" (count stack) "> "))
     (prn stack)
-    (-> sm dequeue-code)))
+    (-> sm stack/dequeue-code)))
 
 
 (defn push-return [sm]
-  (let [[i] (get-stack sm)]
-    (-> sm pop-stack (push-ret i) dequeue-code)))
+  (let [[i] (stack/get-stack sm)]
+    (-> sm stack/pop-stack (stack/push-ret i) stack/dequeue-code)))
 
 
 (defn pop-return [sm]
-  (let [[i] (get-ret sm)]
-    (-> sm pop-ret (push-stack i) dequeue-code)))
+  (let [[i] (stack/get-ret sm)]
+    (-> sm stack/pop-ret (stack/push-stack i) stack/dequeue-code)))
 
 
 (defn swap [sm]
-  (let [[i j] (get-stack sm)]
-    (-> sm pop-stack pop-stack (push-stack i) (push-stack j) dequeue-code)))
+  (let [[i j] (stack/get-stack sm)]
+    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack i) (stack/push-stack j) stack/dequeue-code)))
 
 
 (defn rot [sm]
-  (let [[k j i] (get-stack sm)]
-    (-> sm pop-stack pop-stack pop-stack
-        (push-stack j) (push-stack k) (push-stack i) dequeue-code)))
+  (let [[k j i] (stack/get-stack sm)]
+    (-> sm stack/pop-stack stack/pop-stack stack/pop-stack
+        (stack/push-stack j) (stack/push-stack k) (stack/push-stack i) stack/dequeue-code)))
 
 
 (defn op-drop [sm]
-  (-> sm pop-stack dequeue-code))
+  (-> sm stack/pop-stack stack/dequeue-code))
 
 
 (defn nip [sm]
-  (let [[i j] (get-stack sm)]
-    (-> sm pop-stack pop-stack (push-stack i) dequeue-code)))
+  (let [[i j] (stack/get-stack sm)]
+    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack i) stack/dequeue-code)))
 
 
 (defn tuck [sm]
-  (let [[i j] (get-stack sm)]
-    (-> sm pop-stack pop-stack
-        (push-stack i) (push-stack j) (push-stack i) dequeue-code)))
+  (let [[i j] (stack/get-stack sm)]
+    (-> sm stack/pop-stack stack/pop-stack
+        (stack/push-stack i) (stack/push-stack j) (stack/push-stack i) stack/dequeue-code)))
 
 
 (defn over [sm]
-  (let [[i j] (get-stack sm)]
-    (-> sm (push-stack j) dequeue-code)))
+  (let [[i j] (stack/get-stack sm)]
+    (-> sm (stack/push-stack j) stack/dequeue-code)))
 
 
 (defn roll
   "(v v --) *move* the item at that position to the top"
   [sm]
-  (let [stack (get-stack sm)
+  (let [stack (stack/get-stack sm)
         pos (peek stack)
         item (nth stack pos)
         new-stack (nthrest stack)]))
@@ -171,157 +173,158 @@
 
 (defn op-<
   [sm]
-  (let [[i j] (get-stack sm)
+  (let [[i j] (stack/get-stack sm)
         result (clojure.core/< j i)]
    (-> sm
-       pop-stack pop-stack (push-stack result) dequeue-code)))
+       stack/pop-stack stack/pop-stack
+       (stack/push-stack result) stack/dequeue-code)))
 
 
-(defstack-func-2 op-<= <=)
-(defstack-func-2 op-= =)
-(defstack-func-2 op-not= not=)
-(defstack-func-2 op-> >)
-(defstack-func-2 op->= >=)
+(def/defstack-func-2 op-<= <=)
+(def/defstack-func-2 op-= =)
+(def/defstack-func-2 op-not= not=)
+(def/defstack-func-2 op-> >)
+(def/defstack-func-2 op->= >=)
 
 
 (defn import-stdlib-ops [sm]
   (-> sm
 
       ;; Arithmetic
-      (set-word '+ op+)
-      (set-word '- op-)
-      (set-word 'inc op-plus-1)
-      (set-word 'dec op-minus-1)
-      (set-word '* op*)
-      (set-word '/ op-div)
-      (set-word 'mod op-mod)
-      (set-word 'negate negate)
-      (set-word 'abs abs)
-      (set-word 'max op-max)
-      (set-word 'min op-min)
-      (set-word 'rem (wrap-function-with-arity 2 rem))
-      (set-word 'quot (wrap-function-with-arity 2 quot))
+      (stack/set-word '+ op+)
+      (stack/set-word '- op-)
+      (stack/set-word 'inc op-plus-1)
+      (stack/set-word 'dec op-minus-1)
+      (stack/set-word '* op*)
+      (stack/set-word '/ op-div)
+      (stack/set-word 'mod op-mod)
+      (stack/set-word 'negate negate)
+      (stack/set-word 'abs abs)
+      (stack/set-word 'max op-max)
+      (stack/set-word 'min op-min)
+      (stack/set-word 'rem (wrap-function-with-arity 2 rem))
+      (stack/set-word 'quot (wrap-function-with-arity 2 quot))
 
       ;; Bitwise
-      (set-word 'bit-and (wrap-function-with-arity 2 bit-and))
-      (set-word 'bit-or (wrap-function-with-arity 2 bit-or))
-      (set-word 'bit-xor (wrap-function-with-arity 2 bit-xor))
-      (set-word 'bit-not (wrap-function-with-arity 2 bit-not))
-      (set-word 'bit-flip (wrap-function-with-arity 2 bit-flip))
-      (set-word 'bit-shift-right (wrap-function-with-arity 2 bit-shift-right))
-      (set-word 'bit-shift-left (wrap-function-with-arity 2 bit-shift-left))
-      (set-word 'bit-and-not (wrap-function-with-arity 2 bit-and-not))
-      (set-word 'bit-clear (wrap-function-with-arity 2 bit-clear))
-      (set-word 'bit-test (wrap-function-with-arity 2 bit-test))
-      (set-word 'unsigned-bit-shift-right (wrap-function-with-arity 2 unsigned-bit-shift-right))
-      (set-word 'byte (wrap-function-with-arity 1 byte))
+      (stack/set-word 'bit-and (wrap-function-with-arity 2 bit-and))
+      (stack/set-word 'bit-or (wrap-function-with-arity 2 bit-or))
+      (stack/set-word 'bit-xor (wrap-function-with-arity 2 bit-xor))
+      (stack/set-word 'bit-not (wrap-function-with-arity 2 bit-not))
+      (stack/set-word 'bit-flip (wrap-function-with-arity 2 bit-flip))
+      (stack/set-word 'bit-shift-right (wrap-function-with-arity 2 bit-shift-right))
+      (stack/set-word 'bit-shift-left (wrap-function-with-arity 2 bit-shift-left))
+      (stack/set-word 'bit-and-not (wrap-function-with-arity 2 bit-and-not))
+      (stack/set-word 'bit-clear (wrap-function-with-arity 2 bit-clear))
+      (stack/set-word 'bit-test (wrap-function-with-arity 2 bit-test))
+      (stack/set-word 'unsigned-bit-shift-right (wrap-function-with-arity 2 unsigned-bit-shift-right))
+      (stack/set-word 'byte (wrap-function-with-arity 1 byte))
 
       ;; Forth-based
-      (set-word 'dup dup)
-      (set-word '. dot)
-      (set-word 'cr carriage-return)
-      (set-word '.s dot-stack)
-      (set-word '>r push-return)
-      (set-word 'r> pop-return)
-      (set-word 'swap swap)
-      (set-word '<> swap)
-      (set-word 'rot rot)
-      (set-word 'drop op-drop)
-      (set-word 'nip nip)
-      (set-word 'tuck tuck)
-      (set-word 'over over)
-      (set-word 'roll roll)
+      (stack/set-word 'dup dup)
+      (stack/set-word '. dot)
+      (stack/set-word 'cr carriage-return)
+      (stack/set-word '.s dot-stack)
+      (stack/set-word '>r push-return)
+      (stack/set-word 'r> pop-return)
+      (stack/set-word 'swap swap)
+      (stack/set-word '<> swap)
+      (stack/set-word 'rot rot)
+      (stack/set-word 'drop op-drop)
+      (stack/set-word 'nip nip)
+      (stack/set-word 'tuck tuck)
+      (stack/set-word 'over over)
+      (stack/set-word 'roll roll)
 
       ;; Comparison Operators
-      (set-word '< op-<)
-      (set-word '<= op-<=)
-      (set-word '= op-=)
-      (set-word 'not= op-not=)
-      (set-word '> op->)
-      (set-word '>= op->=)
-      (set-word 'compare (wrap-function-with-arity 2 compare))
-      (set-word 'and (wrap-function-with-arity 2 #(and %1 %2)))
-      (set-word 'or (wrap-function-with-arity 2 #(or %1 %2)))
-      (set-word 'not (wrap-function-with-arity 1 not))
+      (stack/set-word '< op-<)
+      (stack/set-word '<= op-<=)
+      (stack/set-word '= op-=)
+      (stack/set-word 'not= op-not=)
+      (stack/set-word '> op->)
+      (stack/set-word '>= op->=)
+      (stack/set-word 'compare (wrap-function-with-arity 2 compare))
+      (stack/set-word 'and (wrap-function-with-arity 2 #(and %1 %2)))
+      (stack/set-word 'or (wrap-function-with-arity 2 #(or %1 %2)))
+      (stack/set-word 'not (wrap-function-with-arity 1 not))
 
       ;; Type Checking
-      (set-word 'map? (wrap-function-with-arity 1 map?))
-      (set-word 'vector? (wrap-function-with-arity 1 vector?))
-      (set-word 'set? (wrap-function-with-arity 1 set?))
-      (set-word 'list? (wrap-function-with-arity 1 list?))
-      (set-word 'string? (wrap-function-with-arity 1 string?))
-      (set-word 'boolean? (wrap-function-with-arity 1 boolean?))
-      (set-word 'bytes? (wrap-function-with-arity 1 bytes?))
-      (set-word 'keyword? (wrap-function-with-arity 1 keyword?))
-      (set-word 'int? (wrap-function-with-arity 1 int?))
-      (set-word 'even? (wrap-function-with-arity 1 even?))
-      (set-word 'odd? (wrap-function-with-arity 1 odd?))
-      (set-word 'nat-int? (wrap-function-with-arity 1 nat-int?))
-      (set-word 'neg-int? (wrap-function-with-arity 1 neg-int?))
-      (set-word 'pos-int? (wrap-function-with-arity 1 pos-int?))
-      (set-word 'number? (wrap-function-with-arity 1 number?))
-      (set-word 'ratio? (wrap-function-with-arity 1 ratio?))
-      (set-word 'rational? (wrap-function-with-arity 1 rational?))
-      (set-word 'integer? (wrap-function-with-arity 1 integer?))
-      (set-word 'decimal? (wrap-function-with-arity 1 decimal?))
-      (set-word 'symbol? (wrap-function-with-arity 1 symbol?))
-      (set-word 'float? (wrap-function-with-arity 1 float?))
-      (set-word 'double? (wrap-function-with-arity 1 double?))
-      (set-word 'zero? (wrap-function-with-arity 1 zero?))
-      (set-word 'nil? (wrap-function-with-arity 1 nil?))
-      (set-word 'some? (wrap-function-with-arity 1 some?))
-      (set-word 'true? (wrap-function-with-arity 1 true?))
-      (set-word 'false? (wrap-function-with-arity 1 false?))
-      (set-word 'inst? (wrap-function-with-arity 1 inst?))
-      (set-word 'uri? (wrap-function-with-arity 1 uri?))
-      (set-word 'uuid? (wrap-function-with-arity 1 uuid?))
-      (set-word 'associative? (wrap-function-with-arity 1 associative?))
-      (set-word 'coll? (wrap-function-with-arity 1 coll?))
-      (set-word 'sequential? (wrap-function-with-arity 1 sequential?))
-      (set-word 'seq? (wrap-function-with-arity 1 seq?))
-      (set-word 'indexed? (wrap-function-with-arity 1 indexed?))
-      (set-word 'seqable? (wrap-function-with-arity 1 seqable?))
-      (set-word 'any? (wrap-function-with-arity 1 any?))
+      (stack/set-word 'map? (wrap-function-with-arity 1 map?))
+      (stack/set-word 'vector? (wrap-function-with-arity 1 vector?))
+      (stack/set-word 'set? (wrap-function-with-arity 1 set?))
+      (stack/set-word 'list? (wrap-function-with-arity 1 list?))
+      (stack/set-word 'string? (wrap-function-with-arity 1 string?))
+      (stack/set-word 'boolean? (wrap-function-with-arity 1 boolean?))
+      (stack/set-word 'bytes? (wrap-function-with-arity 1 bytes?))
+      (stack/set-word 'keyword? (wrap-function-with-arity 1 keyword?))
+      (stack/set-word 'int? (wrap-function-with-arity 1 int?))
+      (stack/set-word 'even? (wrap-function-with-arity 1 even?))
+      (stack/set-word 'odd? (wrap-function-with-arity 1 odd?))
+      (stack/set-word 'nat-int? (wrap-function-with-arity 1 nat-int?))
+      (stack/set-word 'neg-int? (wrap-function-with-arity 1 neg-int?))
+      (stack/set-word 'pos-int? (wrap-function-with-arity 1 pos-int?))
+      (stack/set-word 'number? (wrap-function-with-arity 1 number?))
+      (stack/set-word 'ratio? (wrap-function-with-arity 1 ratio?))
+      (stack/set-word 'rational? (wrap-function-with-arity 1 rational?))
+      (stack/set-word 'integer? (wrap-function-with-arity 1 integer?))
+      (stack/set-word 'decimal? (wrap-function-with-arity 1 decimal?))
+      (stack/set-word 'symbol? (wrap-function-with-arity 1 symbol?))
+      (stack/set-word 'float? (wrap-function-with-arity 1 float?))
+      (stack/set-word 'double? (wrap-function-with-arity 1 double?))
+      (stack/set-word 'zero? (wrap-function-with-arity 1 zero?))
+      (stack/set-word 'nil? (wrap-function-with-arity 1 nil?))
+      (stack/set-word 'some? (wrap-function-with-arity 1 some?))
+      (stack/set-word 'true? (wrap-function-with-arity 1 true?))
+      (stack/set-word 'false? (wrap-function-with-arity 1 false?))
+      (stack/set-word 'inst? (wrap-function-with-arity 1 inst?))
+      (stack/set-word 'uri? (wrap-function-with-arity 1 uri?))
+      (stack/set-word 'uuid? (wrap-function-with-arity 1 uuid?))
+      (stack/set-word 'associative? (wrap-function-with-arity 1 associative?))
+      (stack/set-word 'coll? (wrap-function-with-arity 1 coll?))
+      (stack/set-word 'sequential? (wrap-function-with-arity 1 sequential?))
+      (stack/set-word 'seq? (wrap-function-with-arity 1 seq?))
+      (stack/set-word 'indexed? (wrap-function-with-arity 1 indexed?))
+      (stack/set-word 'seqable? (wrap-function-with-arity 1 seqable?))
+      (stack/set-word 'any? (wrap-function-with-arity 1 any?))
 
       ;; Other Stuff
-      (set-word 'deref (wrap-function-with-arity 1 deref))
-      (set-word 'print (wrap-procedure-with-arity 1 print))
-      (set-word 'println (wrap-procedure-with-arity 1 println))
-      (set-word 'pr (wrap-procedure-with-arity 1 pr))
-      (set-word 'prn (wrap-procedure-with-arity 1 prn))
-      (set-word 'newline (wrap-procedure-with-arity 1 newline))
-      (set-word 'count (wrap-function-with-arity 1 count))
-      (set-word 'subvec (wrap-function-with-arity 3 subvec))
-      (set-word 'subs (wrap-function-with-arity 3 subs))
-      (set-word 'class (wrap-function-with-arity 1 class))
-      (set-word 'str (wrap-function-with-arity 2 str))
-      (set-word 'rand (wrap-function-with-arity 1 rand))
-      (set-word 'randn (wrap-function-with-arity 2 rand))
-      (set-word 'str/index-of (wrap-function-with-arity 2 str/index-of))
-      (set-word 'str/last-index-of (wrap-function-with-arity 2 str/last-index-of))
-      (set-word 'str/split-lines (wrap-function-with-arity 1 str/split-lines))
-      (set-word 'str/join (wrap-function-with-arity 2 str/join))
-      (set-word 'str/escape (wrap-function-with-arity 2 str/escape))
-      (set-word 'str/split (wrap-function-with-arity 2 str/split))
-      (set-word 'str/replace (wrap-function-with-arity 3 str/replace))
-      (set-word 'str/replace-first (wrap-function-with-arity 3 str/replace-first))
-      (set-word 'str/capitalize (wrap-function-with-arity 1 str/capitalize))
-      (set-word 'str/lower-case (wrap-function-with-arity 1 str/lower-case))
-      (set-word 'str/upper-case (wrap-function-with-arity 1 str/upper-case))
-      (set-word 'str/trim (wrap-function-with-arity 1 str/trim))
-      (set-word 'str/trim-newline (wrap-function-with-arity 1 str/trim-newline))
-      (set-word 'str/triml (wrap-function-with-arity 1 str/triml))
-      (set-word 'str/trimr (wrap-function-with-arity 1 str/trimr))
-      (set-word 'str/blank? (wrap-function-with-arity 1 str/blank?))
-      (set-word 'str/starts-with? (wrap-function-with-arity 2 str/starts-with?))
-      (set-word 'str/ends-with? (wrap-function-with-arity 2 str/ends-with?))
-      (set-word 'str/includes? (wrap-function-with-arity 2 str/includes?))
+      (stack/set-word 'deref (wrap-function-with-arity 1 deref))
+      (stack/set-word 'print (wrap-procedure-with-arity 1 print))
+      (stack/set-word 'println (wrap-procedure-with-arity 1 println))
+      (stack/set-word 'pr (wrap-procedure-with-arity 1 pr))
+      (stack/set-word 'prn (wrap-procedure-with-arity 1 prn))
+      (stack/set-word 'newline (wrap-procedure-with-arity 1 newline))
+      (stack/set-word 'count (wrap-function-with-arity 1 count))
+      (stack/set-word 'subvec (wrap-function-with-arity 3 subvec))
+      (stack/set-word 'subs (wrap-function-with-arity 3 subs))
+      (stack/set-word 'class (wrap-function-with-arity 1 class))
+      (stack/set-word 'str (wrap-function-with-arity 2 str))
+      (stack/set-word 'rand (wrap-function-with-arity 1 rand))
+      (stack/set-word 'randn (wrap-function-with-arity 2 rand))
+      (stack/set-word 'str/index-of (wrap-function-with-arity 2 str/index-of))
+      (stack/set-word 'str/last-index-of (wrap-function-with-arity 2 str/last-index-of))
+      (stack/set-word 'str/split-lines (wrap-function-with-arity 1 str/split-lines))
+      (stack/set-word 'str/join (wrap-function-with-arity 2 str/join))
+      (stack/set-word 'str/escape (wrap-function-with-arity 2 str/escape))
+      (stack/set-word 'str/split (wrap-function-with-arity 2 str/split))
+      (stack/set-word 'str/replace (wrap-function-with-arity 3 str/replace))
+      (stack/set-word 'str/replace-first (wrap-function-with-arity 3 str/replace-first))
+      (stack/set-word 'str/capitalize (wrap-function-with-arity 1 str/capitalize))
+      (stack/set-word 'str/lower-case (wrap-function-with-arity 1 str/lower-case))
+      (stack/set-word 'str/upper-case (wrap-function-with-arity 1 str/upper-case))
+      (stack/set-word 'str/trim (wrap-function-with-arity 1 str/trim))
+      (stack/set-word 'str/trim-newline (wrap-function-with-arity 1 str/trim-newline))
+      (stack/set-word 'str/triml (wrap-function-with-arity 1 str/triml))
+      (stack/set-word 'str/trimr (wrap-function-with-arity 1 str/trimr))
+      (stack/set-word 'str/blank? (wrap-function-with-arity 1 str/blank?))
+      (stack/set-word 'str/starts-with? (wrap-function-with-arity 2 str/starts-with?))
+      (stack/set-word 'str/ends-with? (wrap-function-with-arity 2 str/ends-with?))
+      (stack/set-word 'str/includes? (wrap-function-with-arity 2 str/includes?))
 
       ;; Regex
-      (set-word 're-find (wrap-function-with-arity 2 re-find))
-      (set-word 're-find-match (wrap-function-with-arity 1 re-find))
-      (set-word 're-seq (wrap-function-with-arity 2 re-seq))
-      (set-word 're-matches (wrap-function-with-arity 2 re-matches))
-      (set-word 're-pattern (wrap-function-with-arity 1 re-pattern))
-      (set-word 're-matcher (wrap-function-with-arity 2 re-matcher))
-      (set-word 're-groups (wrap-function-with-arity 1 re-groups))))
+      (stack/set-word 're-find (wrap-function-with-arity 2 re-find))
+      (stack/set-word 're-find-match (wrap-function-with-arity 1 re-find))
+      (stack/set-word 're-seq (wrap-function-with-arity 2 re-seq))
+      (stack/set-word 're-matches (wrap-function-with-arity 2 re-matches))
+      (stack/set-word 're-pattern (wrap-function-with-arity 1 re-pattern))
+      (stack/set-word 're-matcher (wrap-function-with-arity 2 re-matcher))
+      (stack/set-word 're-groups (wrap-function-with-arity 1 re-groups))))

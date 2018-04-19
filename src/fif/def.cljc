@@ -1,8 +1,7 @@
 (ns fif.def
-  (:refer-clojure :exclude [eval])
   (:require
    [clojure.string :as str]
-   [fif.stack-machine :refer :all]
+   [fif.stack-machine :as stack :refer :all]
    [fif.stack-machine.evaluators :as evaluators]
    [fif.stack-machine.error-handling :as error-handling]
    [fif.stack-machine.verification :as verification]))
@@ -14,27 +13,6 @@
     (-> sm 
         (evaluators/eval-fn args)
         (set-step-num 0))))
-
-
-(defmacro defcode-eval
-  "Allows you to define functions that contain fif code, which can then
-  be passed through a fif stack machine to be evaluated.
-
-  Example:
-
-  (defcode-eval import-add2-library
-    fn add2
-      + 2
-    endfn)
-
-  (def custom-stack-machine
-    (-> fif.core/*default-stack*
-        import-add2-library))
-
-  (fif.core/with-stack custom-stack-machine
-    (fif.core/reval 2 add2)) ;; => '(4)"
-  [name & body]
-  `(def ~name (wrap-code-eval (quote ~body))))
 
 
 (defn- handle-arity-error
@@ -129,9 +107,32 @@
             (set-stack (into '() new-stack))
             dequeue-code)))))
 
+
+(defmacro defcode-eval
+  "Allows you to define functions that contain fif code, which can then
+  be passed through a fif stack machine to be evaluated.
+
+  Example:
+
+  (defcode-eval import-add2-library
+    fn add2
+      + 2
+    endfn)
+
+  (def custom-stack-machine
+    (-> fif.core/*default-stack*
+        import-add2-library))
+
+  (fif.core/with-stack custom-stack-machine
+    (fif.core/reval 2 add2)) ;; => '(4)"
+  [name & body]
+  `(def ~name (wrap-code-eval (quote ~body))))
+
+
 ;;
 ;; Define Stack Functions
 ;;
+
 
 (defmacro defstack-func-0 [name f]
   `(def ~name (wrap-function-with-arity 0 ~f)))
@@ -168,6 +169,3 @@
 
 (defmacro defstack-proc-3 [name f]
   `(def ~name (wrap-procedure-with-arity 3 ~f)))
-
-
-
