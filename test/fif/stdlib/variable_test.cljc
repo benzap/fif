@@ -1,7 +1,7 @@
 (ns fif.stdlib.variable-test
   (:require
-   [clojure.test :refer :all]
-   [fif.stdlib.variable :refer :all]
+   [clojure.test :refer [deftest testing is are]]
+   [fif.stdlib.variable]
    [fif-test.utils :refer [teval are-eq*]]))
 
 
