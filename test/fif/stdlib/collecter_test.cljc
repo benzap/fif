@@ -1,7 +1,7 @@
 (ns fif.stdlib.collecter-test
   (:require 
-   [clojure.test :refer :all]
-   [fif.stdlib.collecter :refer :all]
+   [clojure.test :refer [deftest testing is are]]
+   [fif.stdlib.collecter]
    [fif-test.utils :refer [are-eq* teval]]))
             
 
