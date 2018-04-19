@@ -1,7 +1,10 @@
 (ns fif.stack-machine.words-test
   (:require
-   [clojure.test :refer :all]
-   [fif.stack-machine.words :refer :all]
+   [clojure.test :refer [deftest testing is are]]
+   [fif.stack-machine.words :refer [set-word get-word
+                                    set-global-word
+                                    get-global-word
+                                    not-found]]
    [fif.stack-machine.scope :as stack-machine.scope]
    [fif.impl.stack-machine :refer [new-stack-machine]]
    [fif-test.utils :refer [are-eq* teval]]))
