@@ -50,3 +50,60 @@
     (are-eq*
       (teval map! [:a 123] [:b 345] !) => '({:a 123 :b 345})
       (teval map! :a 123 pair :b 345 pair !) => '({:a 123 :b 345}))))
+
+
+(deftest test-collecter-into-set
+  (testing "<-into! operator with sets"
+    (are-eq*
+     (teval #{} <-into! :dog :cat :mouse !)
+     
+     => '(#{:dog :cat :mouse})
+
+
+     (teval #{} <-into! [:dog :cat :mouse] apply !)
+     
+     => '(#{:dog :cat :mouse})))
+
+  (testing "set! operator"
+    (are-eq*
+      (teval set! :dog :cat :mouse !)
+
+      => '(#{:dog :cat :mouse})
+
+
+      (teval set! (:dog :cat :mouse) apply !)
+      
+      => '(#{:dog :cat :mouse}))))
+
+
+(deftest test-collecter-into-*
+  (testing "collector operators with nesting"
+    (are-eq*
+     (teval
+      fn gen-animals
+        set! :cat :dog i 1 = if :mouse then !
+      endfn
+
+      vec! 2 1 do
+        map!
+          :id i pair
+          :options
+          map!
+            [:animals gen-animals] ?
+          ! pair
+        !
+      loop !)
+
+     => '([{:id 1 :options {:animals #{:cat :dog :mouse}}}
+           {:id 2 :options {:animals #{:cat :dog}}}])
+
+     (teval
+      fn gen-animals
+        set! :cat :dog i 1 = if :mouse then !
+      endfn
+
+      2 1 do
+      gen-animals
+      loop)
+
+     => '(#{:cat :dog :mouse} #{:cat :dog}))))

@@ -89,7 +89,8 @@
 
 (defn reval-string
   "Evaluates the given string as a stream of EDN values within the fif
-  stackmachine, and returns the stack in a more pleasing orientation."
+  stackmachine, and returns the main stack in a more pleasing
+  orientation."
   [s]
   (-> *default-stack* (stack.evaluators/eval-string s) stack/get-stack reverse))
 
@@ -102,23 +103,7 @@
          (stack/set-step-max step-max#)
          (stack.evaluators/eval-fn (quote ~body)))))
 
-#_(reval
-   vec! 4 1 do
-     map!
-       :id i pair
-       :options 
-       map!
-         :animals set! :cat :dog :mouse ! pair
-       ! pair
-     !
-   loop !)
 
-#_(reval
-   [4 1 do
-    {:id i :options {:animals #{:cat :dog :mouse}}} ?
-    loop] ?)
-
-#_(reval (1 2 3) apply) ;; (1 2 3)
 
 #_(reval $ conj (1 2 3) 4 _) ;; ((4 1 2 3))
 
@@ -133,13 +118,6 @@
 #_(reval $>> pair :id 1 2 3) ;; ([:id 1] 2 3)
 
 #_(reval $>>> + 1 2 3 4) ;; (1 5 4)
-
-#_(reval (1 1 +) apply) ;; (2)
-
-#_(reval *x) ;; (x)
-
-#_(reval **x) ;; (*x)
-#_(reval ****x) ;; (***x)
 
 #_(reval & * * + _) ;; (*+)
 
@@ -157,37 +135,22 @@
 
 #_(reval def! x 10 *x 20 set! x) ;; (20)
 
-#_(reval *inc [1 2 3 4] map) ;; ((2 3 4 5))
-
 #_(reval (1 +) [1 2 3 4] map) ;; ((2 3 4 5))
 
 #_(reval *even? [1 2 3 4] filter) ;; ((2 4))
 
 #_(reval (2 mod if true else false then) [1 2 3 4] filter) ;; ((2 4))
 
-#_(reval *+ [1 2 3 4] 0 reduce) ;; (10)
-
 #_(reval $>> map *inc [1 2 3 4])
 
 #_(reval $>> map (1 +) [1 2 3 4]) ;; ([2 3 4 5])
-
-#_(reval 2 $-< 3 1 4) ;; '(1 2 3 4)
-#_(reval 2 $< 1 3 4) ;; '(1 2 3 4)
-#_(reval 3 $-<< 1 2 4 5) ;; '(1 2 3 4 5)
-
-#_(reval
-   *even? *inc [0 4 do i loop] ? map filter) ;; ([2 4])
 
 #_(reval
    [4 0 do i loop] ?
    $-< map *inc
    $-< filter *even?) ;; ([2 4])
 
-#_(reval [4 0 do i loop] ?) ;; => '([0 1 2 3 4])
-
-#_(reval [2 0 do [i 0] ? loop] ?) ;; => '([[0 0] [0 1] [0 2]])
-
-#_(reval 2 0 do {:id i} ? loop) ;; => '({:id 0} {:id 1} {:id 2})
+#_(reval 2 0 do {:id i} ?m loop) ;; => '({:id 0} {:id 1} {:id 2})
 
 #_(reval
    $>> range 0 5
@@ -195,77 +158,9 @@
    $-< filter *even?
    apply) ;; (2 4)
 
-#_(reval
-   0 5 range *inc swap map *even? swap filter apply) ;; (2 4)
 
-#_(reval
-   0 5 range
-       *inc <> map
-       *even? <> filter
-       apply) ;; (2 4)
+#_(reval (%:name %:age) {:name "Ben" :age 29} format) ;; (("Ben" 29))
+#_(reval (%0 %1) ["Ben" 29] format) ;; (("Ben" 29))
+#_(reval (% %) ["Ben" 29]) ;; ((["Ben" 29] ["Ben" 29]))
 
 
-#_(reval 0 5 range .s
-         *inc <> map .s
-         *even? <> filter .s
-         *+ <> reduce .s)
-
-
-#_(reval [[:a] [:test]] flatten vec [] <> conj {} <> into)
-
-
-#_(->> (range 0 5)
-       (map inc)
-       (filter even?))
-
-#_(reval println 1 2)
-
-
-#_(reval 1 {} conj)
-
-
-#_(-> (dbg-eval {:step-max 50})
-      fn conj2 conj endfn
-
-      *conj2 [[] 1 2 3] reduce
-      (get-stack))
-
-
-#_(-> (dbg-eval {:step-max 50})
-      *inc [1 2 3] map vec
-      (get-stack))
-
-
-#_(-> (dbg-eval {:step-max 50}
-                *int? [1 2 3.4] filter)
-                get-stack)
-
-
-#_(-> (dbg-eval {:step-max 50}
-                (1 2 3 4 +) ? apply)
-                get-stack
-                reverse)
-
-
-#_(-> (dbg-eval {:step-max 300}
-
-                (5 0 do i loop) ?
-
-                [5 0 do i loop] ?
-
-                {:a test :c later} ?
-
-                list! 5 0 do i loop :eggs !)
-
-                get-stack
-                reverse)
-
-#_(-> (dbg-eval {:step-max 300}
-
-                set! (1 2 3 4) apply !
-                (1 2 3 4) set
-
-                )
-
-                get-stack
-                reverse)
