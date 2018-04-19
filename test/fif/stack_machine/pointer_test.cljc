@@ -1,8 +1,9 @@
 (ns fif.stack-machine.pointer-test
   (:require
-   [clojure.test :refer :all]
+   [clojure.test :refer [deftest testing is are]]
    [fif.stack-machine :as stack]
-   [fif.stack-machine.pointer :refer :all]
+   [fif.stack-machine.pointer :refer [arg-is-pointer?
+                                      trim-pointer-once]]
    [fif-test.utils :refer [are-eq* teval]]))
 
 
