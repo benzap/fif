@@ -1,5 +1,4 @@
-(ns fif.stack-machine
-  (:refer-clojure :exclude [eval]))
+(ns fif.stack-machine)
 
 
 (defprotocol IStackMachine

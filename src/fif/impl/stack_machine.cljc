@@ -1,14 +1,15 @@
 (ns fif.impl.stack-machine
   "Main implementation of IStackMachine"
-  (:require [fif.stack-machine :refer :all]
-            [fif.stack-machine.flags :as stack.flags]
-            [fif.stack-machine.stash :as stack.stash]
-            [fif.stack-machine.words :as stack.words]
-            [fif.stack-machine.processor :as stack.processor]
-            [fif.stack-machine.error-handling :as error-handling]
-            [fif.stack-machine.scope :as stack.scope]
-            [fif.utils.scope :as utils.scope]
-            [fif.utils.stash :as utils.stash]))
+  (:require
+   [fif.stack-machine :as stack]
+   [fif.stack-machine.flags :as stack.flags]
+   [fif.stack-machine.stash :as stack.stash]
+   [fif.stack-machine.words :as stack.words]
+   [fif.stack-machine.processor :as stack.processor]
+   [fif.stack-machine.error-handling :as error-handling]
+   [fif.stack-machine.scope :as stack.scope]
+   [fif.utils.scope :as utils.scope]
+   [fif.utils.stash :as utils.stash]))
 
 
 (defrecord StackMachine
@@ -188,26 +189,26 @@
     (assoc this :halt? true))
 
   (step [this]
-    (let [arg (-> this get-code first)]
+    (let [arg (-> this stack/get-code first)]
       (if (stack.flags/has-flags? this)
         (try
-          (-> this stack.processor/process-mode inc-step)
+          (-> this stack.processor/process-mode stack/inc-step)
           (catch Exception ex
             (error-handling/handle-system-error this ex)))
         (try
-          (-> this stack.processor/process-arg inc-step)
+          (-> this stack.processor/process-arg stack/inc-step)
           (catch Exception ex
             (error-handling/handle-system-error this ex))))))
 
   (run [this]
     (loop [sm this]
-      (let [step-num (get-step-num sm)
-            step-max (get-step-max sm)]
-        (if (or (empty? (-> sm get-code))
+      (let [step-num (stack/get-step-num sm)
+            step-max (stack/get-step-max sm)]
+        (if (or (empty? (-> sm stack/get-code))
                 (and (> step-max 0) (>= step-num step-max))
                 (:halt? sm))
           sm
-          (recur (step sm)))))))
+          (recur (stack/step sm)))))))
 
 
 (defn new-stack-machine []
