@@ -1,7 +1,7 @@
 (ns fif.stdlib.collecter
   "Mode for collecting values, and placing within a data structure"
   (:require
-   [fif.def :refer [defcode-eval]]
+   [fif.def :refer [defcode-eval] :include-macros true]
    [fif.stack-machine :as stack]
    [fif.stack-machine.processor :as stack.processor]
    [fif.utils.token :as token]
@@ -52,5 +52,5 @@
   (-> sm
       (stack/set-mode collecter-mode-flag collecter-mode)
       (stack/set-word arg-start-collecter start-collecter)
-      import-stdlib-macro-mode ;; Macro Dependency
+      import-stdlib-macro-mode ;; fif Macro Dependency
       import-collection-collecter-defaults))
