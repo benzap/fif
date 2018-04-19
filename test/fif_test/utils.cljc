@@ -1,8 +1,8 @@
 (ns fif-test.utils
   (:require 
-   [clojure.test :refer :all]
-   [fif.core :as fif :refer [reval]]
-   [fif.stack-machine :as stack]))
+   [clojure.test :refer [deftest testing is are]]
+   [fif.stack-machine :as stack]
+   [fif.core :as fif]))
 
 
 (def ^:dynamic *test-step-max* 10000)
