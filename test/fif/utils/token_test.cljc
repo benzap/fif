@@ -1,7 +1,15 @@
 (ns fif.utils.token-test
   (:require
-   [clojure.test :refer :all]
-   [fif.utils.token :refer :all]))
+   [clojure.test :refer [deftest testing is are]]
+   [fif.utils.token :refer [take-to-token
+                            strip-token
+                            rest-at-token
+                            between-tokens
+                            split-at-token
+                            replace-token
+                            push-coll
+                            symbol-starts-with?
+                            symbol-ltrim-once]]))
     
 
 (deftest test-take-to-token
