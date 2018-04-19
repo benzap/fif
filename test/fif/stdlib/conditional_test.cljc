@@ -1,9 +1,6 @@
 (ns fif.stdlib.conditional-test
-  (:refer-clojure :exclude [eval])
   (:require
-   [clojure.test :refer :all]
-   [fif.stdlib.conditional :refer :all]
-   [fif.core :refer [reval]]
+   [clojure.test :refer [deftest testing is are]]
    [fif-test.utils :refer [teval are-eq*]]))
 
 
