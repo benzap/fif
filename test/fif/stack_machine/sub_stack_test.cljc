@@ -1,7 +1,12 @@
 (ns fif.stack-machine.sub-stack-test
   (:require
-   [clojure.test :refer :all]
-   [fif.stack-machine.sub-stack :refer :all]))
+   [clojure.test :refer [deftest testing is are]]
+   [fif.stack-machine.sub-stack :refer [create-sub-stack
+                                        push-sub-stack
+                                        pop-sub-stack
+                                        get-sub-stack
+                                        set-sub-stack
+                                        remove-sub-stack]]))
 
 
 (deftest test-create-sub-stack
