@@ -1,7 +1,7 @@
 (ns fif.stdlib.cond-loop-test
   (:require
-   [clojure.test :refer :all]
-   [fif.stdlib.cond-loop-test :refer :all]
+   [clojure.test :refer [deftest testing is are]]
+   [fif.stdlib.cond-loop-test]
    [fif-test.utils :refer [teval are-eq*]]))
 
 
