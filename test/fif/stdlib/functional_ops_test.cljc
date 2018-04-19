@@ -1,7 +1,7 @@
 (ns fif.stdlib.functional-ops-test
   (:require
-   [clojure.test :refer :all]
-   [fif.stdlib.functional-ops :refer :all]
+   [clojure.test :refer [deftest testing is are]]
+   [fif.stdlib.functional-ops]
    [fif-test.utils :refer [teval are-eq*]]))
 
 

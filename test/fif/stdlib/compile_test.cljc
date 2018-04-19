@@ -1,8 +1,7 @@
 (ns fif.stdlib.compile-test
-  (:refer-clojure :exclude [eval])
   (:require
-   [clojure.test :refer :all]
-   [fif.stdlib.compile :refer :all]
+   [clojure.test :refer [deftest testing is are]]
+   [fif.stdlib.compile]
    [fif-test.utils :refer [teval are-eq*]]))
 
 
