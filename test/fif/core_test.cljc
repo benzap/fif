@@ -1,12 +1,14 @@
 (ns fif.core-test
   (:refer-clojure :exclude [eval])
-  (:require [clojure.test :refer [deftest testing is are]]
+  (:require [clojure.test :refer [deftest testing is are]
+             :include-macros true]
             [fif.core :refer [eval-fn
                               eval
                               reval
                               eval-string
                               with-stack
-                              get-stack]]
+                              get-stack]
+             :include-macros true]
             [fif.impl.stack-machine :refer [new-stack-machine]]))
 
 

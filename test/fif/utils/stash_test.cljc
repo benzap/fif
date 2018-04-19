@@ -1,6 +1,6 @@
 (ns fif.utils.stash-test
   (:require
-   [clojure.test :refer [deftest testing is are] :include-macros true]
+   [clojure.test :refer [deftest testing is are]]
    [fif.utils.stash :refer [create-stash
                             new-stash
                             update-stash

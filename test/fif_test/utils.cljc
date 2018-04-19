@@ -1,6 +1,6 @@
 (ns fif-test.utils
   (:require 
-   [clojure.test :refer [deftest testing is are] :include-macros true]
+   [clojure.test :refer [deftest testing is are]]
    [fif.stack-machine :as stack]
    [fif.core :as fif :include-macros true]))
 
