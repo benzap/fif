@@ -95,14 +95,16 @@
   (-> *default-stack* (stack.evaluators/eval-string s) stack/get-stack reverse))
 
 
-(defn eval-file [fpath]
-  (let [fcontent (slurp fpath)]
-    (-> *default-stack* (stack.evaluators/eval-string fcontent))))
+#?(:clj 
+   (defn eval-file [fpath]
+     (let [fcontent (slurp fpath)]
+       (-> *default-stack* (stack.evaluators/eval-string fcontent)))))
 
 
-(defn reval-file [fpath]
-  (let [fcontent (slurp fpath)]
-    (-> *default-stack* (stack.evaluators/eval-string fcontent) stack/get-stack reverse)))
+#?(:clj
+   (defn reval-file [fpath]
+     (let [fcontent (slurp fpath)]
+       (-> *default-stack* (stack.evaluators/eval-string fcontent) stack/get-stack reverse))))
 
 
 #_(reval-file "examples/fif/templating.fif")
