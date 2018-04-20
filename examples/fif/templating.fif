@@ -1,0 +1,50 @@
+;; Example showing how to generate a data structure to a particular liking
+;; In this example, i'm trying to retrieve information on a particular user.
+
+;; Passed in arguments, which are global variables. These would be set programmatically
+def USERNAME "dev"
+
+
+;; Simulate a call to get user data
+let mock-user-data [{:username "dev" :email "unknown"}
+    		    {:username "scott" :email "scott@scott.com"}
+		    {:username "mary" :email "mary@mary.com"}]
+
+let mock-comment-data [{:text "Hello there!" :username "dev"}
+    		       {:text "Hey" :username "scott"}
+    		       {:text "What's new with you?" :username "dev"}
+    		       {:text "Oh you know." :username "scott"}]
+
+
+fn current-user?
+   ;; ( user-data-collection -- boolean )
+   :username get USERNAME =
+endfn
+
+
+fn get-current-user
+   ;; ( -- user-data )
+   mock-user-data
+     *current-user? <> filter
+
+   ;; Check if the username is unique based on what was filtered
+   dup count 1 not= if
+     ;; Raise Error, username isn't unique
+   else
+     first
+   then
+endfn
+
+
+fn get-user-comment-data
+   mock-comment-data
+     *current-user? <> filter
+     (:username dissoc) <> map
+     vec
+endfn
+
+
+;; Construct our output query
+
+get-current-user
+  :comments get-user-comment-data assoc
