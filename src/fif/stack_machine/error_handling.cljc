@@ -41,7 +41,7 @@
                      :stack (-> sm stack/get-stack reverse)
                      :word (-> sm stack/get-code first)
                      :ex-data (ex-data ex)
-                     :ex-message (.getMessage ex)}]
+                     :ex-message #?(:clj (.getMessage ex) :cljs nil)}]
      (new-error-object msg (merge stack-info extra))))
   ([sm ex msg] (system-error sm ex msg {})))
   
