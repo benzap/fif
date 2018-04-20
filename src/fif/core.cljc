@@ -177,3 +177,16 @@
 #_(reval (% %) ["Ben" 29]) ;; ((["Ben" 29] ["Ben" 29]))
 
 
+#_(reval fn add2
+           ;; ( x y -- r )
+           *y <> setl
+           *x <> setl
+
+           x y +
+         endfn
+         1 2 add2)
+
+
+#_(reval fn add2 (x y) ?args
+           x y +
+         endfn)

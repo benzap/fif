@@ -16,14 +16,20 @@ let mock-comment-data [{:text "Hello there!" :username "dev"}
     		       {:text "Oh you know." :username "scott"}]
 
 
+fn is-user?
+   ;; ( user-data-coll username -- boolean )
+   <> :username get =
+endfn
+
+
 fn current-user?
-   ;; ( user-data-collection -- boolean )
-   :username get USERNAME =
+   ;; ( user-data-coll -- boolean )
+   USERNAME is-user?
 endfn
 
 
 fn get-current-user
-   ;; ( -- user-data )
+   ;; ( -- user-data ) ;; Retrieves the current user, and all of his comments
    mock-user-data
      *current-user? <> filter
 
@@ -37,14 +43,23 @@ endfn
 
 
 fn get-user-comment-data
+   ;; ( username -- user-comment-data )
+   *username <> setl
+
    mock-comment-data
-     *current-user? <> filter
+     (username is-user?) <> filter
      (:username dissoc) <> map
      vec
 endfn
 
 
+fn get-current-user-comments
+   USERNAME get-user-comment-data
+endfn
+
+
+
 ;; Construct our output query
 
 get-current-user
-  :comments get-user-comment-data assoc
+  :comments get-current-user-comments assoc
