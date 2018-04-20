@@ -22,6 +22,15 @@
 (def functional-mode-flag :functional-mode)
 
 
+(defn prepare-rfunction
+  "Determines whether the function provided to the map-reduce-filter
+  operations is just a sequence. The `rfunction` is converted such
+  that a sequence can be used in place of a function within
+  map-reduce-filter."
+  [rfunction]
+  (if (seq? rfunction) rfunction [rfunction]))
+
+
 (defn enter-functional-mode [sm state]
   (mode/enter-mode sm functional-mode-flag state))
 
@@ -74,7 +83,7 @@
           (stack-machine/push-stack (first collection))
           (stack-machine.stash/update-stash assoc ::collection (rest collection))
           (mode/update-state assoc :op-state ::iterate)
-          (stack-machine/update-code #(concat %2 %1) [rfunction])))))
+          (stack-machine/update-code #(concat %2 %1) (prepare-rfunction rfunction))))))
 
 
 (defmethod functional-mode
@@ -142,7 +151,7 @@
           (stack-machine/push-stack (first collection))
           (stack-machine.stash/update-stash assoc ::collection (rest collection))
           (mode/update-state assoc :op-state ::iterate)
-          (stack-machine/update-code #(concat %2 %1) [rfunction])))))
+          (stack-machine/update-code #(concat %2 %1) (prepare-rfunction rfunction))))))
 
 
 (defmethod functional-mode
@@ -214,7 +223,7 @@
           (stack-machine.stash/update-stash assoc ::collection (rest collection)
                                                   ::current-value (first collection))
           (mode/update-state assoc :op-state ::iterate)
-          (stack-machine/update-code #(concat %2 %1) [rfunction])))))
+          (stack-machine/update-code #(concat %2 %1) (prepare-rfunction rfunction))))))
 
 
 (defmethod functional-mode

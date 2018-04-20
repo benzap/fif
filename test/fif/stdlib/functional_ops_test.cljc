@@ -9,12 +9,22 @@
   (are-eq*
     (teval *+ [1 2 3 4] reduce)
 
+    => '(10)
+
+    (teval (+) [1 2 3 4] reduce)
+
     => '(10))
 
   (are-eq*
     (teval
      fn conj2 conj endfn
      *conj2 [[1] 2 3 4] reduce)
+
+    => '([1 2 3 4])
+
+    (teval
+     fn conj2 conj endfn
+     (conj2) [[1] 2 3 4] reduce)
 
     => '([1 2 3 4])))
 
@@ -32,8 +42,24 @@
     => '((3 4 5 6))
 
     (teval
+     (2 +) [1 2 3 4] map)
+
+    => '((3 4 5 6))
+
+    (teval
+     let *add2 (2 +)
+     *add2 [1 2 3 4] map)
+
+    => '((3 4 5 6))
+
+    (teval
+     (drop :test) [1 2 3 4] map)
+
+    => '((:test :test :test :test))
+
+    (teval
      fn test drop :test endfn
-     *test [1 2 3 4] map)
+     (test) [1 2 3 4] map)
 
     => '((:test :test :test :test))))
 
@@ -45,6 +71,10 @@
     => '((2 4))
 
     (teval *int? [1 2 3.14 4] filter)
+
+    => '((1 2 4))
+
+    (teval (int?) [1 2 3.14 4] filter)
 
     => '((1 2 4))))
 
