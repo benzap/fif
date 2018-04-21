@@ -20,7 +20,7 @@
 
 (defn wrap-eval-string
   [s]
-  (str "[" s "]"))
+  (str "\n[\n" s "\n]\n"))
 
 
 (defn eval-string

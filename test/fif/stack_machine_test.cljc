@@ -116,7 +116,7 @@
 
 
 (deftest test-wrap-eval-string
-  (is (= "[test]" (evaluators/wrap-eval-string "test"))))
+  (is (= "\n[\ntest\n]\n" (evaluators/wrap-eval-string "test"))))
 
 
 (deftest test-eval-string
