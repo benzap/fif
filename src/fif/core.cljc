@@ -6,8 +6,7 @@
    [fif.stack-machine.stash :as stack-machine.stash]
    [fif.stack-machine.error-handling :refer [default-system-error-handler]]
    [fif.stdlib :refer [import-stdlib]]
-   [fif.impl.stack-machine :refer [new-stack-machine]]
-   :reload-all))
+   [fif.impl.stack-machine :refer [new-stack-machine]]))
 
 
 (def get-code stack/get-code)
