@@ -483,9 +483,9 @@ core libraries for familiarity.
     macro ?do
       over over >
       if
-        _$ inc do $_
+        _! inc do !_
       else
-        _$ do leave $_
+        _! do leave !_
       then
     endmacro
 
