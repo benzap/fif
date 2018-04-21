@@ -5,13 +5,13 @@
 #+LANGUAGE: en
 #+OPTIONS: H:2 num:t toc:t \n:nil ::t |:t ^:t f:t tex:t
 
+[[http://benzaporzan.me/fif-playground/][Try it Online!]]
+
 [[./doc/logo.svg]]
 
 *fif* is a Stack-based Programming Language in Clojure(script). It is an
 interpreted, extensible, sandboxed, and simple scripting language
 based off of Forth.
-
-You can try out fif online in the [[http://benzaporzan.me/fif-playground/][Fif Playground]]
 
 I would like to note that one major tradeoff in the language syntax is
 very limited parenthesis after invocation and the language creation is
