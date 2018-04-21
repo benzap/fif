@@ -58,8 +58,7 @@
   machine."
   [sm errobj]
   (-> sm
-      (stack/push-stack errobj)
-      stack/halt))
+      (stack/push-stack errobj)))
 
 
 (defn default-system-error-handler

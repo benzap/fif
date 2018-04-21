@@ -7,13 +7,13 @@ def USERNAME "dev"
 
 ;; Simulate a call to get user data
 let mock-user-data [{:username "dev" :email "unknown"}
-    		    {:username "scott" :email "scott@scott.com"}
-		    {:username "mary" :email "mary@mary.com"}]
+                    {:username "scott" :email "scott@scott.com"}
+                    {:username "mary" :email "mary@mary.com"}]
 
 let mock-comment-data [{:text "Hello there!" :username "dev"}
-    		       {:text "Hey" :username "scott"}
-    		       {:text "What's new with you?" :username "dev"}
-    		       {:text "Oh you know." :username "scott"}]
+                       {:text "Hey" :username "scott"}
+                       {:text "What's new with you?" :username "dev"}
+                       {:text "Oh you know." :username "scott"}]
 
 
 fn is-user?
@@ -29,13 +29,13 @@ endfn
 
 
 fn get-current-user
-   ;; ( -- user-data ) ;; Retrieves the current user, and all of his comments
+   ;; ( -- user-data ) Retrieves the current user, and all of his comments
    mock-user-data
      *current-user? <> filter
 
    ;; Check if the username is unique based on what was filtered
    dup count 1 not= if
-     ;; Raise Error, username isn't unique
+     "Warning: User is not unique" . ;; Raise Error
    else
      first
    then
@@ -63,3 +63,5 @@ endfn
 
 get-current-user
   :comments get-current-user-comments assoc
+
+prn
