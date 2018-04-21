@@ -1,7 +1,7 @@
 (ns example.rate-limited-fif
   "An example of limited step execution"
   (:require
-   [fif.stack :as stack]
+   [fif.stack-machine :as stack]
    [fif.core :as fif]))
 
 

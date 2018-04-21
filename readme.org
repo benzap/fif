@@ -7,43 +7,76 @@
 
 [[http://benzaporzan.me/fif-playground/][Try it Online!]]
 
+
 [[./doc/logo.svg]]
 
-*fif* is a Stack-based Programming Language in Clojure(script). It is an
-interpreted, extensible, sandboxed, and simple scripting language
-based off of Forth.
 
-I would like to note that one major tradeoff in the language syntax is
-very limited parenthesis after invocation and the language creation is
-motivated by Rich Hickey rolling in his hammock.
+*fif* is a Stack-based Programming Language in Clojure(script). It is
+interpreted, extensible, and simple. It was developed to be its own
+sandboxed scripting language to perform operations on clojure(script)
+applications. *fif* is based off of Forth, but has adopted clojures
+core libraries for familiarity.
+
+
+*fif is currently in alpha*. *Some language features are likely to change*.
 
 
 #+BEGIN_SRC clojure
-(require '[fif.core :as fif])
+  (require '[fif.core :as fif])
 
-(fif/reval "Hello World!" . cr) ;; => '()
-;; <stdout>: Hello World!
+  (fif/reval "Hello World!" . cr) ;; => '()
+  ;; <stdout>: Hello World!
 
-(fif/reval 1 1 +) ;; => '(2)
+  (fif/reval 1 1 +) ;; => '(2)
 
-(fif/reval
- fn yeaa!
-   #_"( n -- ) Prints yeeee{n}hhh!"
-   "yeeee" .
-   0 do "a" . loop
-   "hhh!" . cr
- endfn
+  (fif/reval
+   fn yeaa!
+     #_"( n -- ) Prints yeeee{n}hhh!"
+     "yeeee" .
+     0 do "a" . loop
+     "hhh!" . cr
+   endfn
 
- 5 yeaa!) ;; => '()
-;; <stdout>: yeeeeaaaaaahhh!
+   5 yeaa!) ;; => '()
+  ;; <stdout>: yeeeeaaaaaahhh!
 
-(fif/reval
+  (fif/reval
 
- fn factorial
-   dup 1 > if dup dec factorial * then
- endfn
-   
- 5 factorial) ;; => '(120)
+   fn factorial
+     dup 1 > if dup dec factorial * then
+   endfn
+     
+   5 factorial) ;; => '(120)
+
+  ;;
+  ;; Most of the clojure functions are available, with more being ported
+  ;; and tested.
+  ;;
+
+  (fif/reval (1 2 3 4) rest) ;; => '((2 3 4))
+
+  (fif/reval (1 2 3 4) first) ;; => '((2 3 4))
+
+  (fif/reval (1 2 3 4) 5 conj) ;; => '((5 1 2 3 4))
+
+  (fif/reval [1 2 3 4] 5 conj) ;; => '([1 2 3 4 5])
+
+  ;;
+  ;; More Advanced Features
+  ;;
+
+  ;; Functional Programming
+
+  (fif/reval *+ [1 2 3 4] reduce) ;; => '(10)
+
+  (fif/reval *inc [1 2 3 4] map) ;; => '([2 3 4 5])
+
+  (fif/reval *even? [1 2 3 4] filter) ;; => '([2 4])
+
+  ;; Inner Sequence Evaluation (Termed "Realizing")
+
+  (fif/reval [4 1 do i inc loop] ?) ;; => '([2 3 4 5])
+
 
 #+END_SRC
 
@@ -51,9 +84,11 @@ motivated by Rich Hickey rolling in his hammock.
  
   *fif* requires clojure 1.9+
 
+  This could be relaxed to clojure 1.7 with interest.
+
 * Installation
   
-  *Currently in alpha development*
+  *Since it is currently in alpha development, only a snapshot is provided*
 
   For the latest version, please visit [[https://clojars.org/fif][clojars.org]]
 
@@ -504,7 +539,7 @@ motivated by Rich Hickey rolling in his hammock.
    extend it to include this functionality:
 
    #+BEGIN_SRC clojure
- 
+
    ;; Wrap add-note! as a procedure which accepts 1 value from the
    ;; stack. Note that the procedure wrapper does not return the result
    ;; of our function to the stack.
@@ -560,7 +595,7 @@ motivated by Rich Hickey rolling in his hammock.
    #+BEGIN_SRC clojure
   
    (require '[fif.core :as fif])
-   (require '[fif.stack :as stack])
+   (require '[fif.stack-machine :as stack])
 
    (defn secret-stack-machine
      "Returns a stack machine with a `secret` value stored in the fif
@@ -623,6 +658,8 @@ motivated by Rich Hickey rolling in his hammock.
    number of execution steps.
 
    #+BEGIN_SRC clojure
+   (require '[fif.core :as fif])
+   (require '[fif.stack-machine :as stack])
 
    (defn limited-stack-machine [step-max]
      (-> fif/*default-stack*
@@ -672,11 +709,12 @@ motivated by Rich Hickey rolling in his hammock.
   
   A few things to look out for:
 
-  - Additional Standard Library Word Definitions
+  - +Implementation in Clojurescript+
+  - Additional Standard Library Word Definitions *On-Going*
+  - Regex Support (#"" tagged literal is not valid EDN)
   - Improved Error Messages
   - A Time Machine Debugger
-  - Implementation in Clojurescript
-  - Improved Macros
+  - Improved Fif Macros
 
 * Related Readings
 
@@ -694,3 +732,7 @@ motivated by Rich Hickey rolling in his hammock.
    within the restrictions of computers at the time of it's creation,
    and so the name stuck. I recommend you check out
    [[https://en.wikipedia.org/wiki/Forth_(programming_language)][the wiki page]] for an interesting read.
+
+** Is this production-ready?
+   *fif* is not production-ready, and it's core library and language
+    semantics are subject to change while it remains in alpha.

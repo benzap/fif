@@ -2,7 +2,7 @@
   "An example extending fif from clojure"
   (:require
    [fif.core :as fif]
-   [fif.stack :as stack]
+   [fif.stack-machine :as stack]
    [fif.def :refer [wrap-function-with-arity
                     wrap-procedure-with-arity]]))
 

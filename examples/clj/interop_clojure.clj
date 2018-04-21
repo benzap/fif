@@ -1,7 +1,7 @@
 (ns example.interop-clojure
   "An example extending fif from clojure"
   (:require
-   [fif.stack :as stack]
+   [fif.stack-machine :as stack]
    [fif.core :as fif]))
 
 
