@@ -1,4 +1,4 @@
-#+TITLE: fif - Stack-based Programming in Clojure
+#+TITLE: fif - Stack-based Programming in Clojure(script)
 #+AUTHOR: Benjamin Zaporzan
 #+DATE: 2018-04-04
 #+EMAIL: benzaporzan@gmail.com
@@ -7,10 +7,11 @@
 
 [[./doc/logo.svg]]
 
-*fif* is a Stack-based Programming Language in Clojure. It is an
+*fif* is a Stack-based Programming Language in Clojure(script). It is an
 interpreted, extensible, sandboxed, and simple scripting language
 based off of Forth.
 
+You can try out fif online in the [Fif Playground](http://benzaporzan.me/fif-playground/)
 
 I would like to note that one major tradeoff in the language syntax is
 very limited parenthesis after invocation and the language creation is
@@ -60,7 +61,7 @@ motivated by Rich Hickey rolling in his hammock.
   
   #+BEGIN_SRC clojure
 
-  [fif "0.2.0-SNAPSHOT"]
+  [fif "0.3.0-SNAPSHOT"]
 
   #+END_SRC
 
@@ -68,7 +69,7 @@ motivated by Rich Hickey rolling in his hammock.
 
   #+BEGIN_SRC clojure
 
-  fif {:mvn/version "0.2.0-SNAPSHOT"}
+  fif {:mvn/version "0.3.0-SNAPSHOT"}
 
   #+END_SRC
 
@@ -76,7 +77,7 @@ motivated by Rich Hickey rolling in his hammock.
 
   #+BEGIN_SRC groovy
 
-  compile 'fif:fif:0.2.0-SNAPSHOT'
+  compile 'fif:fif:0.3.0-SNAPSHOT'
 
   #+END_SRC
 
@@ -87,7 +88,7 @@ motivated by Rich Hickey rolling in his hammock.
   <dependency>
     <groupId>fif</groupId>
     <artifactId>fif</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
   </dependency>
 
   #+END_SRC
@@ -390,14 +391,10 @@ motivated by Rich Hickey rolling in his hammock.
 
 ** Variables
  
-   Variables within *fif* are declared using ~def~, but it should be
-   pointed out that anything can be a variable. Getting a variable is
-   done via either the commands ~getv~ or ~at~ (Note that forth uses
-   @, which is restricted in the edn data format). Setting a
-   variable is done via either ~!~ or ~setv~
-
-   /Note that *anything* being a variable is subject to change, and an
-   example will not be provided./
+   Global variables within *fif* are declared using ~def~, and are
+   treated as word definitions. They can be set using the word
+   operator ~setg~. Local variables are declared using ~let~, and can
+   be set programmatically using ~setl~.
 
    Examples
 
@@ -405,31 +402,33 @@ motivated by Rich Hickey rolling in his hammock.
 
    (fif/reval
     
+    *x 2 2 + setg
+
+    x . cr ;; => '(4)
+
     ;; Set x to 10
     def x 10
 
     ;; Get x
-    x getv
+    x
 
     ;; Set x to 20 
-    20 x setv
-    
-    ;; Get x
-    x getv) ;; => '(10 20)
+    *x 20 setg
 
-   #+END_SRC
+    ;;
+    ;; Locally Scoped Variables
+    ;;
 
-** Constants
+    let y true
 
-   *fif* makes use of constants by assigning them as words, and are
-   often more efficient to retrieve.
+    y ;; => '(true)
 
-   Examples:
+    ;; They can be set programmatically with `setl`
 
-   #+BEGIN_SRC clojure
+    *y false setl
 
-   (fif/reval 100 constant WATER-BOILING-POINT
-              WATER-BOILING-POINT 1 +) ;; => '(101)
+    y ;; => '(false)
+    )
 
    #+END_SRC
 
