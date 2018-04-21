@@ -11,7 +11,7 @@
 interpreted, extensible, sandboxed, and simple scripting language
 based off of Forth.
 
-You can try out fif online in the [Fif Playground](http://benzaporzan.me/fif-playground/)
+You can try out fif online in the [[http://benzaporzan.me/fif-playground/][Fif Playground]]
 
 I would like to note that one major tradeoff in the language syntax is
 very limited parenthesis after invocation and the language creation is
