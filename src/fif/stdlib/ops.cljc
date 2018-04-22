@@ -295,7 +295,7 @@
       ;; Other Stuff
       (stack/set-word 'count (wrap-function-with-arity 1 count))
       (stack/set-word 'deref (wrap-function-with-arity 1 deref))
-      (stack/set-word 'newline (wrap-procedure-with-arity 1 newline))
+      (stack/set-word 'newline (wrap-procedure-with-arity 0 newline))
       (stack/set-word 'pr (wrap-procedure-with-arity 1 pr))
       (stack/set-word 'print (wrap-procedure-with-arity 1 print))
       (stack/set-word 'println (wrap-procedure-with-arity 1 println))
