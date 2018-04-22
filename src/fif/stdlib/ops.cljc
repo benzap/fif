@@ -210,7 +210,7 @@
       (stack/set-word 'bit-and-not (wrap-function-with-arity 2 bit-and-not))
       (stack/set-word 'bit-clear (wrap-function-with-arity 2 bit-clear))
       (stack/set-word 'bit-flip (wrap-function-with-arity 2 bit-flip))
-      (stack/set-word 'bit-not (wrap-function-with-arity 2 bit-not))
+      (stack/set-word 'bit-not (wrap-function-with-arity 1 bit-not))
       (stack/set-word 'bit-or (wrap-function-with-arity 2 bit-or))
       (stack/set-word 'bit-shift-left (wrap-function-with-arity 2 bit-shift-left))
       (stack/set-word 'bit-shift-right (wrap-function-with-arity 2 bit-shift-right))
