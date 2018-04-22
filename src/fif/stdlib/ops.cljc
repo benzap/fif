@@ -331,6 +331,7 @@
       (stack/set-word 're-seq (wrap-function-with-arity 2 re-seq))
       (stack/set-word 're-matches (wrap-function-with-arity 2 re-matches))
       (stack/set-word 're-pattern (wrap-function-with-arity 1 re-pattern))
+      (stack/set-word 'regex (wrap-function-with-arity 1 re-pattern))
 
       ;; CLJ Specific
       #?(:clj
