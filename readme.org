@@ -424,7 +424,87 @@ core libraries for familiarity.
 
    #+END_SRC
 
+** Word Referencing
+
+   *fif* uses the concept of *Word Referencing*, which is a means of
+   pushing already defined words onto the stack. This becomes useful
+   for setting variables and for functional programming as shown in
+   the next two sections.
+
+   #+BEGIN_SRC clojure
+
+     ;; Already defined words won't end up on the stack
+     (fif/reval 2 2 +) ;; => '(4)
+
+     (fif/reval +) ;; ERROR
+
+     ;; A word reference involves placing an asterisk '*' infront of the
+     ;; word you want on the stack.
+
+     (fif/reval 2 2 *+) ;; => '(2 2 +)
+     (fif/reval *+) ;; => '(+)
+
+     ;; These can be chained for deeper referencing
+
+     (fif/reval **+) ;; => '(*+)
+
+     (fif/reval ***+) ;; => '(**+)
+
+     (fif/reval ********+) ;; => ....
+
+     ;; Multiplication remains unaffected
+
+     (fif/reval 2 2 *) ;; => '(4)
+
+   #+END_SRC
+
+** Functional Programming
+
+   *fif* supports some of the usual functional programming idioms seen
+   in other popular languages. The currently implemented functional
+   programming operators are *reduce*, *map*, and *filter*.
+
+   ~<fn ( xs x -- 'xs )> <coll> reduce~
+
+   ~<fn ( item -- 'item )> <coll> map~
+
+   ~<fn ( item -- boolean )> <coll> filter~
+
+   
+   #+BEGIN_SRC clojure
+
+   (fif/reval *+ [1 2 3 4] reduce) ;; => '(10)
+
+   (fif/reval *inc [1 2 3 4] map) ;; => '((2 3 4 5))
+
+   (fif/reval *even? [1 2 3 4 5] filter) ;; => '((2 4))
+
+   (fif/reval *inc [1 2 3 4] map) ;; => '((2 3 4 5))
+
+   #+END_SRC
+
+*** Lambda Expressions
+
+    The base functional operators can also be passed a sequence in
+    place of a function, which will be treated as a lambda expression.
+
+    #+BEGIN_SRC clojure
+
+    (fif/reval (2 +) [1 2 3 4] map) ;; => '((3 4 5 6))    
+
+    (fif/reval (:eggs not=) [:eggs :ham :green-eggs :eggs] filter)
+    ;; => '((:ham :green-eggs))
+
+    #+END_SRC
+
+
 ** Variables
+
+   *fif* strays away from Forth in the way it sets and gets
+   variables. Since *Word Referencing* was added to *fif*, the ability
+   to get Word Variables simply requires you to place the word on the
+   stack to retrieve the value. Setting the variable requires you to
+   provide a *Word Reference*, as shown in the examples below.
  
    Global variables within *fif* are declared using ~def~, and are
    treated as word definitions. They can be set using the word
@@ -437,22 +517,27 @@ core libraries for familiarity.
 
    (fif/reval
     
-    *x 2 2 + setg
+    ;;
+    ;; Globally Scoped Variables
+    ;;
 
-    x . cr ;; => '(4)
+    *X 2 2 + setg
 
-    ;; Set x to 10
-    def x 10
+    X . cr ;; => '(4)
 
-    ;; Get x
-    x
+    ;; Set X to 10
+    def X 10
 
-    ;; Set x to 20 
-    *x 20 setg
+    ;; Get X
+    X
+
+    ;; Set X to 20 
+    *X 20 setg
 
     ;;
     ;; Locally Scoped Variables
     ;;
+    ;; Note that functions have a local dynamic scope.
 
     let y true
 
@@ -711,9 +796,9 @@ core libraries for familiarity.
   
   A few things to look out for:
 
-  - +Implementation in Clojurescript+
+  - +Implementation in Clojurescript+ *included since 0.3.0-snapshot*
+  - +Regex Support (#"" tagged literal is not valid EDN)+ *use 'regex word definition*
   - Additional Standard Library Word Definitions *On-Going*
-  - Regex Support (#"" tagged literal is not valid EDN)
   - Improved Error Messages
   - A Time Machine Debugger
   - Improved Fif Macros
@@ -736,5 +821,5 @@ core libraries for familiarity.
    [[https://en.wikipedia.org/wiki/Forth_(programming_language)][the wiki page]] for an interesting read.
 
 ** Is this production-ready?
-   *fif* is not production-ready, and it's core library and language
+   *fif* is not production-ready, and its core library and language
     semantics are subject to change while it remains in alpha.
