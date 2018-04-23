@@ -539,6 +539,8 @@ core libraries for familiarity.
    extend it to include this functionality:
 
    #+BEGIN_SRC clojure
+   (require '[fif.def :refer [wrap-procedure-with-arity
+                              wrap-function-with-arity]])
 
    ;; Wrap add-note! as a procedure which accepts 1 value from the
    ;; stack. Note that the procedure wrapper does not return the result
