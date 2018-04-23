@@ -55,7 +55,7 @@ core libraries for familiarity.
 
   (fif/reval (1 2 3 4) rest) ;; => '((2 3 4))
 
-  (fif/reval (1 2 3 4) first) ;; => '((2 3 4))
+  (fif/reval (1 2 3 4) first) ;; => '(1)
 
   (fif/reval (1 2 3 4) 5 conj) ;; => '((5 1 2 3 4))
 
