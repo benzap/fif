@@ -118,20 +118,11 @@
          (stack.evaluators/eval-fn (quote ~body)))))
 
 
+#_(reval 
+   fn foo endfn
 
-#_(reval $ conj (1 2 3) 4 _) ;; ((4 1 2 3))
-
-#_(reval $>> a b c) ;; => ( b c a )
-
-#_(reval $>> conj [1 2 3] 4 5) ;; ([1 2 3 4] 5)
-
-#_(reval $> first [1 2 3] 5) ;; (1 5)
-
-#_(reval $> a b c) ;; (b a c)
-
-#_(reval $>> pair :id 1 2 3) ;; ([:id 1] 2 3)
-
-#_(reval $>>> + 1 2 3 4) ;; (1 5 4)
+   $ foo -h -t --verbose true
+)
 
 #_(reval & * * + _) ;; (*+)
 
@@ -143,21 +134,6 @@
 
 #_(reval &** + 1 1) ;; (*+ 1 1)
 
-#_(reval def! x 10) ;; ()
-
-#_(reval def! x 10 x) ;; (10)
-
-#_(reval def! x 10 *x 20 set! x) ;; (20)
-
-#_(reval (1 +) [1 2 3 4] map) ;; ((2 3 4 5))
-
-#_(reval *even? [1 2 3 4] filter) ;; ((2 4))
-
-#_(reval (2 mod if true else false then) [1 2 3 4] filter) ;; ((2 4))
-
-#_(reval $>> map *inc [1 2 3 4])
-
-#_(reval $>> map (1 +) [1 2 3 4]) ;; ([2 3 4 5])
 
 #_(reval
    [4 0 do i loop] ?
@@ -191,3 +167,28 @@
 #_(reval fn add2 (x y) ?args
            x y +
          endfn)
+
+
+#_(reval fn foo $ endfn
+         foo -xt --focus 2)
+;; => '({:x true :focus 2 :t true})
+
+
+#_(reval fn foo $ endfn
+         add2 -x -tvalue --focus=2)
+;; => '({:x true :focus 2 :t value})
+
+
+#_(reval fn foo $ endfn
+         add2 -x -tvalue --focus=2)
+;; => '({:x true :focus 2 :t value})
+
+
+#_(reval fn foo $ endfn
+         add2 -x -tvalue --focus 2 2)
+;; => '({:x true :focus 2 :t value} 2)
+
+
+#_(reval fn foo $ endfn
+         add2 -xt --focus _ 2)
+;; => '({:x true :focus true :t true} 2)
