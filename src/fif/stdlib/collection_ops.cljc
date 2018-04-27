@@ -1,14 +1,35 @@
 (ns fif.stdlib.collection-ops
+  "Includes the majority of clojure collection functions, which have
+  been ported to fif for use with the same collections.
+
+  All collection operations follow the same argument order:
+
+  Examples:
+  (require '[fif.core :as fif])
+
+  ;; Clojure
+  (conj [1 2 3] 4) ;; => [1 2 3 4]
+
+  ;; Fif
+  (fif/reval [1 2 3] 4 conj) ;; => '([1 2 3 4])
+
+  "
   (:require
    [fif.stack-machine :as stack]
    [fif.def :refer [wrap-function-with-arity
                     wrap-procedure-with-arity]]))
 
 
-(defn pair [x y] [x y])
+(defn pair
+  "Turns the two arguments into a vector of the two arguments."
+  [x y]
+  [x y])
 
 
-(defn op-unpair [sm]
+(defn op-unpair
+  "Takes the top value, which is a vector of two-elements, and places
+  the two elements on the main stack."
+  [sm]
   (let [[x] (stack/get-stack sm)]
     (-> sm
         stack/pop-stack
@@ -17,7 +38,10 @@
         stack/dequeue-code)))
 
 
-(defn apply-op [sm]
+(defn apply-op
+  "Takes the top value, which is a collection of values, and places them
+  at the front of the code queue."
+  [sm]
   (let [[coll] (stack/get-stack sm)]
     (-> sm
         stack/dequeue-code
@@ -26,6 +50,7 @@
 
 
 (defn import-stdlib-collection-ops
+  "Imports the collection operators as part of the standard library."
   [sm]
   (-> sm
       (stack/set-word 'apply apply-op)

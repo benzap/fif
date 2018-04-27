@@ -1,5 +1,14 @@
 (ns fif.stdlib.compile
-  "Defines the compile-mode within the fif stack machine"
+  "Defines the two main modes, compile-mode and function-mode, which are
+  used to define new word definitions, and to invoke word definitions
+  with their own word definition scope.
+
+  compile-mode is called when a function is first defined with
+  `arg-start-token`, and this compilation mode is finished upon
+  reaching the end of the new definition defined by `arg-end-token`.
+
+  function-mode is entered when a word definition is invoked from the
+  code queue."
   (:require [fif.stack-machine :as stack]
             [fif.stack-machine.scope :as stack.scope]
             [fif.stack-machine.stash :as stack.stash]
@@ -15,7 +24,19 @@
 (def function-mode-flag :function-mode)
 
 
-(defn wrap-compiled-fn [wbody]
+(defn wrap-compiled-fn
+  "Used to wrap a word definition for use within the stack
+  machine. `wbody` is a collection of words which make up the word
+  definition. This function is then placed within the stack machine
+  using fif.stack-machine/set-word.
+
+  Notes:
+
+  - Note that invoking this wrapper, places the stack machine in the
+  function-mode, which creates a new scope. This scope serves the
+  purpose of storing local variables for that function, until it
+  leaves function-mode."
+  [wbody]
   (fn [sm]
     (-> sm
         (stack/push-flag function-mode-flag)
@@ -26,29 +47,33 @@
                  
 
 (defn inner-compile-mode
+  "inner-compile mode is used to circumvent issues with inner function
+  definitions. It is used to ignore these inner function definitions
+  by placing them into a new mode of operation where it places the
+  word values onto the stack."
   [sm]
   (let [arg (-> sm stack/get-code first)]
     (cond
-     (= arg arg-start-token)
-     (-> sm
-         (stack/push-flag inner-compile-mode-flag)
-         (stack.stash/update-stash conj arg)
-         stack/dequeue-code)
+      (= arg arg-start-token)
+      (-> sm
+          (stack/push-flag inner-compile-mode-flag)
+          (stack.stash/update-stash conj arg)
+          stack/dequeue-code)
 
-     (= arg arg-end-token)
-     (-> sm
-         stack/pop-flag
-         (stack.stash/update-stash conj arg)
-         stack/dequeue-code)
+      (= arg arg-end-token)
+      (-> sm
+          stack/pop-flag
+          (stack.stash/update-stash conj arg)
+          stack/dequeue-code)
 
-     :else
-     (-> sm
-         (stack.stash/update-stash conj arg)
-         stack/dequeue-code))))
+      :else
+      (-> sm
+          (stack.stash/update-stash conj arg)
+          stack/dequeue-code))))
 
 
 (defn compile-mode
-  "This should only be called while we are in compile mode."
+  "Represents the compilation mode"
   [sm]
   (let [arg (-> sm stack/get-code first)]
     (cond
@@ -74,17 +99,18 @@
 
 
 (defn function-mode
+  ""
   [sm]
   (let [arg (-> sm stack/get-code first)]
     (cond
-     (= arg arg-end-function-token)
-     (-> sm
-         (stack/pop-flag)
-         (stack.scope/remove-scope)
-         (stack/dequeue-code))
+      (= arg arg-end-function-token)
+      (-> sm
+          (stack/pop-flag)
+          (stack.scope/remove-scope)
+          (stack/dequeue-code))
 
-     :else
-     (-> sm stack.processor/process-arg))))
+      :else
+      (-> sm stack.processor/process-arg))))
 
 
 (defn start-defn
