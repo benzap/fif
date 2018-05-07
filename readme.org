@@ -603,8 +603,8 @@ core libraries for familiarity.
    #+BEGIN_SRC clojure
 
    (def *secret-notes (atom []))
-   (defn add-note! [s] (swap! *secret-ledger conj s))
-   (defn get-notes [] @*secret-ledger)
+   (defn add-note! [s] (swap! *secret-notes conj s))
+   (defn get-notes [] @*secret-notes)
 
    (add-note! "They're in the trees")
    (add-note! {:date "March 14, 2018" :name "Stephen Hawking"})
