@@ -1,19 +1,26 @@
 (ns fif.stack-machine.stash
-  "Functions for manipulating the stack machine stash"
+  "Functions for manipulating the stack machine mode stash. The stash is
+  used by individual modes for storing information in between steps."
   (:require
    [fif.stack-machine :as stack]
    [fif.utils.stash :as utils.stash]))
 
 
-(defn get-stash [sm]
-  (stack/get-stash2 sm))
+(defn get-stash
+  "Gets the stash. Note that it is stash2, since this is going to
+  replace the deprecated stash functionality which used 'sub-stacks'"
+  [sm]
+  (stack/get-mode-stash sm))
 
 
-(defn set-stash [sm stack]
-  (stack/set-stash2 sm stack))
+(defn set-stash
+  "Set the stack-machine stash to the given stash."
+  [sm stack]
+  (stack/set-mode-stash sm stack))
 
 
 (defn new-stash
+  "Initialize a new stack-machine stash, or replace it with "
   ([sm coll]
    (let [stash (get-stash sm)]
      (set-stash sm (utils.stash/new-stash stash coll))))

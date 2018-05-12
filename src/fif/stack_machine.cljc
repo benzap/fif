@@ -18,8 +18,8 @@
   (set-stash [this st])
 
   ;; Will Replace Old Functionality
-  (get-stash2 [this])
-  (set-stash2 [this stash])
+  (get-mode-stash [this])
+  (set-mode-stash [this stash])
 
   (get-scope [this])
   (set-scope [this scope])
@@ -30,12 +30,10 @@
   (get-temp-macro [this])
   (set-temp-macro [this st])
   (pick-temp-macro [this])
+  (clear-temp-macro [this])
 
   (set-word [this wname wbody])
   (get-word [this wname])
-
-  (set-variable [this vname vval])
-  (get-variables [this])
 
   (set-mode [this flag modefn])
   (remove-mode [this flag])
@@ -44,6 +42,7 @@
   (pop-flag [this])
   (get-flags [this])
   (set-flags [this flags])
+  (clear-flags [this])
 
   (enqueue-code [this arg])
   (dequeue-code [this])

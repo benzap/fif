@@ -13,11 +13,21 @@
 
 
 (defrecord StackMachine
-  [arg-stack code-stack ret-stack stash
-   scope flags words variables modes
-   step-num step-max
+  [arg-stack
+   code-stack
+   ret-stack
+   temp-macro-stack
+   scope
+   sub-stash
+   mode-stash
+   flags
+   words
+   modes
+   step-num
+   step-max
    system-error-handler
-   halt? debug?]
+   halt?
+   debug?]
   
   fif.stack-machine/IStackMachine
   
@@ -57,19 +67,19 @@
 
   ;; Deprecated, replaced
   (get-stash [this]
-    (-> this :stash2))
+    (-> this :sub-stash))
 
   ;; Deprecated, replaced
   (set-stash [this st]
-    (assoc this :stash2 st))
+    (assoc this :sub-stash st))
 
   ;; will replace get-stash
-  (get-stash2 [this]
-    (-> this :stash))
+  (get-mode-stash [this]
+    (-> this :mode-stash))
 
   ;; will replace set-stash
-  (set-stash2 [this stash]
-    (assoc this :stash stash))
+  (set-mode-stash [this stash]
+    (assoc this :mode-stash stash))
 
 
   ;; Scope
@@ -94,7 +104,10 @@
     (assoc this :temp-macro-stack st))
 
   (pick-temp-macro [this]
-    (-> this :stash peek))
+    (-> this :temp-macro-stack peek))
+
+  (clear-temp-macro [this]
+    (assoc this :temp-macro-stack (empty (stack/get-temp-macro this))))
 
 
   ;; Word Dictionary
@@ -103,14 +116,6 @@
 
   (get-word [this wname]
     (stack.words/get-word this wname))
-
-
-  ;; Variable Store
-  (set-variable [this vname vval]
-    (update-in this [:variables] assoc vname vval))
-
-  (get-variables [this]
-    (-> this :variables))
 
 
   ;; Mode Functions
@@ -133,6 +138,9 @@
 
   (set-flags [this flags]
     (assoc this :flags flags))
+
+  (clear-flags [this]
+    (assoc this :flags (empty (stack/get-flags this))))
 
 
   ;; Code Queue
@@ -176,6 +184,7 @@
   (is-debug-mode? [this]
     (-> this :debug?))
 
+
   ;; Error Handling
   (get-system-error-handler [this]
     (:system-error-handler this))
@@ -208,7 +217,10 @@
                 (and (> step-max 0) (>= step-num step-max))
                 (:halt? sm))
           sm
-          (recur (stack/step sm)))))))
+          (recur (stack/step sm))))))
+
+  (continue [this]
+    (assoc this :halt? false)))
 
 
 (defn new-stack-machine []
@@ -218,9 +230,10 @@
     :ret-stack '()
     :temp-macro-stack '()
     :scope (utils.scope/new-scope)
-    :stash2 '()
-    :stash (utils.stash/create-stash)
+    :sub-stash '()
+    :mode-stash (utils.stash/create-stash)
     :flags []
+    :words {}
     :modes {}
     :step-num 0
     :step-max 0

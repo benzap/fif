@@ -12,6 +12,7 @@
   (:require [fif.stack-machine :as stack]
             [fif.stack-machine.scope :as stack.scope]
             [fif.stack-machine.stash :as stack.stash]
+            [fif.stack-machine.mode :as stack.mode]
             [fif.stack-machine.processor :as stack.processor]
             [fif.stdlib.reserved :as reserved]))
 
@@ -22,6 +23,18 @@
 (def compile-mode-flag :compile-mode)
 (def inner-compile-mode-flag :inner-compile-mode)
 (def function-mode-flag :function-mode)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TODO: convert to new mode functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defn enter-compile-mode
+  [sm stash])
+
+(defn exit-compile-mode
+  [sm])
 
 
 (defn wrap-compiled-fn
