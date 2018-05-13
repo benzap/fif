@@ -27,6 +27,11 @@
   ([sm] (new-stash sm {})))
 
 
+(defn clear-stash
+  [sm]
+  (set-stash sm (utils.stash/create-stash)))
+
+
 (defn update-stash [sm f & args]
   (let [stash (get-stash sm)]
     (set-stash sm (apply utils.stash/update-stash stash f args))))
@@ -40,3 +45,5 @@
 (defn peek-stash [sm]
   (let [stash (get-stash sm)]
     (utils.stash/peek-stash stash)))
+
+

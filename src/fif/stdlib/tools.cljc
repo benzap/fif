@@ -3,6 +3,9 @@
   machine."
   (:require
    [clojure.string :as str]
+   
+   [fif.stack-machine.stash :as stack-machine.stash]
+   [fif.stack-machine.scope :as stack-machine.scope]
    [fif.stack-machine :as stack]
    [fif.def :as def
     :refer [wrap-function-with-arity
@@ -14,7 +17,10 @@
   "Resets the entire stack machine, similar to a soft-reset
 
   - clears main stack
-  - clears stashes
+  - clears the loop return stack
+  - resets the scope
+  - clears sub-stash
+  - clears mode stash
   - clears flags
 
   Notes:
@@ -24,5 +30,16 @@
   (-> sm
       (stack/clear-stack)
       (stack/clear-ret)
-      (stack/clear-temp-macro)))
+      (stack/clear-temp-macro)
+      (stack-machine.scope/clear-scope)
+      (stack/set-stash '())
+      (stack-machine.stash/clear-stash)
+      (stack/clear-flags)
+      (stack/dequeue-code)))
       
+
+(defn import-stdlib-stack-tools
+  [sm]
+  (-> sm
+      (stack/set-word '$reset-stack-machine reset-stack-op)))
+  

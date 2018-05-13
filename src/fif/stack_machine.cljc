@@ -1,4 +1,9 @@
-(ns fif.stack-machine)
+(ns fif.stack-machine
+  "Main Stack Machine Protocol which stores state machine related
+  information, and stores the entirety of the language functionality.
+
+  Creating the stack machine with the standard libraries is what makes
+  up fif.")
 
 
 (defprotocol IStackMachine
@@ -34,6 +39,10 @@
 
   (set-word [this wname wbody])
   (get-word [this wname])
+  (get-word-list [this])
+
+  (set-word-metadata [this wname wmeta])
+  (get-word-metadata [this wname])
 
   (set-mode [this flag modefn])
   (remove-mode [this flag])

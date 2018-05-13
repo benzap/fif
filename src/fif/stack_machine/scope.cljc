@@ -20,6 +20,11 @@
     (stack/set-scope sm (utils.scope/new-scope scope))))
 
 
+(defn clear-scope
+  [sm]
+  (stack/set-scope sm (utils.scope/new-scope)))
+
+
 (defn update-scope
   "Update the current scope environment within the stack machine."
   [sm f & args]

@@ -11,7 +11,9 @@
    [fif.stdlib.collecter :refer [import-stdlib-collecter-mode]]
    [fif.stdlib.collection-ops :refer [import-stdlib-collection-ops]]
    [fif.stdlib.functional-ops :refer [import-stdlib-functional-ops]]
-   [fif.stdlib.realizer :refer [import-stdlib-realize-mode]]))
+   [fif.stdlib.realizer :refer [import-stdlib-realize-mode]]
+   [fif.stdlib.tools :refer [import-stdlib-stack-tools]]
+   [fif.stdlib.repl :refer [import-stdlib-repl]]))
 
 
 (defn import-stdlib [sm]
@@ -26,5 +28,7 @@
       import-stdlib-collecter-mode
       import-stdlib-collection-ops
       import-stdlib-functional-ops
-      import-stdlib-realize-mode))
+      import-stdlib-realize-mode
+      import-stdlib-stack-tools
+      import-stdlib-repl))
 

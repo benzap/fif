@@ -22,6 +22,7 @@
    mode-stash
    flags
    words
+   word-metadata
    modes
    step-num
    step-max
@@ -117,6 +118,15 @@
   (get-word [this wname]
     (stack.words/get-word this wname))
 
+  (get-word-list [this]
+    (get this :words))
+
+  ;; Word Metadata
+  (set-word-metadata [this wname wmeta]
+    (stack.words/set-global-metadata this wname wmeta))
+
+  (get-word-metadata [this wname]
+    (stack.words/get-global-metadata this wname))
 
   ;; Mode Functions
   (set-mode [this flag modefn]
@@ -234,6 +244,7 @@
     :mode-stash (utils.stash/create-stash)
     :flags []
     :words {}
+    :word-metadata {}
     :modes {}
     :step-num 0
     :step-max 0

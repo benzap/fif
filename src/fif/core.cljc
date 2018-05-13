@@ -142,31 +142,10 @@
 
 #_(reval 2 0 do {:id i} ?m loop) ;; => '({:id 0} {:id 1} {:id 2})
 
-#_(reval
-   $>> range 0 5
-   $-< map *inc
-   $-< filter *even?
-   apply) ;; (2 4)
-
 
 #_(reval (%:name %:age) {:name "Ben" :age 29} format) ;; (("Ben" 29))
 #_(reval (%0 %1) ["Ben" 29] format) ;; (("Ben" 29))
 #_(reval (% %) ["Ben" 29]) ;; ((["Ben" 29] ["Ben" 29]))
-
-
-#_(reval fn add2
-           ;; ( x y -- r )
-           *y <> setl
-           *x <> setl
-
-           x y +
-         endfn
-         1 2 add2)
-
-
-#_(reval fn add2 (x y) ?args
-           x y +
-         endfn)
 
 
 #_(reval fn foo $ endfn
@@ -192,3 +171,6 @@
 #_(reval fn foo $ endfn
          add2 -xt --focus _ 2)
 ;; => '({:x true :focus true :t true} 2)
+
+
+#_(reval see reduce)
