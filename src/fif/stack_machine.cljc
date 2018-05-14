@@ -37,7 +37,7 @@
   (pick-temp-macro [this])
   (clear-temp-macro [this])
 
-  (set-word [this wname wbody])
+  (set-word* [this wname wbody])
   (get-word [this wname])
   (get-word-list [this])
 
@@ -100,3 +100,8 @@
   [sm f & args]
   (let [code (get-code sm)]
     (set-code sm (apply f code args))))
+
+
+(defn set-word
+  [sm wname wfunc]
+  (set-word* sm wname wfunc))

@@ -173,4 +173,8 @@
 ;; => '({:x true :focus true :t true} 2)
 
 
-#_(reval see reduce)
+#_(reval see +)
+
+#_(-> (eval see +)
+      :word-metadata
+      (get '+))

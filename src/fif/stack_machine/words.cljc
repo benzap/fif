@@ -24,36 +24,66 @@
 
 
 (defn set-global-metadata
-  "Sets metadata for the given `wname` which is an indepedent data-store
-  containing information on the word definition defined by `wname` in
-  the form of `wmeta`. `wmeta` should be a map of key values
-  describing the word definition."
+  "Sets metadata for the given `wname` which is an independent
+  data-store containing information on the word definition defined by
+  `wname` in the form of `wmeta`. `wmeta` should be a map of key
+  values describing the word definition."
   [sm wname wmeta]
   (assoc-in sm [:word-metadata wname] wmeta))
 
 
-(defn get-global-metadata [sm wname]
+(defn get-global-metadata
+  "Gets the metadata for the given `wname` word definition."
+  [sm wname]
   (get-in sm [:word-metadata wname]))
 
 
 (defn set-global-word
+  "Sets a word definition within the global scope."
   [sm name wfunc]
   (stack-machine.scope/update-global-scope sm assoc-in [:words name] wfunc))
 
 
 (defn get-global-word
+  "Gets a word definition within the global scope."
   [sm name]
   (stack-machine.scope/get-in-global-scope sm [:words name] not-found))
 
 
 (defn set-meta
+  "Sets the metadata for a particular global word definition, which
+  consists of the keys :doc, :source, :stdlib? and :variable?.
+
+  Meta Data Keys:
+
+  :doc - Is a string explaining the given word definition.
+
+  :source - If it is a word definition defined within fif, this will
+  contain the word definition source code in the form of an EDN vector
+  collectionconsisting of the source.
+  
+  :stdlib? - If true, the word definition is part of the fif standard libraries.
+
+  :variable? - If true, the word definition is a single value data
+  value or data collection."
   [sm wname
    & {:keys [doc source stdlib? variable?]
       :or {doc nil source nil stdlib? false variable? false}}]
   (set-global-metadata sm wname {:doc doc :source source :stdlib? stdlib? :variable? variable?}))
 
 
-(defn set-stdlib-meta
-  [sm wname
-   & {:keys [doc source variable?] :or {source nil variable? false}}]
-  (set-meta sm wname :doc doc :source source :stdlib? true :variable? variable?))
+(defn set-word-defn
+  "Used to set a word definition function while conveniently allowing
+  you to set the metadata as well."
+  [sm wname wfunc
+   & {:keys [doc source stdlib?]
+      :or {doc nil
+           source nil
+           stdlib? false}}]
+  (-> sm
+      (set-word wname wfunc)
+      (set-meta wname
+                :doc doc
+                :source source
+                :stdlib? stdlib?
+                :variable? false)))

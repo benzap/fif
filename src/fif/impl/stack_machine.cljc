@@ -112,7 +112,7 @@
 
 
   ;; Word Dictionary
-  (set-word [this wname wbody]
+  (set-word* [this wname wbody]
     (stack.words/set-global-word this wname wbody))
 
   (get-word [this wname]

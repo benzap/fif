@@ -21,10 +21,14 @@
   [sm]
   (let [arg (-> sm stack/get-code first)
         word (-> sm (stack/get-word arg))
-        doc (meta word)]
-    (println "name: " arg)
-    (println "type: " (if-not (= word words/not-found) "word" (class arg)))
-    (println "doc: " doc)
+        meta (words/get-global-metadata sm arg)]
+    (println "name:\t" arg)
+    (println "type:\t" (cond
+                       (= word words/not-found) (class arg)
+                       (:variable? meta) "variable"
+                       :else "function"))
+    (println "doc:\t"  (:doc meta))
+    (println "source:\t" (or (:source meta) "<clojure>"))
     (-> sm
         stack/pop-flag
         stack/dequeue-code)))
