@@ -13,6 +13,7 @@
             [fif.stack-machine.scope :as stack.scope]
             [fif.stack-machine.stash :as stack.stash]
             [fif.stack-machine.mode :as stack.mode]
+            [fif.stack-machine.words :as stack.words]
             [fif.stack-machine.processor :as stack.processor]
             [fif.stdlib.reserved :as reserved]))
 
@@ -100,7 +101,9 @@
       (let [fn-content (stack.stash/peek-stash sm)
             [wname & wbody] fn-content]
         (-> sm
-            (stack/set-word wname (wrap-compiled-fn wbody))
+            (stack.words/set-word-defn
+             wname (wrap-compiled-fn wbody)
+             :source (vec wbody))
             (stack.stash/remove-stash)
             stack/pop-flag
             stack/dequeue-code))

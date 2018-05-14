@@ -23,15 +23,16 @@
         word (-> sm (stack/get-word arg))
         meta (words/get-global-metadata sm arg)]
     (println "name:\t" arg)
-    (println "type:\t" (cond
+    (println "type:\t" (cond)
                        (= word words/not-found) (class arg)
                        (:variable? meta) "variable"
-                       :else "function"))
+                       :else "function")
     (println "doc:\t"  (:doc meta))
     (println "source:\t" (or (:source meta) "<clojure>"))
     (-> sm
         stack/pop-flag
         stack/dequeue-code)))
+
 
 (defn import-stdlib-repl
   [sm]

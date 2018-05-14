@@ -178,3 +178,6 @@
 #_(-> (eval see +)
       :word-metadata
       (get '+))
+
+
+(reval fn add2 2 + endfn see add2)
