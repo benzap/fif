@@ -115,7 +115,11 @@
   (let [val (-> sm stack/get-code first)
         sym (-> sm stack/get-stack peek)]
     (-> sm
-        (stack.words/set-word sym (wrap-local-variable val))
+        (stack.words/set-word-defn
+         sym
+         (wrap-local-variable val)
+         :variable? true
+         :source [val])
         stack/pop-stack
         exit-variable-mode
         stack/dequeue-code)))

@@ -180,4 +180,6 @@
       (get '+))
 
 
-(reval fn add2 2 + endfn see add2)
+#_(reval fn add2 2 + endfn see add2)
+
+#_(reval see see)

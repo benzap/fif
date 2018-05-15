@@ -38,6 +38,13 @@
   (get-in sm [:word-metadata wname]))
 
 
+(defn update-global-metadata
+  [sm wname f & args]
+  (if-let [meta (get-global-metadata sm wname)]
+    (set-global-metadata sm wname (apply f meta args))
+    (set-global-metadata sm wname (apply f {} args))))
+
+
 (defn set-global-word
   "Sets a word definition within the global scope."
   [sm name wfunc]
@@ -67,23 +74,32 @@
   :variable? - If true, the word definition is a single value data
   value or data collection."
   [sm wname
-   & {:keys [doc source stdlib? variable?]
-      :or {doc nil source nil stdlib? false variable? false}}]
-  (set-global-metadata sm wname {:doc doc :source source :stdlib? stdlib? :variable? variable?}))
+   & {:keys [doc source group stdlib? variable?]
+      :or {doc nil source nil group :root stdlib? false variable? false}}]
+  (cond-> sm
+    doc (update-global-metadata wname assoc :doc doc)
+    source (update-global-metadata wname assoc :source source)
+    true (update-global-metadata wname assoc :group group)
+    true (update-global-metadata wname assoc :name wname)
+    true (update-global-metadata wname assoc :stdlib? stdlib?)
+    true (update-global-metadata wname assoc :variable? variable?)))
 
 
 (defn set-word-defn
   "Used to set a word definition function while conveniently allowing
   you to set the metadata as well."
   [sm wname wfunc
-   & {:keys [doc source stdlib?]
+   & {:keys [doc source group stdlib? variable?]
       :or {doc nil
            source nil
-           stdlib? false}}]
+           group :root
+           stdlib? false
+           variable? false}}]
   (-> sm
-      (set-word wname wfunc)
+      (set-global-word wname wfunc)
       (set-meta wname
                 :doc doc
                 :source source
+                :group group
                 :stdlib? stdlib?
-                :variable? false)))
+                :variable? variable?)))
