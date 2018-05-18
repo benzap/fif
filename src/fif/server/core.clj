@@ -64,7 +64,8 @@
       (dosync
        (println "Client Disconnected... <" session-id ">")
        (alter *server-socket-instances
-              update-in [server-name :server-connections] dissoc session-id)))))
+              update-in [server-name :server-connections] dissoc session-id)
+       (.close socket-connection)))))
 
 
 (defn socket-input-reader

@@ -37,3 +37,7 @@
          {:result result#
           :out sw-out#
           :err sw-err#}))))
+
+
+(def ^:private ^String system-newline
+     (System/getProperty "line.separator"))

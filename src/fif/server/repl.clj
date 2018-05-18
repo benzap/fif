@@ -10,6 +10,8 @@
 
 (def EOF (Object.))
 
+(def crn "\r\n")
+
 
 (defn write-out [s]
   (.write *fif-out* s 0 (count s))
@@ -23,7 +25,7 @@
 
 (defn repl-prompt []
   (println "Prompt")
-  (write-out "\n:"))
+  (write-out (str crn ":")))
 
 
 (defn repl-read []
@@ -33,8 +35,7 @@
 
 (defn repl-eval [s]
   (println "Eval:" s (count s))
-  (write-out "\n")
-  (write-out s))
+  (write-out (str s)))
 
 
 (defn repl
