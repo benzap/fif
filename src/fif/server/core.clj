@@ -49,18 +49,20 @@
            server-repl-fn
            server-repl-args]}]
   (try
-    (when-let [server-session (-> @server.session/*server-sessions server-session-key)]
+    (when-let [server-session (-> @server.session/*server-sessions (get server-session-key))]
       (binding [*fif-session* {:server-name server-name
                                :server-session-key server-session-key}
                 *fif-in* socket-in
                 *fif-out* socket-out
                 *fif-err* socket-out]
+        (println "Client Connected... <" session-id ">")
         (apply server-repl-fn server-repl-args)))
 
     ;; Catch the socket disconnecting
     (catch SocketException _disconnect)
     (finally
       (dosync
+       (println "Client Disconnected... <" session-id ">")
        (alter *server-socket-instances
               update-in [server-name :server-connections] dissoc session-id)))))
 
@@ -91,7 +93,9 @@
   [name]
   (try
     (loop [session-id 0]
-      (when-let [{:keys [stack-machine server-socket server-repl-fn server-repl-args]}
+      (when-let [{:keys [stack-machine server-socket
+                         server-address server-port
+                         server-repl-fn server-repl-args]}
                  (get @*server-socket-instances name)]
         (when-not (.isClosed server-socket)
           (try
@@ -113,7 +117,8 @@
                       update-in [name :server-connections] assoc session-id server-session)
                
                ;; Create thread to handle connection
-               (thread (str "Fif Connection " name " " session-id)
+               (thread (str "<Fif Socket Server Connection> " name ":" session-id
+                            " -- " server-address ":" server-port)
                        true
                        (run-server-session server-session))))
 
@@ -141,7 +146,9 @@
          :server-repl-args repl-args}]
     (dosync
      (alter *server-socket-instances assoc name server-instance)
-     (thread (str "Fif Server " name) true (run-server-socket-instance name)))))
+     (thread (str "<Fif Socket Server> " name " -- " address ":" port)
+             true
+             (run-server-socket-instance name)))))
     
 
 
@@ -154,10 +161,13 @@
 (defn stop-socket-server
   "Stops the server instance with the given name"
   ([name]
-   (when-let [{:keys [socket-connection]} (get @*server-socket-instances name)]
+   (if-let [{:keys [server-socket]} (get @*server-socket-instances name)]
      (dosync
+      (println "Stopping Socket Repl: " name)
       (alter *server-socket-instances dissoc name)
-      (.close socket-connection))))
+      (.close server-socket))
+     (println "Unable to find socket server: " name))
+   @*server-socket-instances)
   ([] (when *fif-session* (stop-socket-server (get *fif-session* :server-name)))))
   
 
