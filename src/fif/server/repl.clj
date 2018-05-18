@@ -33,9 +33,16 @@
   (.readLine *fif-in*))
 
 
-(defn repl-eval [s]
-  (println "Eval:" s (count s))
-  (write-out (str s)))
+(defn repl-eval [sform]
+  (let [server-session-key (:server-session-key *fif-session*)
+        {:keys [out err result]}
+        (with-io (server.session/eval-session! server-session-key sform))
+        sout (str out)
+        serr (str err)]
+    (println "eval out: " sout)
+    (println "eval err: " serr)
+    (when-not (empty? sout) (write-out sout))
+    (when-not (empty? serr) (write-out serr))))
 
 
 (defn repl
@@ -47,11 +54,10 @@
     (repl-prompt)
     (loop []
      (when-let [server-session (get @server.session/*server-sessions server-session-key)]
-       ;; Echo Server Test
-       (let [s (repl-read)]
-         (repl-eval s)
+       (let [sform (repl-read)]
+         (repl-eval sform)
          (repl-prompt)
-         (when-not (= s "bye")
+         (when-not (= sform "bye")
            (println "Loop")
            (recur)))))))
   
