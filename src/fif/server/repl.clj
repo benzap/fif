@@ -19,17 +19,14 @@
 
 
 (defn repl-init []
-  (println "Init")
-  (write-out "Fif Socket Repl"))
+  (write-out (str "Fif Repl\n" crn)))
 
 
 (defn repl-prompt []
-  (println "Prompt")
-  (write-out (str crn ":")))
+  (write-out (str "")))
 
 
 (defn repl-read []
-  (println "Read")
   (.readLine *fif-in*))
 
 
@@ -39,17 +36,13 @@
         (with-io (server.session/eval-session! server-session-key sform))
         sout (str out)
         serr (str err)]
-    (println "eval out: " sout)
-    (println "eval err: " serr)
     (when-not (empty? sout) (write-out sout))
     (when-not (empty? serr) (write-out serr))))
 
 
 (defn repl
   []
-  (println "Started Fif Socket Repl")
   (let [{:keys [server-session-key]} *fif-session*]
-    (println "Session " server-session-key)
     (repl-init)
     (repl-prompt)
     (loop []
@@ -58,6 +51,5 @@
          (repl-eval sform)
          (repl-prompt)
          (when-not (= sform "bye")
-           (println "Loop")
            (recur)))))))
   
