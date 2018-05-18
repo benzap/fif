@@ -19,11 +19,11 @@
 
 
 (defn repl-init []
-  (write-out (str "Fif Repl\n" crn)))
+  (write-out (str "Fif Repl\r\n" crn)))
 
 
 (defn repl-prompt []
-  (write-out (str "")))
+  (write-out (str "> ")))
 
 
 (defn repl-read []

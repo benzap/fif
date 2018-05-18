@@ -38,7 +38,7 @@
                          (:variable? meta) "variable"
                          :else "function"))
     (println "doc:\t"  (:doc meta))
-    (println "source:\t" (or (:source meta) "<clojure>"))
+    (println "source:\t" (or (pr-str (:source meta)) "<clojure>"))
     (-> sm
         stack/pop-flag
         stack/dequeue-code)))

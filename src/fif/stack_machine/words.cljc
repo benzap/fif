@@ -103,3 +103,6 @@
                 :group group
                 :stdlib? stdlib?
                 :variable? variable?)))
+
+
+(def set-global-word-defn set-word-defn)

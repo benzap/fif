@@ -75,7 +75,9 @@
   (let [val (-> sm stack/get-code first)
         sym (-> sm stack/get-stack peek)]
     (-> sm
-        (stack.words/set-global-word sym (wrap-global-variable val))
+        (stack.words/set-global-word-defn
+         sym (wrap-global-variable val)
+         :variable? true)
         stack/pop-stack
         exit-variable-mode
         stack/dequeue-code)))
@@ -115,11 +117,7 @@
   (let [val (-> sm stack/get-code first)
         sym (-> sm stack/get-stack peek)]
     (-> sm
-        (stack.words/set-word-defn
-         sym
-         (wrap-local-variable val)
-         :variable? true
-         :source [val])
+        (stack.words/set-word sym (wrap-local-variable val))
         stack/pop-stack
         exit-variable-mode
         stack/dequeue-code)))
@@ -133,7 +131,9 @@
     (-> sm
         stack/pop-stack
         stack/pop-stack
-        (stack.words/set-global-word sym (wrap-global-variable val))
+        (stack.words/set-global-word-defn
+         sym (wrap-global-variable val)
+         :variable? true)
         stack/dequeue-code)))
 
 
@@ -145,7 +145,7 @@
     (-> sm
         stack/pop-stack
         stack/pop-stack
-        (stack.words/set-word sym (wrap-global-variable val))
+        (stack.words/set-word sym (wrap-local-variable val))
         stack/dequeue-code)))
 
 
