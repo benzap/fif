@@ -183,3 +183,6 @@
 #_(reval fn add2 2 + endfn see add2)
 
 #_(reval see see)
+
+
+(reval "Clojure is awesome!" " " regex str/split)

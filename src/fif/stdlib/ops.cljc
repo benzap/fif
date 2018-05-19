@@ -115,10 +115,9 @@
 
 
 (defn dot-stack [sm]
-  (let [stack (stack/get-stack sm)
-        result (str "<" (count stack) "> ")]
+  (let [stack (stack/get-stack sm)]
     (print (str "<" (count stack) "> "))
-    (prn stack)
+    (prn (reverse stack))
     (-> sm stack/dequeue-code)))
 
 
@@ -791,187 +790,205 @@ positive number when x is logically 'less than', 'equal to', or
       (set-global-word-defn
        'str/blank? (wrap-function-with-arity 1 str/blank?)
        :stdlib? true
-       :doc ""
+       :doc "( s -- b ) Returns true if `s` is nil, empty or contains only whitespace."
        :group :stdlib.string)
 
       (set-global-word-defn
        'str/capitalize (wrap-function-with-arity 1 str/capitalize)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s -- s ) Returns the first character of the string uppercase, and all other characters in lowercase."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/ends-with? (wrap-function-with-arity 2 str/ends-with?)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( str substr -- bool ) Returns true if `str` ends with `substr`."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/escape (wrap-function-with-arity 2 str/escape)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s cmap -- s ) Return a new string, using `cmap` to escape each character."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/includes? (wrap-function-with-arity 2 str/includes?)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s substr -- bool ) Returns true if `s` includes `substr`."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/index-of (wrap-function-with-arity 2 str/index-of)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s substr -- n ) Returns the index of the first occurence of `substr`, otherwise nil."
+       :group :stdlib.string)
+
+      (set-global-word-defn
+       'str/index-after (wrap-function-with-arity 3 str/index-of)
+       :stdlib? true
+       :doc "( s substr from-index -- n ) Returns the index of the first occurence of `substr` after `from-index`, otherwise nil."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/join (wrap-function-with-arity 2 str/join)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( sep coll -- s ) Returns a string of collection `coll` elements separated by `sep`."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/last-index-of (wrap-function-with-arity 2 str/last-index-of)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s substr -- n ) Returns the index of the last occurence of `substr`, otherwise nil."
+       :group :stdlib.string)
+
+      (set-global-word-defn
+       'str/last-index-after (wrap-function-with-arity 3 str/last-index-of)
+       :stdlib? true
+       :doc "( s substr from-index -- n ) Returns the index of the last occurence of `substr` after `from-index`, otherwise nil."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/lower-case (wrap-function-with-arity 1 str/lower-case)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s -- s ) Returns string with all characters in lowercase."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/replace (wrap-function-with-arity 3 str/replace)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s re replacement -- s ) Replace all instances in `s` of regex `re` with `replacement`."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/replace-first (wrap-function-with-arity 3 str/replace-first)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s re replacement -- s ) Same as str/replace, but replaces only the first occurrence."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/split (wrap-function-with-arity 2 str/split)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s re -- vec ) Splits the string at matching regex `re` into a vector of strings `vec`."
+       :group :stdlib.string)
+
+      (set-global-word-defn
+       'str/splitn (wrap-function-with-arity 3 str/split)
+       :stdlib? true
+       :doc "( s re n -- vec ) Splits the string at matching regex `re`, but only `n` times, into a vector of strings `vec`."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/split-lines (wrap-function-with-arity 1 str/split-lines)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s -- vec ) Split string at \\n or \\r\\n into a vector of strings `vec`."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/starts-with? (wrap-function-with-arity 2 str/starts-with?)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( str substr -- bool ) Returns true if `str` starts with `substr`."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/trim (wrap-function-with-arity 1 str/trim)
        :stdlib? true
        :doc ""
-       :group :stdlib)
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/trim-newline (wrap-function-with-arity 1 str/trim-newline)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s -- s ) Removes whitespace from both ends of a string."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/triml (wrap-function-with-arity 1 str/triml)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s -- s ) Removes whitespace from the start of a string."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/trimr (wrap-function-with-arity 1 str/trimr)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s -- s ) Removes whitespace from the end of a string."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'str/upper-case (wrap-function-with-arity 1 str/upper-case)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s -- s ) Returns the string with all characters uppercase."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'subs (wrap-function-with-arity 3 subs)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s start end -- s ) Returns the substring of `s` between indexes `start` and `end`."
+       :group :stdlib.string)
 
       (set-global-word-defn
        'subvec (wrap-function-with-arity 3 subvec)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( v start end -- v ) Returns the subvector of `v` between indexes `start` and `end`."
+       :group :stdlib.collection)
 
       ;; Regex
       (set-global-word-defn
        're-find (wrap-function-with-arity 2 re-find)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( re s -- g ) Returns the next regex match of `re` in `s` in the form of a regex group."
+       :group :stdlib.regex)
 
       (set-global-word-defn
        're-find-match (wrap-function-with-arity 1 re-find)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( m -- g ) Returns the next regex match of Regex Matcher."
+       :group :stdlib.regex)
 
       (set-global-word-defn
        're-seq (wrap-function-with-arity 2 re-seq)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( re s -- coll ) Returns a lazy seq of successive matches of regex `re` in `s`."
+       :group :stdlib.regex)
 
       (set-global-word-defn
        're-matches (wrap-function-with-arity 2 re-matches)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( re s -- g ) Returns the match, if any, of string to regex pattern `re` as a re-group."
+       :group :stdlib.regex)
 
       (set-global-word-defn
        're-pattern (wrap-function-with-arity 1 re-pattern)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s -- re ) Creates a regex pattern object from a string."
+       :group :stdlib.regex)
 
       (set-global-word-defn
        'regex (wrap-function-with-arity 1 re-pattern)
        :stdlib? true
-       :doc ""
-       :group :stdlib)
+       :doc "( s -- re ) Creates a regex pattern object from a string."
+       :group :stdlib.regex)
 
       ;; CLJ Specific
       #?(:clj
          (set-global-word-defn
           'class (wrap-function-with-arity 1 class)
           :stdlib? true
-          :doc ""
-          :group :stdlib))
+          :doc "( x -- class ) Returns the class of `x`"
+          :group :stdlib.repl))
 
       #?(:clj
          (set-global-word-defn
           're-matcher (wrap-function-with-arity 2 re-matcher)
           :stdlib? true
-          :doc ""
-          :group :stdlib))
+          :doc "( re s -- matcher ) Returns a java.util.regex.Matcher, for us in re-find-match."
+          :group :stdlib.regex))
 
       #?(:clj
          (set-global-word-defn
           're-groups (wrap-function-with-arity 1 re-groups)
           :stdlib? true
-          :doc ""
-          :group :stdlib))
+          :doc "( matcher -- g ) Returns the most recent re-group from the most recent re-find-match."
+          :group :stdlib.regex))
 
       ))
 
