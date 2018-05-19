@@ -57,12 +57,11 @@
       :else
       (let [args (take num-args (stack/get-stack sm))
             result (apply f (reverse args))
-            new-stack (-> sm
-                          stack/get-stack
-                          (as-> $ (drop num-args $))
-                          (conj result)
-                          (as-> $ (into '() $))
-                          reverse)]
+            new-stack (as-> sm $
+                        (stack/get-stack $)
+                        (drop num-args $)
+                        (concat [result] $)
+                        (apply list $))]
         (-> sm
             (stack/set-stack new-stack)
             stack/dequeue-code)))))

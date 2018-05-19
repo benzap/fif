@@ -921,9 +921,9 @@
 (deftest test-str-split-op
   (testing "Testing 'str/split' operator"
     (are-eq*
-      (teval "Clojure is awesome!" " " regex str/split)
+      (teval "test" "Clojure is awesome!" " " regex str/split)
 
-      => '(["Clojure" "is" "awesome!"]))))
+      => '("test" ["Clojure" "is" "awesome!"]))))
 
 
 (deftest test-str-split-lines-op

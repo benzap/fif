@@ -184,5 +184,4 @@
 
 #_(reval see see)
 
-
-(reval "Clojure is awesome!" " " regex str/split)
+#_(reval "test" "Clojure is awesome!" " " regex str/split println)
