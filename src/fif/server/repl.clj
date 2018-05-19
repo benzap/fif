@@ -13,6 +13,14 @@
 (def crn "\r\n")
 
 
+(defmacro with-fif-io-bindings
+  "Bind *out* and *err* to *fif-out* and *fif-err*"
+  [& body]
+  `(binding [*out* *fif-out*
+             *err* *fif-err*]
+     ~@body))
+
+
 (defn write-out [s]
   (.write *fif-out* s 0 (count s))
   (.flush *fif-out*))
@@ -33,11 +41,7 @@
 (defn repl-eval [sform]
   (let [server-session-key (:server-session-key *fif-session*)
         {:keys [out err result]}
-        (with-io (server.session/eval-session! server-session-key sform))
-        sout (str out)
-        serr (str err)]
-    (when-not (empty? sout) (write-out sout))
-    (when-not (empty? serr) (write-out serr))))
+        (with-fif-io-bindings (server.session/eval-session! server-session-key sform))]))
 
 
 (defn repl
