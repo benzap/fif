@@ -166,6 +166,9 @@
   (get-code [this]
     (-> this :code-stack))
 
+  (clear-code [this]
+    (assoc this :code-stack (empty (:code-stack this))))
+
 
   ;; Step Tracker
   (get-step-max [this]

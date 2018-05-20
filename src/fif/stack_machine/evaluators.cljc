@@ -1,10 +1,12 @@
 (ns fif.stack-machine.evaluators
   "Functions for running and evaluating fif code within a stack machine."
-  (:refer-clojure :exclude [eval])
+  (:refer-clojure :exclude [eval read-string])
   (:require 
    [clojure.tools.reader.edn :as edn]
-   [fif.stack-machine :as stack]))
-
+   
+   [fif.stack-machine :as stack]
+   [fif.stack-machine.error-handling :as stack.error-handling])
+  (:import [clojure.lang ExceptionInfo]))
 
 (defn eval-fn
   [sm args]
@@ -23,9 +25,17 @@
   (str "\n[\n" s "\n]\n"))
 
 
+(defn read-string [sm s]
+  (let [s (wrap-eval-string s)]
+    (try
+      [sm (edn/read-string s)]
+      
+      ;; Parsing Error
+      (catch #?(:clj ExceptionInfo :cljs js/Error) ex
+        [(stack.error-handling/handle-system-error sm ex) []]))))
+
+
 (defn eval-string
   [sm s]
-  (->> s
-       wrap-eval-string
-       edn/read-string
-       (eval-fn sm)))
+  (let [[sm args] (read-string sm s)]
+       (eval-fn sm args)))

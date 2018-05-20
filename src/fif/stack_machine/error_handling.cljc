@@ -54,10 +54,14 @@
 
 
 (defn set-error
-  "Places the given error object on the stack, and halts the stack
-  machine."
+  "Resets the stack, and places the given error object on the stack."
   [sm errobj]
   (-> sm
+      stack/clear-stack
+      stack/clear-ret
+      stack/clear-flags
+      stack/clear-temp-macro
+      stack/clear-code
       (stack/push-stack errobj)))
 
 
@@ -78,8 +82,8 @@
   (if (stack/is-debug-mode? sm)
     (let [errmsg (str "System Error")
           errobj (system-error sm ex errmsg)]
-      (-> sm
-          (set-error errobj)))
+      (binding [*out* *err*] (println ex))
+      (set-error sm errobj))
     (throw ex)))
 
 

@@ -3,6 +3,8 @@
   server."
   (:require
    [clojure.edn :as edn]
+   [clojure.string :as str]
+
    [fif.server.dynamic :refer [*fif-session* *fif-in* *fif-out* *fif-err*]]
    [fif.server.session :as server.session]
    [fif.server.utils :refer [with-io]]))
@@ -11,6 +13,11 @@
 (def EOF (Object.))
 
 (def crn "\r\n")
+
+
+(defn remove-telnet-codes [s]
+  (-> s
+      (str/replace #"\^\[\[(A|B|C|D)" " ")))
 
 
 (defmacro with-fif-io-bindings
@@ -40,8 +47,8 @@
 
 (defn repl-eval [sform]
   (let [server-session-key (:server-session-key *fif-session*)
-        {:keys [out err result]}
-        (with-fif-io-bindings (server.session/eval-session! server-session-key sform))]))
+        sform (remove-telnet-codes sform)]
+    (with-fif-io-bindings (server.session/eval-session! server-session-key sform))))
 
 
 (defn repl

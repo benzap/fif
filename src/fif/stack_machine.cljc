@@ -57,6 +57,7 @@
   (dequeue-code [this])
   (set-code [this stack])
   (get-code [this])
+  (clear-code [this])
 
   (get-step-max [this])
   (set-step-max [this m])
