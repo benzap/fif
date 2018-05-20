@@ -4,6 +4,8 @@
    [fif.def :refer [defcode-eval] :include-macros true]
    [fif.stack-machine :as stack]
    [fif.stack-machine.processor :as stack.processor]
+   [fif.stack-machine.words :refer [set-global-word-defn]]
+   [fif.stack-machine.exceptions :as exceptions]
    [fif.utils.token :as token]
    [fif.stdlib.macro :refer [import-stdlib-macro-mode]]))
 
@@ -51,6 +53,18 @@
   [sm]
   (-> sm
       (stack/set-mode collecter-mode-flag collecter-mode)
-      (stack/set-word arg-start-collecter start-collecter)
+
+      (set-global-word-defn
+       arg-start-collecter start-collecter
+       :stdlib? true
+       :doc "<coll> <-into! <body> ! -- Place <body> form into <coll> collection."
+       :group :stdlib.mode.collecter)
+
+      (set-global-word-defn
+       arg-end-collecter exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc "<coll> <-into! <body> ! -- Place <body> form into <coll> collection."
+       :group :stdlib.mode.collecter)
+
       import-stdlib-macro-mode ;; fif Macro Dependency
       import-collection-collecter-defaults))

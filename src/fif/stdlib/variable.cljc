@@ -4,6 +4,8 @@
   (:require
    [fif.stack-machine :as stack]
    [fif.stack-machine.words :as stack.words]
+   [fif.stack-machine.words :refer [set-global-word-defn]]
+   [fif.stack-machine.exceptions :as exceptions]
    [fif.stack-machine.mode :as mode]
    [fif.stack-machine.stash :as stash]))
 
@@ -153,8 +155,29 @@
   "Stack Machine Import for variable-mode"
   [sm]
   (-> sm
-      (stack/set-word arg-global-var-token start-global-variable)
-      (stack/set-word 'setg setg)
-      (stack/set-word arg-local-var-token start-local-variable)
-      (stack/set-word 'setl setl)
+
+      (set-global-word-defn
+       arg-global-var-token start-global-variable
+       :stdlib? true
+       :doc "def <word> <val> -- Set global variable."
+       :group :stdlib.variable)
+
+      (set-global-word-defn
+       'setg setg
+       :stdlib? true
+       :doc "( wname val -- ) Set global variable."
+       :group :stdlib.variable)
+
+      (set-global-word-defn
+       arg-local-var-token start-local-variable
+       :stdlib? true
+       :doc "let <word> <val> --  Set local variable."
+       :group :stdlib.variable)
+
+      (set-global-word-defn
+       'setl setl
+       :stdlib? true
+       :doc "( wname val -- ) Set local variable."
+       :group :stdlib.variable)
+
       (stack/set-mode variable-mode-flag variable-mode)))

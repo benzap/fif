@@ -2,6 +2,8 @@
   (:require
     [fif.stack-machine :as stack]
     [fif.stack-machine.sub-stack :as sub-stack]
+    [fif.stack-machine.words :refer [set-global-word-defn]]
+    [fif.stack-machine.exceptions :as exceptions]
     [fif.utils.token :as token]
     [fif.stdlib.conditional :refer [condition-true?]]
     [fif.stack-machine.processor :as stack.processor]))
@@ -505,9 +507,43 @@
     (-> sm leave-recent-loop stack/dequeue-code)))
 
 
+(def doc-string-do "<end> <start> do <body> loop|+loop -- Loop conditional")
+(def doc-string-begin "begin <body> <flag> until | begin <flag> while <body> repeat -- Loop conditional -- Loop conditional")
+
+
 (defn import-stdlib-cond-loop-mode [sm]
   (-> sm
-      (stack/set-word arg-do-token start-do)
+
+      (set-global-word-defn
+       arg-do-token start-do
+       :stdlib? true
+       :doc doc-string-do
+       :group :stdlib.mode.conditional-loop)
+
+      (set-global-word-defn
+       arg-loop-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc doc-string-do
+       :group :stdlib.mode.conditional-loop)
+
+      (set-global-word-defn
+       arg-loopend-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc doc-string-do
+       :group :stdlib.mode.conditional-loop)
+
+      (set-global-word-defn
+       arg-plus-loop-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc doc-string-do
+       :group :stdlib.mode.conditional-loop)
+
+      (set-global-word-defn
+       arg-plus-loopend-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc doc-string-do
+       :group :stdlib.mode.conditional-loop)
+
       (stack/set-word 'i get-loop-index-1)
       (stack/set-word 'j get-loop-index-2)
       (stack/set-word 'k get-loop-index-3)
@@ -517,7 +553,41 @@
       (stack/set-mode loop-mode-flag loop-mode)
       (stack/set-mode loop-leave-mode-flag loop-leave-mode)
 
-      (stack/set-word arg-begin-token start-begin)
+      (set-global-word-defn
+       arg-begin-token start-begin
+       :stdlib? true
+       :doc doc-string-begin
+       :group :stdlib.mode.conditional-loop)
+
+      (set-global-word-defn
+       arg-until-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc doc-string-begin
+       :group :stdlib.mode.conditional-loop)
+
+      (set-global-word-defn
+       arg-untilend-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc doc-string-begin
+       :group :stdlib.mode.conditional-loop)
+
+      (set-global-word-defn
+       arg-while-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc doc-string-begin
+       :group :stdlib.mode.conditional-loop)
+
+      (set-global-word-defn
+       arg-repeat-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc doc-string-begin
+       :group :stdlib.mode.conditional-loop)
+
+      (set-global-word-defn
+       arg-repeatend-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc doc-string-begin
+       :group :stdlib.mode.conditional-loop)
 
       (stack/set-mode begin-mode-flag begin-mode)
       (stack/set-mode inner-begin-mode-flag inner-begin-mode)
@@ -527,4 +597,8 @@
       (stack/set-mode begin-while-leave-mode-flag begin-while-leave-mode)
       (stack/set-mode begin-until-leave-mode-flag begin-until-leave-mode)
 
-      (stack/set-word arg-leave-token start-leave)))
+      (set-global-word-defn
+       arg-leave-token start-leave
+       :stdlib? true
+       :doc "Used within a conditional loop to leave early"
+       :group :stdlib.mode.conditional-loop)))

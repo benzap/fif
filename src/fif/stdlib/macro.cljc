@@ -1,14 +1,20 @@
 (ns fif.stdlib.macro
-  (:require [fif.stack-machine :as stack]
-            [fif.stack-machine.sub-stack :as sub-stack]))
+  (:require
+   [fif.stack-machine :as stack]
+   [fif.stack-machine.sub-stack :as sub-stack]
+   [fif.stack-machine.words :refer [set-global-word-defn]]
+   [fif.stack-machine.exceptions :as exceptions]))
+
 
 (def macro-define-mode-flag :macro-define-mode)
 (def arg-start-macro 'macro)
 (def arg-end-macro 'endmacro)
 
+
 (def macro-store-mode-flag :macro-store-mode)
 (def arg-start-macro-store '_!)
 (def arg-end-macro-store '!_)
+
 
 (def arg-create-macro-stack 'macro/stack-create)
 (def arg-transfer-macro-stack 'macro/stack->code-stack)

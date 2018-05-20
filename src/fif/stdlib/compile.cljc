@@ -13,8 +13,9 @@
             [fif.stack-machine.scope :as stack.scope]
             [fif.stack-machine.stash :as stack.stash]
             [fif.stack-machine.mode :as stack.mode]
-            [fif.stack-machine.words :as stack.words]
+            [fif.stack-machine.words :as stack.words :refer [set-global-word-defn]]
             [fif.stack-machine.processor :as stack.processor]
+            [fif.stack-machine.exceptions :as exceptions]
             [fif.stdlib.reserved :as reserved]))
 
 
@@ -141,7 +142,19 @@
 
 (defn import-stdlib-compile-mode [sm]
   (-> sm
-      (stack/set-word arg-start-token start-defn)
+
+      (set-global-word-defn
+       arg-start-token start-defn
+       :stdlib? true
+       :doc "fn <wname> <wbody> endfn -- Create a word definition with name <wname> consisting of words <wbody>."
+       :group :stdlib.mode.compile)
+
+      (set-global-word-defn
+       arg-end-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc "fn <wname> <wbody> endfn -- Create a word definition with name <wname> consisting of words <wbody>."
+       :group :stdlib.mode.compile)
+
       (stack/set-mode compile-mode-flag compile-mode)
       (stack/set-mode inner-compile-mode-flag inner-compile-mode)
       (stack/set-mode function-mode-flag function-mode)))

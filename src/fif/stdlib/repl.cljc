@@ -33,6 +33,7 @@
         word (-> sm (stack/get-word arg))
         meta (words/get-global-metadata sm arg)]
     (println "name:\t" arg)
+    (println "group:\t" (:group meta))
     (println "type:\t" (cond
                          (= word words/not-found) (class arg)
                          (:variable? meta) "variable"
@@ -47,10 +48,16 @@
 (defn import-stdlib-repl
   [sm]
   (-> sm
-      (words/set-word-defn arg-see-op see-op
-                          :doc "see <word> - Display info about a given word definition"
-                          :stdlib? true)
-      (words/set-word-defn arg-meta-op meta-op
-                          :doc "(word -- metadata) Returns the metadata for the given word definition"
-                          :stdlib? true)
+      (words/set-global-word-defn 
+       arg-see-op see-op
+       :doc "see <word> -- Display info about a given word definition."
+       :stdlib? true
+       :group :stdlib.repl)
+
+      (words/set-global-word-defn
+       arg-meta-op meta-op
+       :doc "( word -- metadata ) Returns the metadata for the given word definition"
+       :stdlib? true
+       :group :stdlib.repl)
+
       (stack/set-mode arg-see-mode see-mode)))

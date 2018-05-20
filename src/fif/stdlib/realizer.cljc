@@ -3,6 +3,8 @@
    [fif.stack-machine :as stack-machine]
    [fif.stack-machine.processor :as processor]
    [fif.stack-machine.stash :as stack-machine.stash]
+   [fif.stack-machine.words :refer [set-global-word-defn]]
+   [fif.stack-machine.exceptions :as exceptions]
    [fif.stack-machine.mode :as mode]
    [fif.utils.token :as utils.token]))
 
@@ -80,5 +82,23 @@
 (defn import-stdlib-realize-mode
   [sm]
   (-> sm
-      (stack-machine/set-word arg-realize-token realize-op)
+
+      (set-global-word-defn
+       arg-realize-token realize-op
+       :stdlib? true
+       :doc "<coll> ? -- Realizes the sequential collection."
+       :group :stdlib.realizer)
+
+      (set-global-word-defn
+       arg-realize-start-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc "<coll> ? -- Realizes the sequential collection."
+       :group :stdlib.realizer)
+
+      (set-global-word-defn
+       arg-realize-finish-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc "<coll> ? -- Realizes the sequential collection."
+       :group :stdlib.realizer)
+
       (stack-machine/set-mode realize-mode-flag realize-mode)))

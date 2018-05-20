@@ -2,6 +2,8 @@
   "For the if-else-then fif functionality"
   (:require [fif.stack-machine :as stack]
             [fif.stack-machine.sub-stack :as sub-stack]
+            [fif.stack-machine.words :as words :refer [set-global-word-defn]]
+            [fif.stack-machine.exceptions :as exceptions]
             [fif.stack-machine.processor :as stack.processor]))
 
 
@@ -249,12 +251,32 @@
       (stack/push-flag conditional-mode-flag)
       stack/dequeue-code)))
 
+(def doc-string "<flag> if <true-body> [else <false-body>] then -- <flag> determines if <true-body> or <false-body> is executed.")
+
 
 (defn import-stdlib-conditional-mode
   "Stack Machine imports for if-else-then functionality"
   [sm]
   (-> sm
-      (stack/set-word arg-if-token start-if)
+
+      (set-global-word-defn
+       arg-if-token start-if
+       :stdlib? true
+       :doc doc-string
+       :group :stdlib.mode.conditional)
+
+      (set-global-word-defn
+       arg-else-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc doc-string
+       :group :stdlib.mode.conditional)
+
+      (set-global-word-defn
+       arg-then-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc doc-string
+       :group :stdlib.mode.conditional)
+
       (stack/set-mode conditional-mode-flag conditional-mode)
       (stack/set-mode inner-conditional-flag inner-conditional-mode)
       (stack/set-mode truth-condition-mode-flag truth-condition-mode)

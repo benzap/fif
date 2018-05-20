@@ -5,6 +5,8 @@
    [fif.stack-machine.processor :as processor]
    [fif.stack-machine.stash :as stack-machine.stash]
    [fif.stack-machine.mode :as mode]
+   [fif.stack-machine.words :refer [set-global-word-defn]]
+   [fif.stack-machine.exceptions :as exceptions]
    [fif.stdlib.reserved :as reserved]
    [fif.stdlib.conditional :refer [condition-true?]]
    [fif.utils.token :as utils.token]))
@@ -263,6 +265,39 @@
   [sm]
   (-> sm
       (stack-machine/set-mode functional-mode-flag functional-mode)
-      (stack-machine/set-word arg-start-reduce-token reduce-op)
-      (stack-machine/set-word arg-start-map-token map-op)
-      (stack-machine/set-word arg-start-filter-token filter-op)))
+
+      (set-global-word-defn
+       arg-start-reduce-token reduce-op
+       :stdlib? true
+       :doc "<fn ( xs x -- 'xs )> <coll> reduce"
+       :group :stdlib.functional)
+
+      (set-global-word-defn
+       arg-iter-reduce-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc "<fn ( xs x -- 'xs )> <coll> reduce"
+       :group :stdlib.functional)
+
+      (set-global-word-defn
+       arg-start-map-token map-op
+       :stdlib? true
+       :doc "<fn ( item -- 'item )> <coll> map"
+       :group :stdlib.functional)
+
+      (set-global-word-defn
+       arg-iter-map-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc "<fn ( item -- 'item )> <coll> map"
+       :group :stdlib.functional)
+
+      (set-global-word-defn
+       arg-start-filter-token filter-op
+       :stdlib? true
+       :doc "<fn ( item -- boolean )> <coll> filter"
+       :group :stdlib.functional)
+
+      (set-global-word-defn
+       arg-iter-filter-token exceptions/raise-unbounded-mode-argument
+       :stdlib? true
+       :doc "<fn ( item -- boolean )> <coll> filter"
+       :group :stdlib.functional)))
