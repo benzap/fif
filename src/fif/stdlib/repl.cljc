@@ -17,9 +17,13 @@
 (def arg-doc-op 'doc)
 (def arg-group-op 'group)
 (def see-mode-flag :see-mode)
-
-
 (def doc-mode-flag :doc-mode)
+(def group-mode-flag :group-mode)
+
+
+;;
+;; Doc Mode
+;;
 
 
 (defn enter-doc-mode [sm state]
@@ -43,7 +47,6 @@
   {:state :retrieve-word}
   [sm]
   (let [wname (-> sm stack/get-code first)]
-    (println "Wname" wname)
     (-> sm
         (mode/update-stash assoc ::wname wname)
         (mode/update-state assoc :state :retrieve-docstring)
@@ -55,17 +58,55 @@
   [sm]
   (let [docstring (-> sm stack/get-code first)
         wname (-> sm mode/get-mode-stash ::wname)]
-    (println "Doc" wname docstring)
     (-> sm
         (words/update-global-metadata wname assoc :doc docstring)
         exit-doc-mode
         stack/dequeue-code)))
 
 
-(defn see-op [sm]
+;;
+;; Group Mode
+;;
+
+
+(defn enter-group-mode [sm state]
+  (mode/enter-mode sm group-mode-flag state))
+
+
+(defn exit-group-mode [sm]
+  (mode/exit-mode sm))
+
+
+(defmulti group-mode mode/mode-dispatch-fn)
+
+
+(defn group-op [sm]
   (-> sm
-      (stack/push-flag see-mode-flag)
+      (enter-group-mode {:state :retrieve-word})
       stack/dequeue-code))
+
+
+(defmethod group-mode
+  {:state :retrieve-word}
+  [sm]
+  (let [wname (-> sm stack/get-code first)]
+    (println "Wname" wname)
+    (-> sm
+        (mode/update-stash assoc ::wname wname)
+        (mode/update-state assoc :state :retrieve-groupkey)
+        stack/dequeue-code)))
+
+
+(defmethod group-mode
+  {:state :retrieve-groupkey}
+  [sm]
+  (let [groupkey (-> sm stack/get-code first)
+        wname (-> sm mode/get-mode-stash ::wname)]
+    (println "Group" wname groupkey)
+    (-> sm
+        (words/update-global-metadata wname assoc :group groupkey)
+        exit-group-mode
+        stack/dequeue-code)))
 
 
 (defn meta-op [sm]
@@ -75,6 +116,17 @@
         stack/pop-stack
         (stack/push-stack meta)
         stack/dequeue-code)))
+
+
+;;
+;; See Mode
+;;
+
+
+(defn see-op [sm]
+  (-> sm
+      (stack/push-flag see-mode-flag)
+      stack/dequeue-code))
 
 
 (defn see-mode
@@ -101,7 +153,13 @@
 
       (words/set-global-word-defn 
        arg-doc-op doc-op
-       :doc "doc <string> -- set "
+       :doc "doc <wname> <string> -- set docstring for given word definition."
+       :stdlib? true
+       :group :stdlib.repl)
+
+      (words/set-global-word-defn 
+       arg-group-op group-op
+       :doc "group <wname> <group-key> -- set group for given word definition."
        :stdlib? true
        :group :stdlib.repl)
 
@@ -118,4 +176,5 @@
        :group :stdlib.metadata)
 
       (stack/set-mode see-mode-flag see-mode)
-      (stack/set-mode doc-mode-flag doc-mode)))
+      (stack/set-mode doc-mode-flag doc-mode)
+      (stack/set-mode group-mode-flag group-mode)))
