@@ -45,6 +45,9 @@
   (apply stash/update-stash sm update-in [::state] f args))
 
 
+(def update-stash stash/update-stash)
+
+
 (defn get-mode-stash
   [sm]
   (-> sm stash/peek-stash))

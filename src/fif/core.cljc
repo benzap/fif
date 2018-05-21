@@ -185,3 +185,40 @@
 #_(reval see see)
 
 #_(reval "test" "Clojure is awesome!" " " regex str/split println)
+
+
+;; Manipulating metadata
+#_(reval
+   def x 10
+   doc x "Includes data"
+   group x :stdlib
+   see x
+
+   fn y
+    "Hello World" println
+   endfn
+   doc y "Includes Data"
+   group y :stdlib.test
+
+   see y
+   )
+
+
+#_(reval groups)
+
+;; stdout:
+;;
+;;- :stdlib
+;;-- :stdlib.collections
+;;-- :stdlib.math
+;;--- :stdlib.math.arithmetic
+;;...
+
+
+#_(reval dir :stdlib)
+
+;; :stdlib
+;; g :stdlib.math
+;; g :stdlib.repl
+;; w foo
+;; v bar
