@@ -10,6 +10,8 @@
 
 
 (def arg-meta-op 'meta)
+(def arg-setmeta-op 'setmeta)
+
 (def arg-see-op 'see)
 (def arg-see-words-op 'see-words)
 (def arg-see-groups-op 'see-groups)
@@ -118,6 +120,16 @@
         stack/dequeue-code)))
 
 
+(defn setmeta-op [sm]
+  (let [[new-meta wname] (stack/get-stack sm)
+        old-meta (words/get-global-metadata sm wname)]
+    (-> sm
+        stack/pop-stack
+        stack/pop-stack
+        (words/set-global-metadata wname (merge old-meta new-meta))
+        stack/dequeue-code)))
+
+
 ;;
 ;; See Mode
 ;;
@@ -141,7 +153,7 @@
                          (:variable? meta) "variable"
                          :else "function"))
     (println "doc:\t"  (:doc meta))
-    (println "source:\t" (or (pr-str (:source meta)) "<clojure>"))
+    (println "source:\t" (if-some [source (:source meta)] (pr-str (:source meta)) "<clojure>"))
     (-> sm
         stack/pop-flag
         stack/dequeue-code)))
@@ -172,6 +184,12 @@
       (words/set-global-word-defn
        arg-meta-op meta-op
        :doc "( word -- metadata ) Returns the metadata for the given word definition"
+       :stdlib? true
+       :group :stdlib.metadata)
+
+      (words/set-global-word-defn
+       arg-setmeta-op setmeta-op
+       :doc "( wname metadata -- ) Sets and merges the key values of `metadata` into the metadata of `wname`."
        :stdlib? true
        :group :stdlib.metadata)
 

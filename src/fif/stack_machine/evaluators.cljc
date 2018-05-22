@@ -6,7 +6,8 @@
    
    [fif.stack-machine :as stack]
    [fif.stack-machine.error-handling :as stack.error-handling])
-  (:import [clojure.lang ExceptionInfo]))
+  #?(:clj
+     (:import [clojure.lang ExceptionInfo])))
 
 (defn eval-fn
   [sm args]
