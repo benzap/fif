@@ -72,6 +72,7 @@
        (let [sform (repl-read)]
          (repl-eval sform)
          (repl-prompt)
-         (when-not (= sform "bye")
-           (recur)))))))
+         (if-not (= sform "bye")
+           (recur)
+           (write-out "For now, bye!\r\n")))))))
   
