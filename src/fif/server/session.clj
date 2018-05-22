@@ -15,6 +15,10 @@
    (ref-set *server-sessions {})))
 
 
+(defn get-stack-machine [key]
+  (-> @*server-sessions (get key) :stack-machine))
+
+
 (defn new-session!
   ([key sm]
    (let [opts {:stack-machine sm}]

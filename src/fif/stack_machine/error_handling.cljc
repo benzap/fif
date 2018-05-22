@@ -1,7 +1,8 @@
 (ns fif.stack-machine.error-handling
   "Functions for handling errors within the fif stackmachine."
   (:require
-   [fif.stack-machine :as stack]))
+   [fif.stack-machine :as stack]
+   [fif.utils.display :refer [prn-err pprint-err]]))
 
 
 (def error-symbol 'ERR##)
@@ -21,7 +22,10 @@
   "Creates an error object for stack errors."
   ;; TODO: include more info when in debug mode
   ([sm msg extra]
-   (let [stack-info {:type ::stack-error}]
+   (let [stack-info {:type ::stack-error
+                     :stack (-> sm stack/get-stack reverse)
+                     :word (-> sm stack/get-code first)
+                     :flags (-> sm stack/get-flags reverse)}]
      (new-error-object msg (merge stack-info extra))))
   ([sm msg] (stack-error sm msg {})))
 
@@ -40,6 +44,7 @@
    (let [stack-info {:type ::system-error
                      :stack (-> sm stack/get-stack reverse)
                      :word (-> sm stack/get-code first)
+                     :flags (-> sm stack/get-flags reverse)
                      :ex-data (ex-data ex)
                      :ex-message #?(:clj (.getMessage ex) :cljs nil)}]
      (new-error-object msg (merge stack-info extra))))
@@ -82,7 +87,7 @@
   (if (stack/is-debug-mode? sm)
     (let [errmsg (str "System Error")
           errobj (system-error sm ex errmsg)]
-      (binding [*out* *err*] (println ex))
+      (pprint-err errobj)
       (set-error sm errobj))
     (throw ex)))
 
@@ -91,3 +96,15 @@
   (if-let [system-error-handler (stack/get-system-error-handler sm)]
     (system-error-handler sm ex)
     (throw ex)))
+
+
+(defn default-stack-error-handler
+  [sm err]
+  (pprint-err err)
+  (set-error sm err))
+
+
+(defn handle-stack-error [sm err]
+  (if-let [stack-error-handler (stack/get-stack-error-handler sm)]
+    (stack-error-handler sm err)
+    (set-error sm err)))

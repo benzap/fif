@@ -12,90 +12,12 @@
     :include-macros true]))
 
 
-(defn op+
-  "(n n -- n) Add top two values of stack"
-  [sm]
-  (let [[i j] (stack/get-stack sm)
-        result (clojure.core/+ j i)]
-    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
-
-
-(defn op-
-  "(n n -- n) Subtract top two values of stack"
-  [sm]
-  (let [[i j] (stack/get-stack sm)
-        result (clojure.core/- j i)]
-    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
-
-
-(defn op-plus-1
-  [sm]
-  (let [[i] (stack/get-stack sm)
-        result (inc i)]
-    (-> sm stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
-
-
-(defn op-minus-1
-  [sm]
-  (let [[i] (stack/get-stack sm)
-        result (dec i)]
-    (-> sm stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
-
-
-(defn op*
-  "(n n -- n) Multiply top two values of the stack"
-  [sm]
-  (let [[i j] (stack/get-stack sm)
-        result (clojure.core/* j i)]
-    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
-
-
-(defn op-div
-  "(n n -- n) Divide top two values of the stack"
-  [sm]
-  (let [[i j] (stack/get-stack sm)
-        result (clojure.core// j i)]
-    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
-
-
-(defn op-mod
-  "(n n -- n) Get the modulo of the top two values"
-  [sm]
-  (let [[i j] (stack/get-stack sm)
-        result (clojure.core/mod j i)]
-    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
-
-
-(defn negate
-  "(n -- n) Negates the top value"
-  [sm]
-  (let [[i] (stack/get-stack sm)
-        result (clojure.core/- i)]
-    (-> sm stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
-
-
 (defn abs
   "(n -- n) Gets the absolute of the top value"
   [sm]
   (let [[i] (stack/get-stack sm)
         result (if (pos? i) i (clojure.core/- i))]
     (-> sm stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
-
-
-(defn op-max
-  "(n n -- n) Gets the max value between the top two values"
-  [sm]
-  (let [[i j] (stack/get-stack sm)
-        result (max j i)]
-    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
-
-
-(defn op-min
-  "(n n -- n) Gets teh min value between the top two values"
-  [sm]
-  (let [[i j] (stack/get-stack sm)
-        result (min j i)]
-    (-> sm stack/pop-stack stack/pop-stack (stack/push-stack result) stack/dequeue-code)))
 
 
 (defn dup [sm]
@@ -171,47 +93,31 @@
         new-stack (nthrest stack 2)]))
 
 
-(defn op-<
-  [sm]
-  (let [[i j] (stack/get-stack sm)
-        result (clojure.core/< j i)]
-   (-> sm
-       stack/pop-stack stack/pop-stack
-       (stack/push-stack result) stack/dequeue-code)))
-
-
-(def/defstack-func-2 op-<= <=)
-(def/defstack-func-2 op-= =)
-(def/defstack-func-2 op-not= not=)
-(def/defstack-func-2 op-> >)
-(def/defstack-func-2 op->= >=)
-
-
 (defn import-stdlib-ops [sm]
   (-> sm
 
       ;; Arithmetic
 
       (set-global-word-defn
-       '* op*
+       '* (wrap-function-with-arity 2 *)
        :stdlib? true
        :doc "( n n -- n ) Multiply the top two values on the stack."
        :group :stdlib.math.arithmetic)
 
       (set-global-word-defn
-       '+ op+
+       '+ (wrap-function-with-arity 2 +)
        :stdlib? true
        :doc "( n n -- n ) Add the top two values on the stack."
        :group :stdlib.math.arithmetic)
 
       (set-global-word-defn
-       '- op-
+       '- (wrap-function-with-arity 2 -)
        :stdlib? true
        :doc "( n n -- n ) Subtract the top two values on the stack."
        :group :stdlib.math.arithmetic)
 
       (set-global-word-defn
-       '/ op-div
+       '/ (wrap-function-with-arity 2 /)
        :stdlib? true
        :doc "( n n -- n ) Divide the top two values on the stack"
        :group :stdlib.math.arithmetic)
@@ -223,37 +129,37 @@
        :group :stdlib.math.arithmetic)
 
       (set-global-word-defn
-       'dec op-minus-1
+       'dec (wrap-function-with-arity 1 dec)
        :stdlib? true
        :doc "( n -- n ) Decrement of top value on the stack."
        :group :stdlib.math.arithmetic)
 
       (set-global-word-defn
-       'inc op-plus-1
+       'inc (wrap-function-with-arity 1 inc)
        :stdlib? true
        :doc "( n -- n ) Increment of top value on the stack."
        :group :stdlib.math.arithmetic)
 
       (set-global-word-defn
-       'max op-max
+       'max (wrap-function-with-arity 2 max)
        :stdlib? true
        :doc "( n n -- n ) Max value between the top two values on the stack."
        :group :stdlib.math.arithmetic)
 
       (set-global-word-defn
-       'min op-min
+       'min (wrap-function-with-arity 2 min)
        :stdlib? true
        :doc "( n n -- n ) Min value between the top two values on the stack."
        :group :stdlib.math.arithmetic)
 
       (set-global-word-defn
-       'mod op-mod
+       'mod (wrap-function-with-arity 2 mod)
        :stdlib? true
        :doc "( num div -- n ) Modulus of `num` and `div`"
        :group :stdlib.math.arithmetic)
 
       (set-global-word-defn
-       'negate negate
+       'negate (wrap-function-with-arity 1 -)
        :stdlib? true
        :doc "( n -- n ) Negate the top value"
        :group :stdlib.math.arithmetic)
@@ -435,31 +341,31 @@
       ;;
 
       (set-global-word-defn
-       '< op-<
+       '< (wrap-function-with-arity 2 <)
        :stdlib? true
        :doc "( x y -- bool ) Returns true if `x` < `y`, else false"
        :group :stdlib.comparison)
 
       (set-global-word-defn
-       '<= op-<=
+       '<= (wrap-function-with-arity 2 <=)
        :stdlib? true
        :doc "( x y -- bool ) Returns true if `x` <= `y`, else false"
        :group :stdlib.comparison)
 
       (set-global-word-defn
-       '= op-=
+       '= (wrap-function-with-arity 2 =)
        :stdlib? true
        :doc "( x y -- bool ) Returns true if `x` = `y`, else false"
        :group :stdlib.comparison)
 
       (set-global-word-defn
-       '> op->
+       '> (wrap-function-with-arity 2 >)
        :stdlib? true
        :doc "( x y -- bool ) Returns true if `x` > `y`, else false"
        :group :stdlib.comparison)
 
       (set-global-word-defn
-       '>= op->=
+       '>= (wrap-function-with-arity 2 >=)
        :stdlib? true
        :doc "( x y -- bool ) Returns true if `x` >= `y`, else false"
        :group :stdlib.comparison)
@@ -485,7 +391,7 @@ positive number when x is logically 'less than', 'equal to', or
        :group :stdlib.comparison)
 
       (set-global-word-defn
-       'not= op-not=
+       'not= (wrap-function-with-arity 2 not=)
        :stdlib? true
        :doc "( x y -- bool ) Returns true if `x` not equal to `y`, else false"
        :group :stdlib.comparison)

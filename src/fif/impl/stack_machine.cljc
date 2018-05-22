@@ -21,12 +21,11 @@
    sub-stash
    mode-stash
    flags
-   words
-   word-metadata
    modes
    step-num
    step-max
    system-error-handler
+   stack-error-handler
    halt?
    debug?]
   
@@ -118,8 +117,9 @@
   (get-word [this wname]
     (stack.words/get-word this wname))
 
-  (get-word-list [this]
-    (get this :words))
+  (get-word-listing [this]
+    (stack.words/get-word-listing this))
+
 
   ;; Word Metadata
   (set-word-metadata [this wname wmeta]
@@ -127,6 +127,7 @@
 
   (get-word-metadata [this wname]
     (stack.words/get-global-metadata this wname))
+
 
   ;; Mode Functions
   (set-mode [this flag modefn]
@@ -205,6 +206,12 @@
   (set-system-error-handler [this err-handler]
     (assoc this :system-error-handler err-handler))
 
+  (get-stack-error-handler [this]
+    (:stack-error-handler this))
+
+  (set-stack-error-handler [this err-handler]
+    (assoc this :stack-error-handler err-handler))
+
 
   ;; Execution
   (halt [this]
@@ -246,11 +253,10 @@
     :sub-stash '()
     :mode-stash (utils.stash/create-stash)
     :flags []
-    :words {}
-    :word-metadata {}
     :modes {}
     :step-num 0
     :step-max 0
     :system-error-handler nil
+    :stack-error-handler nil
     :halt? false
     :debug? true}))

@@ -21,8 +21,7 @@
         errmsg (str "Not enough values on the main stack to satisfy word function")
         errextra {:word-function-name word-name :word-function-arity num-args}
         errobj (error-handling/stack-error sm errmsg errextra)]
-    (-> sm
-        (error-handling/set-error errobj))))
+    (error-handling/handle-stack-error sm errobj)))
 
 
 (defn wrap-function-with-arity

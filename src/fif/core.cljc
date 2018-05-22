@@ -4,7 +4,8 @@
    [fif.stack-machine :as stack]
    [fif.stack-machine.evaluators :as stack.evaluators]
    [fif.stack-machine.stash :as stack-machine.stash]
-   [fif.stack-machine.error-handling :refer [default-system-error-handler]]
+   [fif.stack-machine.error-handling :refer [default-system-error-handler
+                                             default-stack-error-handler]]
    [fif.stdlib :refer [import-stdlib]]
    [fif.impl.stack-machine :refer [new-stack-machine]]))
 
@@ -23,6 +24,7 @@
   `eval`, `seval` and `reval`"
   (-> (new-stack-machine)
       (stack/set-system-error-handler default-system-error-handler)
+      (stack/set-stack-error-handler default-stack-error-handler)
       import-stdlib))
 
 

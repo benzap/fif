@@ -39,7 +39,7 @@
 
   (set-word* [this wname wbody])
   (get-word [this wname])
-  (get-word-list [this])
+  (get-word-listing [this])
 
   (set-word-metadata [this wname wmeta])
   (get-word-metadata [this wname])
@@ -71,6 +71,9 @@
 
   (get-system-error-handler [this])
   (set-system-error-handler [this err-handler])
+
+  (get-stack-error-handler [this])
+  (set-stack-error-handler [this err-handler])
 
   (step [this])
   (run [this])

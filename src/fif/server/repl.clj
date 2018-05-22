@@ -5,6 +5,7 @@
    [clojure.edn :as edn]
    [clojure.string :as str]
 
+   [fif.stack-machine :as stack]
    [fif.server.dynamic :refer [*fif-session* *fif-in* *fif-out* *fif-err*]]
    [fif.server.session :as server.session]
    [fif.server.utils :refer [with-io]]))
@@ -16,7 +17,7 @@
 
 
 (defn remove-telnet-codes [s]
-  (-> s
+  (-> (str s)
       (str/replace #"\^\[\[(A|B|C|D)" " ")))
 
 
@@ -37,8 +38,18 @@
   (write-out (str "Fif Repl\r\n" crn)))
 
 
-(defn repl-prompt []
-  (write-out (str "> ")))
+(defn repl-prompt
+  "Displays a normal prompt '> ', and a "
+  []
+  (let [flags
+        (some-> *fif-session*
+                :server-session-key
+                server.session/get-stack-machine
+                stack/get-flags)
+        flag-count (count flags)]
+    (if (zero? flag-count)
+      (write-out (str "> "))
+      (write-out (apply str ".." (repeat flag-count "  "))))))
 
 
 (defn repl-read []
