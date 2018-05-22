@@ -37,7 +37,7 @@
   :profiles
   {:dev
    {:source-paths ["src" "dev" "test"]
-    :repositories [[org.clojure/tools.namespace "0.2.11"]]
+    :dependencies [[org.clojure/tools.namespace "0.2.11"]]
     :repl-options {:init-ns fif.dev.user
                    ;;:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]
                    :port 9000

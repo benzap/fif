@@ -102,7 +102,7 @@
       (let [fn-content (stack.stash/peek-stash sm)
             [wname & wbody] fn-content]
         (-> sm
-            (stack.words/set-word-defn
+            (set-global-word-defn
              wname (wrap-compiled-fn wbody)
              :source (vec wbody))
             (stack.stash/remove-stash)

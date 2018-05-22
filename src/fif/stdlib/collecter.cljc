@@ -4,7 +4,8 @@
    [fif.def :refer [defcode-eval] :include-macros true]
    [fif.stack-machine :as stack]
    [fif.stack-machine.processor :as stack.processor]
-   [fif.stack-machine.words :refer [set-global-word-defn]]
+   [fif.stack-machine.words :refer [set-global-word-defn
+                                    set-global-meta]]
    [fif.stack-machine.exceptions :as exceptions]
    [fif.utils.token :as token]
    [fif.stdlib.macro :refer [import-stdlib-macro-mode]]))
@@ -67,4 +68,9 @@
        :group :stdlib.mode.collecter)
 
       import-stdlib-macro-mode ;; fif Macro Dependency
-      import-collection-collecter-defaults))
+      import-collection-collecter-defaults
+
+      (set-global-meta 'list! :stdlib? true)
+      (set-global-meta 'map! :stdlib? true)
+      (set-global-meta 'vec! :stdlib? true)
+      (set-global-meta 'set! :stdlib? true)))

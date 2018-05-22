@@ -4,7 +4,8 @@
   (:require
    [fif.stack-machine :as stack]
    [fif.stack-machine.words :as stack.words]
-   [fif.stack-machine.words :refer [set-global-word-defn]]
+   [fif.stack-machine.words :refer [set-global-word-defn
+                                    set-local-word-defn]]
    [fif.stack-machine.exceptions :as exceptions]
    [fif.stack-machine.mode :as mode]
    [fif.stack-machine.stash :as stash]))
@@ -79,7 +80,7 @@
     (-> sm
         (stack.words/set-global-word-defn
          sym (wrap-global-variable val)
-         :variable? true)
+         :variable? :global)
         stack/pop-stack
         exit-variable-mode
         stack/dequeue-code)))
@@ -119,7 +120,9 @@
   (let [val (-> sm stack/get-code first)
         sym (-> sm stack/get-stack peek)]
     (-> sm
-        (stack.words/set-word sym (wrap-local-variable val))
+        (stack.words/set-local-word-defn
+         sym (wrap-local-variable val)
+         :variable? :local)
         stack/pop-stack
         exit-variable-mode
         stack/dequeue-code)))
@@ -135,7 +138,7 @@
         stack/pop-stack
         (stack.words/set-global-word-defn
          sym (wrap-global-variable val)
-         :variable? true)
+         :variable? :global)
         stack/dequeue-code)))
 
 
@@ -147,7 +150,9 @@
     (-> sm
         stack/pop-stack
         stack/pop-stack
-        (stack.words/set-word sym (wrap-local-variable val))
+        (stack.words/set-local-word-defn
+         sym (wrap-local-variable val)
+         :variable? :local)
         stack/dequeue-code)))
 
 

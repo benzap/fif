@@ -1,6 +1,6 @@
 (ns fif.dev.user
   (:require
-   ;;[clojure.tools.namespace.repl :only (refresh)]
+   [clojure.tools.namespace.repl :refer [refresh]]
 
    [fif.server.core-test :refer :all]))
 

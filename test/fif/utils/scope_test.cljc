@@ -5,7 +5,8 @@
                             update-scope
                             get-in-scope
                             remove-scope
-                            update-global-scope]]
+                            update-global-scope
+                            get-merged-scope]]
    [fif-test.utils :refer [teval are-eq*]]))
 
 
@@ -93,3 +94,13 @@
    => [{:test 345} {:test 123}]))
 
 
+(deftest test-get-merged-scope
+  (are-eq*
+   (-> (new-scope)
+       (update-scope assoc :test 123)
+       (update-scope assoc :test2 234)
+       (new-scope)
+       (update-scope assoc :test 345)
+       (get-merged-scope))
+
+   => {:test 345 :test2 234}))

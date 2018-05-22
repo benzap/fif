@@ -770,13 +770,13 @@ positive number when x is logically 'less than', 'equal to', or
        :group :stdlib.io)
 
       (set-global-word-defn
-       'rand (wrap-function-with-arity 1 rand)
+       'rand (wrap-function-with-arity 0 rand)
        :stdlib? true
        :doc "( -- n ) Returns a random floating point number between [0 1)."
        :group :stdlib.random)
 
       (set-global-word-defn
-       'randn (wrap-function-with-arity 2 rand)
+       'randn (wrap-function-with-arity 1 rand)
        :stdlib? true
        :doc "( n -- n ) Returns a random floating point number between  [0 n)."
        :group :stdlib.random)

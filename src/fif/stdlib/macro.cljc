@@ -101,10 +101,14 @@
 (defn import-stdlib-macro-mode
   [sm]
   (-> sm
-      (stack/set-word arg-start-macro start-macro)
-      (stack/set-word arg-start-macro-store start-macro-store)
-      (stack/set-word arg-create-macro-stack op-create-temp-macro-stack)
-      (stack/set-word arg-transfer-macro-stack op-transfer-macro-stack)
+
+      (set-global-word-defn arg-start-macro start-macro :stdlib? true)
+
+      (set-global-word-defn arg-start-macro-store start-macro-store :stdlib? true)
+
+      (set-global-word-defn arg-create-macro-stack op-create-temp-macro-stack :stdlib? true)
+
+      (set-global-word-defn arg-transfer-macro-stack op-transfer-macro-stack :stdlib? true)
 
       (stack/set-mode macro-define-mode-flag macro-define-mode)
       (stack/set-mode macro-store-mode-flag macro-store-mode)))

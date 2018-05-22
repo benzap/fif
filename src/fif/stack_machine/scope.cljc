@@ -60,3 +60,9 @@
    (let [fscope (-> sm stack/get-scope first)]
      (get-in fscope attrs default)))
   ([sm attrs] (get-in-global-scope sm attrs nil)))
+
+
+(defn get-merged-scope
+  [sm]
+  (let [scope (stack/get-scope sm)]
+    (utils.scope/get-merged-scope scope)))

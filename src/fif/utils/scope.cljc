@@ -33,3 +33,8 @@
 (defn update-global-scope
   [scope f & args]
   (apply update-in scope [0] f args))
+
+
+(defn get-merged-scope
+  [scope]
+  (reduce merge scope))

@@ -1,6 +1,10 @@
 (ns fif.stdlib.constant
   "Allows defining words which return a constant value"
-  (:require [fif.stack-machine :as stack]))
+  (:require
+   [fif.stack-machine :as stack]
+   [fif.stack-machine.words :refer [set-global-word-defn
+                                    set-global-meta]]
+   [fif.stack-machine.exceptions :as exceptions]))
 
 
 (def arg-constant-token 'constant)
@@ -14,6 +18,7 @@
     (-> sm (stack/push-stack cval) stack/dequeue-code)))
 
 
+;; TODO; include as reserved word for prevent overwrite.
 (defn constant-mode
   "Mode for creating a word definition which pops a constant value onto
   the stack."
@@ -39,6 +44,12 @@
   "Stack Machine Import for constant-mode"
   [sm]
   (-> sm
-      (stack/set-word arg-constant-token start-constant)
+
+      (set-global-word-defn
+       arg-constant-token start-constant
+       :stdlib? true
+       :group :stdlib.constant
+       :doc "constant <name> <value> -- Sets a constant value.")
+
       (stack/set-mode constant-mode-flag constant-mode)))
     

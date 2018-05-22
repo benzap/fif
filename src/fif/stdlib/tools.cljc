@@ -6,6 +6,9 @@
    
    [fif.stack-machine.stash :as stack-machine.stash]
    [fif.stack-machine.scope :as stack-machine.scope]
+   [fif.stack-machine.words :refer [set-global-word-defn
+                                    set-global-meta]]
+   [fif.stack-machine.exceptions :as exceptions]
    [fif.stack-machine :as stack]
    [fif.def :as def
     :refer [wrap-function-with-arity
@@ -41,5 +44,12 @@
 (defn import-stdlib-stack-tools
   [sm]
   (-> sm
-      (stack/set-word '$reset-stack-machine reset-stack-op)))
+
+      (set-global-word-defn
+       '$reset-stack-machine reset-stack-op
+       :stdlib? true
+       :group :stdlib.tools
+       :doc "soft-resets the stack machine.")
+
+      ))
   

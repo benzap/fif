@@ -14,6 +14,7 @@
 
 (def arg-see-op 'see)
 (def arg-see-words-op 'see-words)
+(def arg-see-user-words-op 'see-user-words)
 (def arg-see-groups-op 'see-groups)
 
 (def arg-doc-op 'doc)
@@ -92,7 +93,6 @@
   {:state :retrieve-word}
   [sm]
   (let [wname (-> sm stack/get-code first)]
-    (println "Wname" wname)
     (-> sm
         (mode/update-stash assoc ::wname wname)
         (mode/update-state assoc :state :retrieve-groupkey)
@@ -104,16 +104,15 @@
   [sm]
   (let [groupkey (-> sm stack/get-code first)
         wname (-> sm mode/get-mode-stash ::wname)]
-    (println "Group" wname groupkey)
     (-> sm
-        (words/update-global-metadata wname assoc :group groupkey)
+        (words/update-metadata wname assoc :group groupkey)
         exit-group-mode
         stack/dequeue-code)))
 
 
 (defn meta-op [sm]
   (let [[val] (stack/get-stack sm)
-        meta (words/get-global-metadata sm val)]
+        meta (words/get-metadata sm val)]
     (-> sm
         stack/pop-stack
         (stack/push-stack meta)
@@ -126,7 +125,7 @@
     (-> sm
         stack/pop-stack
         stack/pop-stack
-        (words/set-global-metadata wname (merge old-meta new-meta))
+        (words/set-metadata wname (merge old-meta new-meta))
         stack/dequeue-code)))
 
 
@@ -150,13 +149,41 @@
     (println "group:\t" (:group meta))
     (println "type:\t" (cond
                          (= word words/not-found) (class arg)
-                         (:variable? meta) "variable"
+                         (:variable? meta) (case (:variable? meta)
+                                             :local "local variable"
+                                             :global "global variable"
+                                             "variable")
                          :else "function"))
     (println "doc:\t"  (:doc meta))
     (println "source:\t" (if-some [source (:source meta)] (pr-str (:source meta)) "<clojure>"))
     (-> sm
         stack/pop-flag
         stack/dequeue-code)))
+
+
+(defn see-words-op
+  [sm]
+  (let [words (-> sm words/get-word-listing keys)]
+    (->> words (map str) sort (apply println))
+    (stack/dequeue-code sm)))
+
+
+(defn see-user-words-op
+  [sm]
+  (let [words (-> sm words/get-word-listing keys)
+        metadata (-> sm words/get-metadata-listing)
+        user-words
+        (reduce
+         ;; Remove any entries that are part of stdlib, and keep any
+         ;; words without metadata
+         (fn [wlist wname]
+           (if-let [wmeta (words/get-metadata sm wname)]
+             (if (:stdlib? wmeta) wlist (conj wlist wname))
+             (conj wlist wname)))
+         []
+         words)]
+    (->> user-words (map str) sort (apply println))
+    (stack/dequeue-code sm)))
 
 
 (defn import-stdlib-repl
@@ -178,6 +205,18 @@
       (words/set-global-word-defn 
        arg-see-op see-op
        :doc "see <word> -- Display info about a given word definition."
+       :stdlib? true
+       :group :stdlib.repl)
+
+      (words/set-global-word-defn
+       arg-see-words-op see-words-op
+       :doc "see-words -- Display a list of all word definitions."
+       :stdlib? true
+       :group :stdlib.repl)
+
+      (words/set-global-word-defn
+       arg-see-user-words-op see-user-words-op
+       :doc "see-user-words -- Display all words that are not part of the standard library."
        :stdlib? true
        :group :stdlib.repl)
 
