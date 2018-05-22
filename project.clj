@@ -1,4 +1,4 @@
-(defproject fif "0.3.0-SNAPSHOT"
+(defproject fif "0.4.0-SNAPSHOT"
   :description "Stack-based Programming in Clojure(script)"
   :url "http://github.com/benzap/fif"
   :license {:name "Eclipse Public License"
@@ -31,6 +31,7 @@
                                    :main fif.test-runner
                                    :target :nodejs
                                    :optimizations :none}}}}
+
   :doo {:build "test"
         :alias {:default [:node]}}
 

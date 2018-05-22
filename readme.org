@@ -5,7 +5,7 @@
 #+LANGUAGE: en
 #+OPTIONS: H:2 num:t toc:t \n:nil ::t |:t ^:t f:t tex:t
 
-[[http://benzaporzan.me/fif-playground/][Try it Online!]]
+[[http://benzaporzan.me/fif-playground/][Try it Online!]] *In Alpha*
 
 
 [[./doc/logo.svg]]
@@ -96,7 +96,7 @@ core libraries for familiarity.
   
   #+BEGIN_SRC clojure
 
-  [fif "0.3.0-SNAPSHOT"]
+  [fif "0.4.0-SNAPSHOT"]
 
   #+END_SRC
 
@@ -104,7 +104,7 @@ core libraries for familiarity.
 
   #+BEGIN_SRC clojure
 
-  fif {:mvn/version "0.3.0-SNAPSHOT"}
+  fif {:mvn/version "0.4.0-SNAPSHOT"}
 
   #+END_SRC
 
@@ -112,7 +112,7 @@ core libraries for familiarity.
 
   #+BEGIN_SRC groovy
 
-  compile 'fif:fif:0.3.0-SNAPSHOT'
+  compile 'fif:fif:0.4.0-SNAPSHOT'
 
   #+END_SRC
 
@@ -123,7 +123,7 @@ core libraries for familiarity.
   <dependency>
     <groupId>fif</groupId>
     <artifactId>fif</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>0.4.0-SNAPSHOT</version>
   </dependency>
 
   #+END_SRC
@@ -344,14 +344,14 @@ core libraries for familiarity.
 
    #+END_SRC
 
-** Creating Functions (Word Definitions)
+** Creating Functions
 
-   Functions within *fif* are called *words* and have the syntax:
+   Functions within *fif* are called *word definitions* and have the syntax:
 
    ~fn <name> <body...> endfn~
 
-   Functions are stored as global words within the stack
-   machine. Note that further developments might change this.
+   Functions are stored globaly within the stack machine. This holds
+   true when you attempt to define functions while within a function.
 
    Few Examples:
 
@@ -624,6 +624,8 @@ core libraries for familiarity.
    extend it to include this functionality:
 
    #+BEGIN_SRC clojure
+   (require '[fif.core :as fif])
+   (require '[fif.stack-machine :as stack])
    (require '[fif.def :refer [wrap-procedure-with-arity
                               wrap-function-with-arity]])
 
@@ -782,7 +784,10 @@ core libraries for familiarity.
 
 * Development
   
-  You can pull the project from github. Tests can be run via ~lein test~.
+  You can pull the project from github. Clojure tests are run via
+  ~lein test~, and Clojurescript tests are run via `lein
+  doo`. Clojurescript tests require you to have ~node~ on your
+  Environment PATH.
 
   I welcome any and all pull requests that further improve what is
   currently here, especially things which further improve security and
@@ -798,9 +803,11 @@ core libraries for familiarity.
 
   - +Implementation in Clojurescript+ *included since 0.3.0-snapshot*
   - +Regex Support (#"" tagged literal is not valid EDN)+ *use 'regex word definition*
+  - +Improved Error Messages+
+  - +Socket Repl+ *included since 0.4.0-snapshot*
   - Additional Standard Library Word Definitions *On-Going*
-  - Improved Error Messages
   - A Time Machine Debugger
+  - Improved repl word definitions *On-Going*
   - Improved Fif Macros
 
 * Related Readings
@@ -820,6 +827,19 @@ core libraries for familiarity.
    and so the name stuck. I recommend you check out
    [[https://en.wikipedia.org/wiki/Forth_(programming_language)][the wiki page]] for an interesting read.
 
+   It also helps to note that fif kind of sounds like you /have a lisp/ :)
+
 ** Is this production-ready?
+
    *fif* is not production-ready, and its core library and language
-    semantics are subject to change while it remains in alpha.
+   semantics are subject to change while it remains in alpha.
+
+** Do you plan on using fif in production?
+
+   With further developments, I think I can get it to the point where
+   it's a feature rich, and viable scripting language for my own
+   projects. It has the benefits of being completely sandboxed, and
+   with the addition of the socket repl server, it could be used as an
+   alternative to exposing functionality for setting and getting
+   server configuration data, or even for automating certain
+   functionality with external scripts.
