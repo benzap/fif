@@ -33,6 +33,7 @@
    [fif.stdlib.ops-test]
    [fif.stdlib.tools-test]
    [fif.stdlib.realizer-test]
+   [fif.stdlib.repl-test]
    [fif.stdlib.variable-test]
 
    ;; Test Cases ./utils
@@ -77,6 +78,7 @@
  'fif.stdlib.ops-test
  'fif.stdlib.tools-test
  'fif.stdlib.realizer-test
+ 'fif.stdlib.repl-test
  'fif.stdlib.variable-test
 
 

@@ -38,10 +38,34 @@
    => '(:test)))
 
 
-(deftest test-see)
+(deftest test-see
+  (are-eq*
+   (teval see +) => '()
+
+   (teval see x) => '()
+
+   (teval see 1) => '()
+
+   (teval see 1.2) => '()
+
+   (teval see :test) => '()
+
+   (teval see "string") => '()
+
+   (teval see {:a test}) => '()
+
+   (teval see [1 2 3]) => '()
+
+   (teval see (1 2 3)) => '()
+
+   (teval see x fn x 1 endfn see x) => '()))
 
 
-(deftest test-see-words)
+(deftest test-see-words
+  (are-eq*
+   (teval see-words) => '()))
 
 
-(deftest test-see-user-words)
+(deftest test-see-user-words
+  (are-eq*
+   (teval see-user-words) => '()))

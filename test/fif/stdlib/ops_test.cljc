@@ -131,14 +131,6 @@
    => '(1)))
 
 
-
-(deftest test-dup-op
-  (are-eq*
-   (teval 1 dup dup)
-
-   => '(1 1 1)))
-
-
 (deftest test-quot-op
   (are-eq*
    (teval 1 2 quot)
