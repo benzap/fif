@@ -3,6 +3,9 @@
    [clojure.pprint :refer [pprint]]))
 
 
+#?(:cljs (def ^:dynamic *err* (js/goog.string.StringBuffer.)))
+
+
 (defn print-err
   [& args]
   (binding [*out* *err*]

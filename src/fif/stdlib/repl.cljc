@@ -148,7 +148,7 @@
     (println "name:\t" arg)
     (println "group:\t" (:group meta))
     (println "type:\t" (cond
-                         (= word words/not-found) (class arg)
+                         (= word words/not-found) #?(:clj (class arg) :cljs (type arg))
                          (:variable? meta) (case (:variable? meta)
                                              :local "local variable"
                                              :global "global variable"

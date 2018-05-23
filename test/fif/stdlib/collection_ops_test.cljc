@@ -170,13 +170,6 @@
     => '(false true)))
 
 
-(deftest test-empty-op
-  (are-eq*
-    (teval {:a 1 :b 2 :c 3} :a find)
-
-    => '([:a 1])))
-
-
 (deftest test-find-op
   (are-eq*
     (teval {:a 1 :b 2 :c 3} :a find)

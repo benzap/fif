@@ -132,7 +132,7 @@
 
 
 
-(deftest test-negate-op
+(deftest test-dup-op
   (are-eq*
    (teval 1 dup dup)
 
