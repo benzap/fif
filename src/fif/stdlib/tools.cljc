@@ -60,6 +60,14 @@
         stack/dequeue-code)))
 
 
+(defn get-stack-op
+  [sm]
+  (let [st (-> sm stack/get-stack)]
+    (-> sm
+        (stack/push-stack st)
+        stack/dequeue-code)))
+
+
 (defn import-stdlib-stack-tools
   [sm]
   (-> sm
@@ -86,7 +94,13 @@
        '$reverse-stack reverse-stack-op
        :stdlib? true
        :group :stdlib.tools
-       :doc "Reverse the main stack.")))
+       :doc "Reverse the main stack.")
+
+      (set-global-word-defn
+       '$get-stack get-stack-op
+       :stdlib? true
+       :group :stdlib.tools
+       :doc "( -- stack ) Push a copy of the main stack onto the main stack.")))
 
       
   

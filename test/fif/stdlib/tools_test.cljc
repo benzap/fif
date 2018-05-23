@@ -58,3 +58,11 @@
    (teval $reverse-stack 5)
    
    => '(5)))
+
+
+(deftest test-get-stack
+  (are-eq*
+
+   (teval 2 2 $get-stack)
+   
+   => '(2 2 (2 2))))
