@@ -22,24 +22,43 @@
   - clears main stack
   - clears the loop return stack
   - resets the scope
-  - clears sub-stash
+  - clears sub stash
   - clears mode stash
   - clears flags
-
-  Notes:
-
-  - This does not clear the code queue."
+  - clears code queue
+  "
   [sm]
   (-> sm
-      (stack/clear-stack)
-      (stack/clear-ret)
-      (stack/clear-temp-macro)
-      (stack-machine.scope/clear-scope)
-      (stack/set-stash '())
-      (stack-machine.stash/clear-stash)
-      (stack/clear-flags)
-      (stack/dequeue-code)))
-      
+      stack/clear-stack
+      stack/clear-ret
+      stack/clear-temp-macro
+      stack/clear-scope
+      stack/clear-stash
+      stack/clear-mode-stash
+      stack/clear-flags
+      stack/clear-code))
+
+
+(defn clear-stack-op
+  [sm]
+  (-> sm stack/clear-stack stack/dequeue-code))
+
+
+(defn stack-empty?-op
+  [sm]
+  (let [bool (empty? (stack/get-stack sm))]
+    (-> sm
+        (stack/push-stack bool)
+        stack/dequeue-code)))
+
+
+(defn reverse-stack-op
+  [sm]
+  (let [st (-> sm stack/get-stack reverse)]
+    (-> sm
+        (stack/set-stack (apply list st))
+        stack/dequeue-code)))
+
 
 (defn import-stdlib-stack-tools
   [sm]
@@ -51,5 +70,23 @@
        :group :stdlib.tools
        :doc "soft-resets the stack machine.")
 
-      ))
+      (set-global-word-defn
+       '$clear-stack clear-stack-op
+       :stdlib? true
+       :group :stdlib.tools
+       :doc "Clear the main stack.")
+
+      (set-global-word-defn
+       '$empty-stack? stack-empty?-op
+       :stdlib? true
+       :group :stdlib.tools
+       :doc "( -- b ) Returns true, if the main stack is empty.")
+
+      (set-global-word-defn
+       '$reverse-stack reverse-stack-op
+       :stdlib? true
+       :group :stdlib.tools
+       :doc "Reverse the main stack.")))
+
+      
   

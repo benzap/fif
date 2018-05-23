@@ -73,6 +73,9 @@
   (set-stash [this st]
     (assoc this :sub-stash st))
 
+  (clear-stash [this]
+    (assoc this :sub-stash (empty (:sub-stash this))))
+
   ;; will replace get-stash
   (get-mode-stash [this]
     (-> this :mode-stash))
@@ -80,6 +83,9 @@
   ;; will replace set-stash
   (set-mode-stash [this stash]
     (assoc this :mode-stash stash))
+  
+  (clear-mode-stash [this]
+    (stack.stash/clear-stash this))
 
 
   ;; Scope
@@ -88,6 +94,9 @@
 
   (set-scope [this scope]
     (assoc this :scope scope))
+
+  (clear-scope [this]
+    (stack.scope/clear-scope this))
 
 
   ;; Temp Macro
@@ -151,7 +160,7 @@
     (assoc this :flags flags))
 
   (clear-flags [this]
-    (assoc this :flags (empty (stack/get-flags this))))
+    (assoc this :flags (empty (:flags this))))
 
 
   ;; Code Queue

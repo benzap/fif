@@ -21,13 +21,16 @@
   ;; Old Functionality
   (get-stash [this])
   (set-stash [this st])
+  (clear-stash [this])
 
   ;; Will Replace Old Functionality
   (get-mode-stash [this])
   (set-mode-stash [this stash])
+  (clear-mode-stash [this])
 
   (get-scope [this])
   (set-scope [this scope])
+  (clear-scope [this])
 
   ;; Soon-to-be Deprecated
   (push-temp-macro [this x])

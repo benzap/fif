@@ -31,6 +31,7 @@
    [fif.stdlib.functional-ops-test]
    [fif.stdlib.macro-test]
    [fif.stdlib.ops-test]
+   [fif.stdlib.tools-test]
    [fif.stdlib.realizer-test]
    [fif.stdlib.variable-test]
 
@@ -74,6 +75,7 @@
  'fif.stdlib.functional-ops-test
  'fif.stdlib.macro-test
  'fif.stdlib.ops-test
+ 'fif.stdlib.tools-test
  'fif.stdlib.realizer-test
  'fif.stdlib.variable-test
 
