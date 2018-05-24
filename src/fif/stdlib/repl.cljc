@@ -188,6 +188,41 @@
     (stack/dequeue-code sm)))
 
 
+(defn see-groups-op
+  [sm]
+  (let [groups (->> sm words/get-metadata-listing
+                    vals (map :group) distinct sort)]
+     (doseq [group groups]
+       (println group))
+     (stack/dequeue-code sm)))
+
+
+(defn see-user-groups-op
+  [sm]
+  (let [groups (->> sm words/get-metadata-listing
+                    vals (filter #(not (get % :stdlib? false)))
+                    (map :group) distinct sort)]
+     (doseq [group groups]
+       (println group))
+     (stack/dequeue-code sm)))
+
+
+;; TODO: use proper mode function
+(defn dir-op
+  [sm]
+  (let [[dir group] (-> sm stack/get-code)
+        words (as-> sm $ (words/get-metadata-listing $)
+                   (map (fn [[k v]] (assoc v :word k)) $)
+                   (group-by :group $)
+                   (get $ group)
+                   (map :word $)
+                   (sort $))]
+    (apply println words)
+    (-> sm
+        stack/dequeue-code
+        stack/dequeue-code)))
+
+
 (defn import-stdlib-repl
   [sm]
   (-> sm
@@ -223,8 +258,26 @@
        :group :stdlib.repl)
 
       (words/set-global-word-defn
+       arg-see-groups-op see-groups-op
+       :doc "see-groups -- Display all word definition groups."
+       :stdlib? true
+       :group :stdlib.repl)
+
+      (words/set-global-word-defn
+       'see-user-groups see-user-groups-op
+       :doc "see-user-groups -- Display all user word definition groups."
+       :stdlib? true
+       :group :stdlib.repl)
+
+      (words/set-global-word-defn
+       'dir dir-op
+       :doc "dir <group> -- Display all words that belong to the given group"
+       :stdlib? true
+       :group :stdlib.repl)
+
+      (words/set-global-word-defn
        arg-meta-op meta-op
-       :doc "( word -- metadata ) Returns the metadata for the given word definition"
+       :doc "( word -- metadata ) Returns the metadata for the given word definition."
        :stdlib? true
        :group :stdlib.metadata)
 

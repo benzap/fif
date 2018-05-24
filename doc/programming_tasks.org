@@ -43,12 +43,6 @@
 
 ** Programming Tasks
 
-   - Version 1.0: More word definitions for manipulating the group
-     metadata in the repl
-     - View all groups
-     - View user groups
-     - view all words in a specific group
-
    - Version 1.0: Add 'fn?' word definition to return true when it's a word definition.
 
    - Version 1.0: cljs-specific web-repl implementation in vanilla
@@ -61,7 +55,7 @@
 
    - Version 1.1: implement ampersand special form, concat operations
 
-   - Version 1.1: implement percent special form, for stash operations
+   - Version 1.1: implement percent special form, for stash operations (?)
 
    - Version 1.1: implement 'foreach 'endfor
      (reval [1 2 3 4] foreach %elem inc endfor) ;; => (2 3 4 5)
