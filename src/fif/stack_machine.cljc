@@ -43,6 +43,7 @@
   (set-word* [this wname wbody])
   (get-word [this wname])
   (get-word-listing [this])
+  (set-variable [this wname value])
 
   (set-word-metadata [this wname wmeta])
   (get-word-metadata [this wname])

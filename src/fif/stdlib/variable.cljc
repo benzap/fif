@@ -3,33 +3,19 @@
   stack machine."
   (:require
    [fif.stack-machine :as stack]
-   [fif.stack-machine.words :as stack.words]
-   [fif.stack-machine.words :refer [set-global-word-defn
-                                    set-local-word-defn]]
+   [fif.stack-machine.words :as stack.words
+    :refer [set-global-word-defn
+            set-local-word-defn]]
    [fif.stack-machine.exceptions :as exceptions]
    [fif.stack-machine.mode :as mode]
-   [fif.stack-machine.stash :as stash]))
+   [fif.stack-machine.stash :as stash]
+   [fif.stack-machine.variable :refer [wrap-global-variable
+                                       wrap-local-variable]]))
 
 
 (def arg-global-var-token 'def)
 (def arg-local-var-token 'let)
 (def variable-mode-flag :variable-mode)
-
-
-(defn wrap-global-variable
-  [value]
-  (fn [sm]
-    (-> sm
-        stack/dequeue-code
-        (stack/update-code #(concat %2 %1) [value]))))
-
-
-(defn wrap-local-variable
-  [value]
-  (fn [sm]
-    (-> sm
-        stack/dequeue-code
-        (stack/update-code #(concat %2 %1) [value]))))
 
 
 (defn enter-variable-mode

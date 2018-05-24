@@ -16,3 +16,15 @@
         errobj (error-handling/stack-error sm errmsg errextra)]
     (error-handling/handle-stack-error sm errobj)))
 
+
+(defn raise-max-steps-exceeded
+  "Raises an error for errors involving the max step execution being
+  exceeded."
+  [sm]
+  (let [step-num (stack/get-step-num sm)
+        step-max (stack/get-step-max sm)
+        errmsg (str "Max Execution Step Exceeded")
+        errextra {:step-num step-num :step-max step-max}
+        errobj (error-handling/stack-error sm errmsg errextra)]
+    (error-handling/handle-stack-error sm errobj)))
+    

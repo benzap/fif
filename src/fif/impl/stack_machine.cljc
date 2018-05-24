@@ -5,6 +5,9 @@
    [fif.stack-machine.flags :as stack.flags]
    [fif.stack-machine.stash :as stack.stash]
    [fif.stack-machine.words :as stack.words]
+   [fif.stack-machine.variable :as stack.variable]
+   [fif.stack-machine.exceptions :as stack.exceptions]
+
    [fif.stack-machine.processor :as stack.processor]
    [fif.stack-machine.error-handling :as error-handling]
    [fif.stack-machine.scope :as stack.scope]
@@ -129,6 +132,10 @@
   (get-word-listing [this]
     (stack.words/get-word-listing this))
 
+  (set-variable [this wname value]
+    (stack.words/set-global-word-defn
+     this wname (stack.variable/wrap-global-variable value)
+     :variable? true))
 
   ;; Word Metadata
   (set-word-metadata [this wname wmeta]
@@ -242,11 +249,15 @@
     (loop [sm this]
       (let [step-num (stack/get-step-num sm)
             step-max (stack/get-step-max sm)]
-        (if (or (empty? (-> sm stack/get-code))
-                (and (> step-max 0) (>= step-num step-max))
-                (:halt? sm))
-          sm
-          (recur (stack/step sm))))))
+        (cond
+          (empty? (-> sm stack/get-code)) sm
+
+          (and (> step-max 0) (>= step-num step-max))
+          (stack.exceptions/raise-max-steps-exceeded sm)
+
+          (:halt? sm) sm
+
+          :else (recur (stack/step sm))))))
 
   (continue [this]
     (assoc this :halt? false)))

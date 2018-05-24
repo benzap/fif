@@ -4,7 +4,8 @@
    [fif.stack-machine :as stack]
    [fif.stack-machine.evaluators :as evaluators]
    [fif.stack-machine.error-handling :as error-handling]
-   [fif.stack-machine.verification :as verification]))
+   [fif.stack-machine.verification :as verification]
+   [fif.stack-machine.variable :as variable]))
 
 
 (defn wrap-code-eval
@@ -167,3 +168,10 @@
 
 (defmacro defstack-proc-3 [name f]
   `(def ~name (wrap-procedure-with-arity 3 ~f)))
+
+
+;;
+;; Define Global Variables
+;;
+
+(def wrap-variable variable/wrap-global-variable)

@@ -23,89 +23,17 @@
 
   - values :: Listed are several value types, which are abbreviated as
               single or double letter lowercase acronymns. This is not
-              not necessary, but useful to keep the documentation
-              small.
+              necessary, but useful to keep the documentation small.
 
 * Standard Library API Reference
-  
-** Special Symbols
-   
-   Asterisk '*' -- Word Pointer. Allows you to place Word definitions
-   on the stack
-   
-   ex.
-
-   #+BEGIN_SRC clojure
-
-   
-
-   #+END_SRC
 
 ** Not Implemented
 
-  - $stack/empty? :: ( -- bool ) Returns true if the main stack is empty.
 
-  - $stack/clear! :: ( -- ) Clears the main stack. Not recommended.
-		     
-  - $stack/pop! :: ( any -- ) Redundant function to 'drop. Drops a
-                    value on the stack.
 
   - drop? :: ( any -- bool ) Attempts to drop the first item on the
              stack. If it succeeds, returns true, otherwise returns
              false.
-
-  - into :: ( collection, ... any -- 'collection ) <-$ <data values> $<-
-
-    #+BEGIN_SRC clojure
-
-    (fif/reval () <-into! 1 2 3 !) ;; => '((1 2 3))
-  
-    (fif/reval [] <-into! [1 2] [3 4] !) ;; => '([[1 2] [3 4]])
-
-    (fif/reval {} <-into! [:x 1] [:y 2] !) ;; => '({:x 1 :y 2})
-
-    (fif/reval {} <-into!
-      :x [] <-into! 1 2 3 !
-      :y [] <-into! 4 0 do i loop !
-     !) ;; '({:x [1 2 3] :y [0 1 2 3 4]})
-
-    (fif/reval
-     macro list! _! () <-into! !_ endmacro
-     macro dict! _! {} <-into! !_ endmacro
-     macro vec! _! [] <-into! !_ endmacro
-     macro set! _! #{} <-into! !_ endmacro
-
-     dict!
-      :x vec! 1 2 3 ! pair
-      :y list! 4 0 do i loop ! pair
-     !) ;; => {:x [1 2 3]
-               :y (0 1 2 3 4)}
-
-    (fif/reval (0 3 do i loop) apply) ;; => (0 1 2 3)
-
-    (fif/reval [0 3 do i loop] apply) ;; => (0 1 2 3)
-
-    (fif/reval (0 3 do i loop) realize) ;; => ((0 1 2 3))
-
-    (fif/reval [0 3 do i loop] realize) ;; => ([0 1 2 3])
-
-    ;; '? is the same as 'realize
-    (fif/reval [0 3 do i loop] ?) ;; => ([0 1 2 3])
-
-    (fif/reval [[:a (0 4 do i loop) realize]
-                [:b (1 2 3)]] realize ->map) ;; => ({:a (0 1 2 3 4) :b (1 2 3)})
-
-    (fif/reval [:first-name "ben" pair
-                :last-name "zap" pair] realize ->map) ;; => ({:first-name "ben" :last-name "zap"})
-
-    (fif/reval set! :eggs :bacon :salad !) ;; => (#{:eggs :bacon :salad})
-
-    (fif/reval (1 2) (3 4) into) ;; => '((2 1 3 4))
-
-
-    (fif/reval (1 2 3) apply 4 5) ;; => '(1 2 3 4 5)
-    
-    (fif/reval {:x 1 :y 2} apply :z 3) ;; => '([:x 1] [:y 2] :z 3)
 
     (fif/reval 4 0 do %i loop) ;; => '(0 1 2 3 4)
 
@@ -114,23 +42,109 @@
     #+END_SRC
 
 ** Programming Tasks
-   - Refactor stackmachine into separate files (.impl namespace, etc)
-   - Better Test Coverage
-   - Make functions go into a #'function-mode
-     using :function-mode-flag
-     - add 'return word, to prematurely leave a function
-     
-   - implement dollar special form, for stack operations
-   - implement asterisk special form, pointer operations
-   - implement ampersand special form, concat operations
-   - implement percent special form, for stash operations
-   - change how variables are created and queried based on asterisk notation
-   - remove '! for variable setting, remove 'getv, keep 'setv,
-   - implement 'foreach 'endfor
+
+   - Version 1.0: Develop reserved words, which cannot be defined as
+     words
+
+   - Version 1.0: More word definitions for manipulating the group
+     metadata in the repl
+     - View all groups
+     - View user groups
+     - view all words in a specific group
+
+   - Version 1.0: Add 'fn?' word definition to return true when it's a word definition.
+
+   - Version 1.0: cljs-specific web-repl implementation in vanilla
+     cljs
+     - prepl implementation, so it can be easily extended to popular
+       component libraries (react, web-components)
+
+   - Version 1.1: implement more higher-order clojure functions that accept
+     functions.
+
+   - Version 1.1: implement ampersand special form, concat operations
+
+   - Version 1.1: implement percent special form, for stash operations
+
+   - Version 1.1: implement 'foreach 'endfor
      (reval [1 2 3 4] foreach %elem inc endfor) ;; => (2 3 4 5)
 
-   - Implement collection construction methods
-   - Implement error handling
-     - system errors
-     - stack errors
-   - Add even? operator and odd? operator
+   - Version 1.1: Make functions go into a #'function-mode
+     using :function-mode-flag
+     - add 'return word, to prematurely leave a function
+
+   - Version 1.2: Implement shell functionality for use with potential
+     console shell
+     - dash-prefixed symbols have special meaning, can be used to
+       construct option maps seen by the next word function
+       called.
+     (reval -h ls) ;; Similar to `see ls`, but specific to `ls` as an
+     optional argument.
+
+     - The dash prefixed symbols get placed within a special symbol $,
+       which can be accessed by any preceding word
+       definitions. Clearing of this symbol is done via another
+       special symbol $$
+
+     #+BEGIN_SRC fif
+     fn ls 
+       $ get :h true? if
+         ;; note the use of function 'return' (not implemented at the time of proposal)
+         display-ls-help return
+       then
+
+       $ get :v true? if
+         let verbose? true
+       else
+         let verbose? false
+       then
+
+       ;; normal operation
+       ;; ...
+
+       ;; we've processed the optional arguments, so let's clear it
+       $$
+
+     endfn
+     #+END_SRC
+
+     - Single-dash with a single lower-case or upper-case valid edn
+       letter symbol will place a keyval of that letter in the special
+       $ map with a value of `true`. Additional letters included will
+       be treated as separate keyval entries into the special $ map.
+
+       ex.
+
+       -v $ println ;; {:v true}
+
+       -vh $ println ;; {:v true :h true}
+       
+       -v -h $ println ;; {:v true :h true}
+
+       - Double-dash with a valid edn symbol will place the full keyval
+         symbol within the $ map with a value of `true`.
+
+	 ex.
+
+         --verbose $ println ;; {:verbose true}
+
+         --help --verbose $ println ;; {:help true :verbose true}
+
+       - Padding in arguments through the $ map is done used an
+         equal-sign suffix. The value preceding will then be placed in
+         the $ special map as the value. The same holds true for
+         double-dashed entries.
+
+	 -p= "./logs" $ println ;; {:p "./logs"}
+
+	 -vp= "./logs" $ println ;; {:v true :p "./logs"}
+
+	 --path= "./logs" $ println ;; {:path "./logs"}
+
+	 ;; Putting it altogether
+
+	 --path= "./" -lh ls
+
+         ;; calls `ls` on the given :path. Additionally shows it as a
+         ;; list, and makes it human-readable.
+
