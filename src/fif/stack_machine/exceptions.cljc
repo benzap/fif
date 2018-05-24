@@ -28,3 +28,29 @@
         errobj (error-handling/stack-error sm errmsg errextra)]
     (error-handling/handle-stack-error sm errobj)))
     
+
+(defn raise-incorrect-arity-error
+  [sm num-args]
+  (let [word-name (-> sm stack/get-code first)
+        errmsg (str "Not enough values on the main stack to satisfy word function")
+        errextra {:word-function-name word-name :word-function-arity num-args}
+        errobj (error-handling/stack-error sm errmsg errextra)]
+    (error-handling/handle-stack-error sm errobj)))
+
+
+(defn raise-validation-error
+  [sm arg-index arg-value errmsg]
+  (let [errmsg (str "Stack Operation Validation Error")
+        errextra {:stack-argument-index arg-index
+                  :stack-argument-value arg-value
+                  :validation-error-message errmsg}
+        errobj (error-handling/stack-error sm errmsg errextra)]
+    (error-handling/handle-stack-error sm errobj)))
+
+
+(defn raise-reserved-word-redefinition-error
+  [sm wname]
+  (let [errmsg (str "Reserved Word Redefinition Error")
+        errextra {:word-name wname}
+        errobj (error-handling/stack-error sm errmsg errextra)]
+    (error-handling/handle-stack-error sm errobj)))

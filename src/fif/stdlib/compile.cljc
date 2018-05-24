@@ -16,7 +16,8 @@
             [fif.stack-machine.words :as stack.words :refer [set-global-word-defn]]
             [fif.stack-machine.processor :as stack.processor]
             [fif.stack-machine.exceptions :as exceptions]
-            [fif.stdlib.reserved :as reserved]))
+            [fif.stack-machine.validation :as validation]
+            [fif.stdlib.reserved :as reserved :refer [*reserved-tokens*]]))
 
 
 (def arg-start-token reserved/function-begin-definition-word)
@@ -101,13 +102,21 @@
       (= arg arg-end-token)
       (let [fn-content (stack.stash/peek-stash sm)
             [wname & wbody] fn-content]
-        (-> sm
-            (set-global-word-defn
-             wname (wrap-compiled-fn wbody)
-             :source (vec wbody))
-            (stack.stash/remove-stash)
-            stack/pop-flag
-            stack/dequeue-code))
+        (cond
+          (not (symbol? wname))
+          (exceptions/raise-validation-error sm 1 wname "Function name must be a symbol")
+          
+          (contains? *reserved-tokens* wname)
+          (exceptions/raise-reserved-word-redefinition-error sm wname)
+
+          :else
+          (-> sm
+              (set-global-word-defn
+               wname (wrap-compiled-fn wbody)
+               :source (vec wbody))
+              (stack.stash/remove-stash)
+              stack/pop-flag
+              stack/dequeue-code)))
 
       :else
       (-> sm

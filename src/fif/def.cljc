@@ -4,6 +4,7 @@
    [fif.stack-machine :as stack]
    [fif.stack-machine.evaluators :as evaluators]
    [fif.stack-machine.error-handling :as error-handling]
+   [fif.stack-machine.exceptions :as exceptions]
    [fif.stack-machine.verification :as verification]
    [fif.stack-machine.variable :as variable]))
 
@@ -14,15 +15,6 @@
     (-> sm
         (evaluators/eval-fn args)
         (stack/set-step-num 0))))
-
-
-(defn- handle-arity-error
-  [sm num-args]
-  (let [word-name (-> sm stack/get-code first)
-        errmsg (str "Not enough values on the main stack to satisfy word function")
-        errextra {:word-function-name word-name :word-function-arity num-args}
-        errobj (error-handling/stack-error sm errmsg errextra)]
-    (error-handling/handle-stack-error sm errobj)))
 
 
 (defn wrap-function-with-arity
@@ -52,7 +44,7 @@
       ;; Check to see if the main stack has enough arguments to
       ;; satisfy the word operation.
       (not (verification/stack-satisfies-arity? sm num-args))
-      (handle-arity-error sm num-args)
+      (exceptions/raise-incorrect-arity-error sm num-args)
 
       :else
       (let [args (take num-args (stack/get-stack sm))
@@ -96,7 +88,7 @@
       ;; Check to see if the main stack has enough arguments to
       ;; satisfy the word function.
       (not (verification/stack-satisfies-arity? sm num-args))
-      (handle-arity-error sm num-args)
+      (exceptions/raise-incorrect-arity-error sm num-args)
 
       :else
       (let [args (take num-args (stack/get-stack sm))

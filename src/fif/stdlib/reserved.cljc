@@ -10,11 +10,16 @@
 (def pointer-subtoken '*)
 
 
-(defn ^:dynamic *reserved-tokens*
-  [
+(def ^:dynamic *reserved-tokens*
+  #{
+    
+    ;; Compile-mode
+    function-begin-definition-word
+    function-end-definition-word
+    
+    ;; Variable-mode
+    'let 'def
 
-   ;; Compile-mode
-   function-begin-definition-word
-   function-end-definition-word])
-
-   
+    })
+  
+#_(contains? *reserved-tokens* 'let)
