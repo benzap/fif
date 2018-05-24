@@ -39,11 +39,11 @@
 
 
 (defn raise-validation-error
-  [sm arg-index arg-value errmsg]
+  [sm arg-index arg-value msg]
   (let [errmsg (str "Stack Operation Validation Error")
         errextra {:stack-argument-index arg-index
                   :stack-argument-value arg-value
-                  :validation-error-message errmsg}
+                  :validation-error-message msg}
         errobj (error-handling/stack-error sm errmsg errextra)]
     (error-handling/handle-stack-error sm errobj)))
 

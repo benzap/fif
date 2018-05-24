@@ -21,5 +21,3 @@
     'let 'def
 
     })
-  
-#_(contains? *reserved-tokens* 'let)

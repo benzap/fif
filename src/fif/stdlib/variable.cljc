@@ -10,7 +10,8 @@
    [fif.stack-machine.mode :as mode]
    [fif.stack-machine.stash :as stash]
    [fif.stack-machine.variable :refer [wrap-global-variable
-                                       wrap-local-variable]]))
+                                       wrap-local-variable]]
+   [fif.stdlib.reserved :refer [*reserved-tokens*]]))
 
 
 (def arg-global-var-token 'def)
@@ -46,16 +47,18 @@
   {:op ::global-variable :op-state ::get-symbol}
   [sm]
   (let [arg (-> sm stack/get-code first)]
-    (if (symbol? arg)
+    (cond
+      (not (symbol? arg))
+      (exceptions/raise-validation-error sm 0 arg "Variable name must be a symbol")
+      
+      (contains? *reserved-tokens* arg)
+      (exceptions/raise-reserved-word-redefinition-error sm arg)
+
+      :else
       (-> sm
           (stack/push-stack arg)
           (mode/update-state assoc :op-state ::set)
-          stack/dequeue-code)
-
-      ;; TODO: throw stack error
-      (-> sm
-          (stack/push-stack "Def: Undefined Behaviour!")
-          (stack/halt)))))
+          stack/dequeue-code))))
 
 
 (defmethod variable-mode
@@ -88,16 +91,18 @@
   {:op ::local-variable :op-state ::get-symbol}
   [sm]
   (let [arg (-> sm stack/get-code first)]
-    (if (symbol? arg)
+    (cond
+      (not (symbol? arg))
+      (exceptions/raise-validation-error sm 0 arg "Variable name must be a symbol")
+      
+      (contains? *reserved-tokens* arg)
+      (exceptions/raise-reserved-word-redefinition-error sm arg)
+
+      :else
       (-> sm
           (stack/push-stack arg)
           (mode/update-state assoc :op-state ::set)
-          stack/dequeue-code)
-
-      ;; TODO: throw stack error
-      (-> sm
-          (stack/push-stack "Def: Undefined Behaviour!")
-          (stack/halt)))))
+          stack/dequeue-code))))
 
 
 (defmethod variable-mode
@@ -118,28 +123,44 @@
   "Word function used to set a global variable to a provided value"
   [sm]
   (let [[val sym] (stack/get-stack sm)]
-    ;; TODO: check if variable exists
-    (-> sm
-        stack/pop-stack
-        stack/pop-stack
-        (stack.words/set-global-word-defn
-         sym (wrap-global-variable val)
-         :variable? :global)
-        stack/dequeue-code)))
+    (cond
+
+      (not (symbol? sym))
+      (exceptions/raise-validation-error sm 1 sym "Variable name must be a symbol")
+      
+      (contains? *reserved-tokens* sym)
+      (exceptions/raise-reserved-word-redefinition-error sm sym)      
+
+      :else
+      (-> sm
+          stack/pop-stack
+          stack/pop-stack
+          (stack.words/set-global-word-defn
+           sym (wrap-global-variable val)
+           :variable? :global)
+          stack/dequeue-code))))
 
 
 (defn setl
   "Word function used to set a local variable to a provided value"
   [sm]
   (let [[val sym] (stack/get-stack sm)]
-    ;; TODO: check if variable exists
-    (-> sm
-        stack/pop-stack
-        stack/pop-stack
-        (stack.words/set-local-word-defn
-         sym (wrap-local-variable val)
-         :variable? :local)
-        stack/dequeue-code)))
+    (cond
+
+      (not (symbol? sym))
+      (exceptions/raise-validation-error sm 1 sym "Variable name must be a symbol")
+      
+      (contains? *reserved-tokens* sym)
+      (exceptions/raise-reserved-word-redefinition-error sm sym)      
+
+      :else
+      (-> sm
+          stack/pop-stack
+          stack/pop-stack
+          (stack.words/set-local-word-defn
+           sym (wrap-local-variable val)
+           :variable? :local)
+          stack/dequeue-code))))
 
 
 (defn import-stdlib-variable-mode

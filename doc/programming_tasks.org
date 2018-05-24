@@ -43,9 +43,6 @@
 
 ** Programming Tasks
 
-   - Version 1.0: Develop reserved words, which cannot be defined as
-     words
-
    - Version 1.0: More word definitions for manipulating the group
      metadata in the repl
      - View all groups
