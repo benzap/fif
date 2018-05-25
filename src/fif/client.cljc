@@ -10,7 +10,16 @@
   "quoted form with escaped evaluation. Values preceding
   *fif-clojure-value-escape* are evaluated.
 
-  Examples:"
+  Examples:
+
+  ;; Assuming we want to pull a clojure value into the a quoted form
+  (def x 10)
+  (form value %= x) ;; => '[form value 10]
+
+  Notes:
+
+  - *fif-clojure-value-escape can be replaced with a different escape
+  symbol as desired."
   [& body]
   (:result
     (reduce
