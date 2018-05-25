@@ -130,107 +130,15 @@
   (repl))
 
 
-#_(reval 
-   fn foo endfn
-
-   $ foo -h -t --verbose true
-)
-
-#_(reval & * * + _) ;; (*+)
-
-#_(reval & constructing - value _)
-
-#_(reval &plus- 2) ;; (plus-2)
-
-#_(reval &* + 1 1) ;; (+ 1 1)
-
-#_(reval &** + 1 1) ;; (*+ 1 1)
-
-
-#_(reval
-   [4 0 do i loop] ?
-   $-< map *inc
-   $-< filter *even?) ;; ([2 4])
+;;
+;; Feature Ideas
+;;
 
 #_(reval 2 0 do {:id i} ?m loop) ;; => '({:id 0} {:id 1} {:id 2})
 
-
 #_(reval (%:name %:age) {:name "Ben" :age 29} format) ;; (("Ben" 29))
+
 #_(reval (%0 %1) ["Ben" 29] format) ;; (("Ben" 29))
+
 #_(reval (% %) ["Ben" 29]) ;; ((["Ben" 29] ["Ben" 29]))
 
-
-#_(reval fn foo $ endfn
-         foo -xt --focus 2)
-;; => '({:x true :focus 2 :t true})
-
-
-#_(reval fn foo $ endfn
-         add2 -x -tvalue --focus=2)
-;; => '({:x true :focus 2 :t value})
-
-
-#_(reval fn foo $ endfn
-         add2 -x -tvalue --focus=2)
-;; => '({:x true :focus 2 :t value})
-
-
-#_(reval fn foo $ endfn
-         add2 -x -tvalue --focus 2 2)
-;; => '({:x true :focus 2 :t value} 2)
-
-
-#_(reval fn foo $ endfn
-         add2 -xt --focus _ 2)
-;; => '({:x true :focus true :t true} 2)
-
-
-#_(reval see +)
-
-#_(-> (eval see +)
-      :word-metadata
-      (get '+))
-
-
-#_(reval fn add2 2 + endfn see add2)
-
-#_(reval see see)
-
-#_(reval "test" "Clojure is awesome!" " " regex str/split println)
-
-
-;; Manipulating metadata
-#_(reval
-   def x 10
-   doc x "Includes data"
-   group x :stdlib
-   see x
-
-   fn y
-    "Hello World" println
-   endfn
-   doc y "Includes Data"
-   group y :stdlib.test
-
-   see y
-   )
-
-
-#_(reval groups)
-
-;; stdout:
-;;
-;;- :stdlib
-;;-- :stdlib.collections
-;;-- :stdlib.math
-;;--- :stdlib.math.arithmetic
-;;...
-
-
-#_(reval dir :stdlib)
-
-;; :stdlib
-;; g :stdlib.math
-;; g :stdlib.repl
-;; w foo
-;; v bar
