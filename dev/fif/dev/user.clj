@@ -2,6 +2,7 @@
   (:require
    [clojure.tools.namespace.repl :refer [refresh]]
 
+   [fif.core :refer [repl]]
    [fif.server.core-test :refer :all]))
 
 

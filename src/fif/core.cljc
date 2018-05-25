@@ -7,7 +7,8 @@
    [fif.stack-machine.error-handling :refer [default-system-error-handler
                                              default-stack-error-handler]]
    [fif.stdlib :refer [import-stdlib]]
-   [fif.impl.stack-machine :refer [new-stack-machine]]))
+   [fif.impl.stack-machine :refer [new-stack-machine]]
+   [fif.repl]))
 
 
 (def get-code stack/get-code)
@@ -26,6 +27,11 @@
       (stack/set-system-error-handler default-system-error-handler)
       (stack/set-stack-error-handler default-stack-error-handler)
       import-stdlib))
+
+
+(defn repl
+  ([sm] (fif.repl/repl sm))
+  ([] (repl *default-stack*)))
 
 
 (defmacro with-stack
@@ -118,6 +124,10 @@
      (-> *default-stack*
          (stack/set-step-max step-max#)
          (stack.evaluators/eval-fn (quote ~body)))))
+
+
+(defn -main [& args]
+  (repl))
 
 
 #_(reval 

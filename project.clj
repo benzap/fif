@@ -10,6 +10,7 @@
             [lein-ancient "0.6.15"]
             [lein-doo "0.1.10"]]
   ;;:hooks [leiningen.cljsbuild]
+  :main fif.core
   :repositories [["clojars" {:sign-releases false}]]
   :cljsbuild {:builds {:dev
                        {:source-paths ["src"]
