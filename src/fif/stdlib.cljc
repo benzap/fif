@@ -13,7 +13,9 @@
    [fif.stdlib.functional-ops :refer [import-stdlib-functional-ops]]
    [fif.stdlib.realizer :refer [import-stdlib-realize-mode]]
    [fif.stdlib.tools :refer [import-stdlib-stack-tools]]
-   [fif.stdlib.repl :refer [import-stdlib-repl]]))
+   [fif.stdlib.repl :refer [import-stdlib-repl]]
+   [fif.stdlib.reader :refer [import-stdlib-reader]]
+   [fif.stdlib.type-checking :refer [import-stdlib-type-checking]]))
 
 
 (defn import-stdlib [sm]
@@ -30,6 +32,8 @@
       import-stdlib-functional-ops
       import-stdlib-realize-mode
       import-stdlib-stack-tools
-      import-stdlib-repl))
+      import-stdlib-repl
+      import-stdlib-reader
+      import-stdlib-type-checking))
 
 

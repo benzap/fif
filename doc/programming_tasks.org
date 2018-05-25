@@ -43,8 +43,6 @@
 
 ** Programming Tasks
 
-   - Version 1.0: Add 'fn?' word definition to return true when it's a word definition.
-
    - Version 1.0: cljs-specific web-repl implementation in vanilla
      cljs
      - prepl implementation, so it can be easily extended to popular
@@ -64,6 +62,8 @@
      using :function-mode-flag
      - add 'return word, to prematurely leave a function
 
+   - Version 1.2: First-class exception handling. Try and Catch blocks.
+
    - Version 1.2: Implement shell functionality for use with potential
      console shell
      - dash-prefixed symbols have special meaning, can be used to
@@ -79,22 +79,22 @@
 
      #+BEGIN_SRC fif
      fn ls 
-       $ get :h true? if
-         ;; note the use of function 'return' (not implemented at the time of proposal)
-         display-ls-help return
-       then
+     $ get :h true? if
+     ;; note the use of function 'return' (not implemented at the time of proposal)
+     display-ls-help return
+     then
 
-       $ get :v true? if
-         let verbose? true
-       else
-         let verbose? false
-       then
+     $ get :v true? if
+     let verbose? true
+     else
+     let verbose? false
+     then
 
-       ;; normal operation
-       ;; ...
+     ;; normal operation
+     ;; ...
 
-       ;; we've processed the optional arguments, so let's clear it
-       $$
+     ;; we've processed the optional arguments, so let's clear it
+     $$
 
      endfn
      #+END_SRC
