@@ -13,7 +13,7 @@
    [fif.impl.prepl-test]
 
    ;; Test Cases ./stack_machine
-   [fif.stack-machine.error-handling]
+   [fif.stack-machine.error-handling-test]
    [fif.stack-machine.evaluators-test]
    [fif.stack-machine.flags-test]
    [fif.stack-machine.pointer-test]
@@ -59,7 +59,7 @@
  'fif.impl.prepl-test
 
  ;; Test Cases ./stack_machine
- 'fif.stack-machine.error-handling
+ 'fif.stack-machine.error-handling-test
  'fif.stack-machine.evaluators-test
  'fif.stack-machine.flags-test
  'fif.stack-machine.pointer-test

@@ -9,9 +9,11 @@
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-ancient "0.6.15"]
             [lein-doo "0.1.10"]]
-  ;;:hooks [leiningen.cljsbuild]
-  :main fif.core
+
+  :main fif.core ;; `lein run` starts a repl
+
   :repositories [["clojars" {:sign-releases false}]]
+
   :cljsbuild {:builds {:dev
                        {:source-paths ["src"]
                         :compiler {:output-dir "resources/public/js/compiled/out"

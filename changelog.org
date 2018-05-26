@@ -1,0 +1,9 @@
+#+TITLE: Changelog for the Fif Scripting Language
+#+AUTHOR: Benjamin Zaporzan
+#+DATE: 2018-05-26
+#+EMAIL: benzaporzan@gmail.com
+#+LANGUAGE: en
+#+OPTIONS: H:2 num:t toc:t \n:nil ::t |:t ^:t f:t tex:t
+
+* 1.0.0
+  - First Production Release, and the start of changelog recordings.
