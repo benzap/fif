@@ -4,7 +4,7 @@
    [clojure.string :as str]
    [fif.stack-machine :as stack]
    [fif.core :refer [*default-stack*]]
-   [fif.impl.prepl :refer [prepl]]
+   [fif.impl.prepl :refer [prepl-eval]]
    [fif-test.utils :refer [are-eq*]]))
 
 
@@ -12,7 +12,7 @@
   (let [*svalue (atom "")
         output-fn (fn [{:keys [value]}]
                     (swap! *svalue str (str/replace value #"\r\n" "\n")))
-        sm (prepl *default-stack* "true 2 2 + println" output-fn)]
+        sm (prepl-eval *default-stack* "true 2 2 + println" output-fn)]
     
     (are-eq*
 
@@ -25,7 +25,7 @@
   (let [*svalue (atom "")
         output-fn (fn [{:keys [value]}]
                     (swap! *svalue str (str/replace value #"\r\n" "\n")))
-        sm (prepl *default-stack* "true 2 2 + print" output-fn)]
+        sm (prepl-eval *default-stack* "true 2 2 + print" output-fn)]
     
     (are-eq*
 

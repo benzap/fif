@@ -7,9 +7,12 @@
    #?(:clj [fif.utils.display :refer [PrintWriter-on]])))
 
 
-(defn prepl
-  "Programmable Repl Implementation for clojure(script).
+(defn prepl-eval
+  "Programmable Repl Evaluation for clojure(script). Function is useful
+  for a full repl implementation, since the output can be processed
+  via `output-fn`.
    
+
    Keyword Arguments:
   
    sm -- Stack-machine
@@ -18,16 +21,23 @@
 
    output-fn -- Function of the form (fn [{:keys [tag value]}]).
 
+
    Output Function Key Arguments:
 
    tag -- either :error from *err* output, :out from *out* output.
 
    value -- string value of the presented tag.
 
+
    Return Value:
   
-   Returns an updated stack-machine after it has evaluated
-  `input-string`.
+   Returns an updated stack-machine after the `input-string` has been evaluated.
+
+   Notes:
+
+   - Standard Out is flushed after evaluation, however, while
+  evaluating, output-fn will get called preceding any newline
+  delimited string within the print writer.
    "
   [sm input-string output-fn]
   (binding
