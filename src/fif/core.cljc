@@ -12,10 +12,6 @@
    [fif.repl]))
 
 
-;;
-;; Stack Manipulation
-;;
-
 (def get-stack stack/get-stack)
 
 
