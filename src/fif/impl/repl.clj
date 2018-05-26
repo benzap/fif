@@ -9,7 +9,10 @@
   IRepl
 
   (repl-init [this]
-    (println "Fif Repl") (flush))
+    (println "Fif Repl")
+    (println " 'help' for Help Message,")
+    (println " 'bye' to Exit.")
+    (flush))
 
   (repl-prompt [this]
     (print "> ") (flush))
@@ -26,7 +29,7 @@
       (let [sform (repl-read this)]
         (if-not (= sform "bye")
           (do (repl-eval this sform) (flush) (recur))
-          (println "For now, bye!!")))))
+          (println "For now, bye!")))))
 
   (repl-run [this]
     (repl-init this)

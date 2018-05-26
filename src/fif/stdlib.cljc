@@ -15,7 +15,8 @@
    [fif.stdlib.tools :refer [import-stdlib-stack-tools]]
    [fif.stdlib.repl :refer [import-stdlib-repl]]
    [fif.stdlib.reader :refer [import-stdlib-reader]]
-   [fif.stdlib.type-checking :refer [import-stdlib-type-checking]]))
+   [fif.stdlib.type-checking :refer [import-stdlib-type-checking]]
+   [fif.stdlib.help :refer [import-stdlib-help]]))
 
 
 (defn import-stdlib [sm]
@@ -34,6 +35,7 @@
       import-stdlib-stack-tools
       import-stdlib-repl
       import-stdlib-reader
-      import-stdlib-type-checking))
+      import-stdlib-type-checking
+      import-stdlib-help))
 
 
