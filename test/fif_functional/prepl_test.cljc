@@ -14,8 +14,13 @@
 
 
 (def *secret-notes (atom []))
+
+
 (defn add-note! [note]
   (swap! *secret-notes conj note))
+
+
+(defn clear-notes! [] (reset! *secret-notes []))
 
 
 (def note-stack-machine
@@ -32,7 +37,7 @@
        :group :note-taking)
 
       (fif.def/set-word-function
-       'get-notes (fif.def/wrap-function-with-arity 1 #(deref *secret-notes))
+       'get-notes (fif.def/wrap-function-with-arity 0 #(deref *secret-notes))
        :doc "( -- notes ) Get the secret notes."
        :group :note-taking)))
 
@@ -46,23 +51,42 @@
   (swap! *result str (str/replace value #"\r\n" "\n")))
 
 
-(defn prepl [sinput]
-  (swap! *note-sm fif/prepl-eval sinput output-fn)
-  [(-> @*note-sm fif/get-stack reverse) @*result])
-
-
 (defn prepl-reset! []
   (reset! *note-sm note-stack-machine)
   (reset! *result ""))
 
 
+(defn prepl [sinput]
+  (prepl-reset!)
+  (swap! *note-sm fif/prepl-eval sinput output-fn)
+  [(-> @*note-sm fif/get-stack reverse) @*result])
+
+
 (deftest basic-evaluation-test
   (are-eq*
 
-   (do (prepl-reset!) (prepl "2 2 +"))
+   (prepl "2 2 +")
 
    => ['(4) ""]
 
-   (do (prepl-reset!) (prepl "2 2 + ."))
+   (prepl "2 2 + .")
 
    => ['() "4"]))
+
+
+(deftest version-test
+  (are-eq*
+
+   (prepl "version")
+
+   => ['("0.1") ""]))
+
+
+(deftest notes-test
+  (are-eq*
+
+   (let [result (prepl "\"My First Note\" add-note! get-notes")]
+     (clear-notes!)
+     result)
+
+   => ['(["My First Note"]) ""]))
