@@ -10,8 +10,6 @@
             [lein-ancient "0.6.15"]
             [lein-doo "0.1.10"]]
 
-  :main fif.core ;; `lein run` starts a repl
-
   :repositories [["clojars" {:sign-releases false}]]
 
   :cljsbuild {:builds {:dev
@@ -40,7 +38,8 @@
 
   :profiles
   {:dev
-   {:source-paths ["src" "dev" "test"]
+   {:main fif.core ;; `lein run` starts a repl
+    :source-paths ["src" "dev" "test"]
     :dependencies [[org.clojure/tools.namespace "0.2.11"]]
     :repl-options {:init-ns fif.dev.user
                    ;;:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]
