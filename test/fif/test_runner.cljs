@@ -43,7 +43,11 @@
    ;; Test Cases ./utils
    [fif.utils.scope-test]
    [fif.utils.stash-test]
-   [fif.utils.token-test]))
+   [fif.utils.token-test]
+
+   ;; Functional Tests
+   [fif-functional.prepl-test]
+   ))
 
 #_(doo-all-tests)
 
@@ -92,4 +96,8 @@
  ;; Test Cases ./utils
  'fif.utils.scope-test
  'fif.utils.stash-test
- 'fif.utils.token-test)
+ 'fif.utils.token-test
+
+
+ ;; Functional Tests
+ 'fif-functional.prepl-test)
