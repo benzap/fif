@@ -9,6 +9,9 @@
    [fif.def-test]
    [fif.stack-machine-test]
 
+   ;; Test Cases ./impl
+   [fif.impl.prepl-test]
+
    ;; Test Cases ./stack_machine
    [fif.stack-machine.error-handling]
    [fif.stack-machine.evaluators-test]
@@ -52,6 +55,8 @@
  'fif.def-test
  'fif.stack-machine-test
 
+ ;; Test Cases ./impl
+ 'fif.impl.prepl-test
 
  ;; Test Cases ./stack_machine
  'fif.stack-machine.error-handling

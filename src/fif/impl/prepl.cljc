@@ -8,7 +8,7 @@
 
 
 (defn prepl
-  "Programmable Repl Implementation for clojure.
+  "Programmable Repl Implementation for clojure(script).
    
    Keyword Arguments:
   
@@ -31,10 +31,10 @@
    "
   [sm input-string output-fn]
   (binding
-   #?(:clj [*out* (PrintWriter-on #(output-fn {:tag :out :value %1}))
-            *err* (PrintWriter-on #(output-fn {:tag :error :value %1}))]
+   #?(:clj [*out* (PrintWriter-on #(output-fn {:tag :out :value %1}) nil)
+            *err* (PrintWriter-on #(output-fn {:tag :error :value %1}) nil)]
       :cljs [*print-newline* true
              *print-fn* #(output-fn {:tag :out :value %1})])
-   (evaluators/eval-string sm input-string)))
-   
-
+   (let [evaled-sm (evaluators/eval-string sm input-string)]
+     (flush)
+     evaled-sm)))
