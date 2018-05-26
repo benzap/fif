@@ -51,7 +51,9 @@
   [(-> @*note-sm fif/get-stack reverse) @*result])
 
 
-(defn prepl-reset! [] (reset! *note-sm note-stack-machine))
+(defn prepl-reset! []
+  (reset! *note-sm note-stack-machine)
+  (reset! *result ""))
 
 
 (deftest basic-evaluation-test
