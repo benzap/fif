@@ -1,4 +1,11 @@
 (ns fif-functional.prepl-test
+  "Functional test involving:
+
+  - Defining a word variable in a stack-machine
+
+  - Defining word functions from a set of clojure functions
+
+  - Creating a programmable repl, which captures standard output."
   (:require
    [clojure.test :refer [deftest is testing]]
    [clojure.string :as str]
