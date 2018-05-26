@@ -7,8 +7,7 @@
    [fif.server.session :as server.session]
    [fif.server.prepl]
    [fif.server.repl]
-   [fif.server.dynamic :refer [*fif-session* *fif-in* *fif-out* *fif-err*]]
-   [fif.server.utils :refer [PrintWriter-on]])
+   [fif.server.dynamic :refer [*fif-session* *fif-in* *fif-out* *fif-err*]])
   (:import
    [clojure.lang LineNumberingPushbackReader]
    [java.net Socket ServerSocket SocketException InetAddress]
