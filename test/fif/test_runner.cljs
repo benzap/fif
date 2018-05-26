@@ -5,6 +5,7 @@
    ;;[fif-test.utils]
 
    ;; Test Cases ./
+   [fif.client-test]
    [fif.core-test]
    [fif.def-test]
    [fif.stack-machine-test]
@@ -51,6 +52,7 @@
  ;;'fif-test.utils
 
  ;; Test Cases ./
+ 'fif.client-test
  'fif.core-test
  'fif.def-test
  'fif.stack-machine-test

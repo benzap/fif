@@ -8,7 +8,7 @@
 
 (defmacro form
   "quoted form with escaped evaluation. Values preceding
-  *fif-clojure-value-escape* are evaluated.
+  *fif-clojure-value-escape* are evaluated in clojure(script).
 
   Examples:
 

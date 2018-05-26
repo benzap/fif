@@ -6,6 +6,7 @@
    [fif.stack-machine.error-handling :as error-handling]
    [fif.stack-machine.exceptions :as exceptions]
    [fif.stack-machine.verification :as verification]
+   [fif.stack-machine.words :as words]
    [fif.stack-machine.variable :as variable]))
 
 
@@ -166,4 +167,46 @@
 ;; Define Global Variables
 ;;
 
+
 (def wrap-variable variable/wrap-global-variable)
+
+
+(defn set-word-variable
+  "Creates a new word variable in `sm` with the symbol name `wname` and
+  with the value `value`. Optionally, you can include a docstring, and
+  a group key.
+
+  Notes:
+
+  - `value` is automatically wrapped for you. This is not the case
+  with `set-word-definition`."
+  [sm wname value & {:keys [doc group]}]
+  (words/set-global-word-defn
+   sm
+   wname (wrap-variable value)
+   :doc doc :group group
+   :stdlib? false
+   :variable? true))
+
+
+;;
+;; Define Global Words
+;;
+
+
+(defn set-word-function
+  "Creates a new word function in `sm` with the symbol name `wname` and
+  with the word function defined by `wfunc`.
+
+  Notes:
+
+  - `wfunc` is a stack-machine function. Normal clojure functions can
+  be turned into stack-machine functions via
+  `wrap-function-with-arity` and `wrap-procedure-with-arity`."
+  [sm wname wfunc & {:keys [doc group]}]
+  (words/set-global-word-defn
+   sm
+   wname wfunc
+   :doc doc :group group
+   :stdlib? false
+   :variable? false))

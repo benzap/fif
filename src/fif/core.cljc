@@ -8,14 +8,15 @@
                                              default-stack-error-handler]]
    [fif.stdlib :refer [import-stdlib]]
    [fif.impl.stack-machine :refer [new-stack-machine]]
+   [fif.impl.prepl]
    [fif.repl]))
 
 
-(def get-code stack/get-code)
+;;
+;; Stack Manipulation
+;;
+
 (def get-stack stack/get-stack)
-(def get-ret stack/get-ret)
-(def get-flags stack/get-flags)
-(def get-stash stack-machine.stash/get-stash)
 
 
 (def ^:dynamic
@@ -30,8 +31,16 @@
 
 
 (defn repl
+  "Command-line Repl for either the *default-stack*, or a provided
+  stack-machine."
   ([sm] (fif.repl/repl sm))
   ([] (repl *default-stack*)))
+
+
+(def prepl-eval
+  "Programmable Repl Evaluation Function, for creating a full-fledged
+  prepl. Documentation can be found in fif.impl.prepl/prepl-eval."
+  fif.impl.prepl/prepl-eval)
 
 
 (defmacro with-stack
@@ -63,6 +72,8 @@
 
 
 (defmacro ieval
+  "Evaluate `body` forms within the provided stack-machine,
+  `sm`. Returns the stack-machine after evaluation."
   [sm & body]
   `(ieval-fn ~sm (quote ~body)))
 
@@ -103,13 +114,19 @@
 
 
 #?(:clj 
-   (defn eval-file [fpath]
+   (defn eval-file
+     "Evaluates the given file as a fif script. Returns the stack-machine
+  after evaluation."
+     [fpath]
      (let [fcontent (slurp fpath)]
        (-> *default-stack* (stack.evaluators/eval-string fcontent)))))
 
 
 #?(:clj
-   (defn reval-file [fpath]
+   (defn reval-file
+     "Evaluates the given file as a fif script. Returns the main stack in a
+  more pleasing orientation."
+     [fpath]
      (let [fcontent (slurp fpath)]
        (-> *default-stack* (stack.evaluators/eval-string fcontent) stack/get-stack reverse))))
 
@@ -118,7 +135,7 @@
 
 
 (defmacro dbg-eval
-  "Debugging tool. By default enables the step inhibitor"
+  "Debugging tool. By default enables the step inhibitor."
   [opts & body]
   `(let [step-max# (get ~opts :step-max 100)]
      (-> *default-stack*
@@ -126,7 +143,9 @@
          (stack.evaluators/eval-fn (quote ~body)))))
 
 
-(defn -main [& args]
+(defn -main
+  "Main Execution opens a commandline repl of the *default-stack*"
+  [& args]
   (repl))
 
 

@@ -137,6 +137,7 @@
      this wname (stack.variable/wrap-global-variable value)
      :variable? true))
 
+
   ;; Word Metadata
   (set-word-metadata [this wname wmeta]
     (stack.words/set-global-metadata this wname wmeta))
