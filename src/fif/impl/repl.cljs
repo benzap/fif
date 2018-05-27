@@ -1,7 +1,12 @@
 (ns fif.impl.repl
   (:require
-   [fif.protocols.repl :refer [IRepl]]))
+   [fif.stack-machine.evaluators :as evaluators]
+   [fif.protocols.repl
+    :refer [IRepl repl-init repl-prompt
+            repl-read repl-eval repl-loop
+            repl-run]]))
 
+;; Untested and likely unsupported. Use fif.impl.prepl instead.
 
 (defrecord Repl [*sm]
   IRepl
