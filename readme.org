@@ -672,6 +672,64 @@ core libraries for familiarity.
    a few of these functions can be seen in the ~fif.stdlib.ops~
    namespace.
 
+** Implementing a fif Programmable Repl (prepl)
+   
+   *fif* isn't that useful interactively without facilities to capture
+   stdout and stderr. A Programmable Repl (prepl) can be easily
+   implemented within fif using `fif.core/prepl-eval`.
+
+   For this example, i'm going to create a prepl from the
+   *default-stack* which will change state within an atom. An
+   additional atom will be used to capture stdout and stderr.
+
+   #+BEGIN_SRC clojure
+     (require '[clojure.string :as str])
+     (require '[fif.core :as fif])
+
+     (def *sm (atom fif/*default-stack*))
+     (def *stdout-results (atom []))
+     (def *stderr-results (atom []))
+
+
+     (defn prepl-reset! []
+       (reset! *sm fif/*default-stack*)
+       (reset! *stdout-results [])
+       (reset! *stderr-results []))
+
+
+     (defn output-fn
+       "Standard Output/Error Handler Function. "
+       [{:keys [tag value]}]
+       (let [;; Remove platform specific newlines
+             value (str/replace value #"\r\n" "\n")]
+         (cond
+          (= tag :out)
+          (swap! *stdout-results conj value)
+  
+          (= tag :error)
+          (swap! *stderr-results conj value))))
+
+
+      (defn prepl [sinput]
+        (swap! *sm fif/prepl-eval sinput output-fn)
+        {:stack (-> @*sm fif/get-stack reverse)
+         :stdout @*stdout-results
+         :stderr @*stderr-results})
+       
+      (prepl "2 2") ;; => {:stack '(2 2) :stdout [] :stderr []}
+      
+      (prepl "+") ;; => {:stack '(4) :stdout [] :stderr []}
+
+      (prepl "println") ;; => {:stack '() :stdout ["4\n"] :stderr []}
+
+      (prepl-reset!)
+
+   #+END_SRC
+
+   The fif prepl functionality works in clojurescript, however,
+   clojurescript lacks a standard error output, so it is not likely
+   the :error tag would appear to the output function.
+
 ** fif and clojure interoperability
    
    Although this might not be taken as a feature, *fif* can have
@@ -822,6 +880,51 @@ core libraries for familiarity.
    ;; {:type :reader-exception, :ex-kind :reader-error}
 
    #+END_SRC
+
+
+** Running a fif Socket Repl Server
+   *fif* has the ability to start a socket repl server with a
+   designated stack-machine which can be accessed through a raw socket
+   connection. This has the benefit of providing a simple interface
+   for configuring a server, while only exposing limited
+   functionality.
+
+   #+BEGIN_SRC
+
+   (require '[fif.core :as fif])
+   (require '[fif.stack-machine :as stack])
+   (require '[fif.server.core :as fif.server])
+
+   (def server-name "Example Socket Server")
+   (def server-port 5005)
+
+   (def custom-stack-machine
+     (-> fif/*default-stack*
+         ;; prevents system error handler from throwing an error,
+         ;; places it on the stack instead
+         stack/enable-debug))
+
+   (defn start-socket-server []
+     (fif.server/start-socket-server custom-stack-machine server-name :port server-port))
+
+   (defn stop-socket-server []
+     (fif.server/stop-socket-server server-name))
+
+   #+END_SRC
+
+   Testing this server on linux can be done using netcat: ~netcat localhost 5005~
+   
+   If you are on Windows, it can be accessed with putty with these additional
+   configuration options:
+
+   - Set *Connection Type* to /Raw/
+   - Under the *Terminal* Setting Category, enable /Implicit CR in every LF/
+
+* Starting a commandline repl
+
+  fif has the ability to start a commandline repl with
+  `fif.core/repl`. If you wish to try out a default fif repl, you can
+  clone this repository and with leinigen installed: ~lein run~
 
 * Development
   
