@@ -6,7 +6,7 @@
 #+OPTIONS: H:2 num:t toc:t \n:nil ::t |:t ^:t f:t tex:t
 
 
-[[http://benzaporzan.me/fif-playground/][Try it Online!]] *In Alpha*
+[[http://benzaporzan.me/fif-playground/][Try it Online!]]
 
 
 [[./doc/logo.svg]]
@@ -17,9 +17,6 @@ interpreted, extensible, and simple. It was developed to be its own
 sandboxed scripting language to perform operations on clojure(script)
 applications. *fif* is based off of Forth, but has adopted clojures
 core libraries for familiarity.
-
-
-*fif is currently in alpha*. *Some language features are likely to change*.
 
 
 #+BEGIN_SRC clojure
@@ -97,7 +94,7 @@ core libraries for familiarity.
   
   #+BEGIN_SRC clojure
 
-  [fif "0.4.0-SNAPSHOT"]
+  [fif "1.0.0"]
 
   #+END_SRC
 
@@ -105,7 +102,7 @@ core libraries for familiarity.
 
   #+BEGIN_SRC clojure
 
-  fif {:mvn/version "0.4.0-SNAPSHOT"}
+  fif {:mvn/version "1.0.0"}
 
   #+END_SRC
 
@@ -113,7 +110,7 @@ core libraries for familiarity.
 
   #+BEGIN_SRC groovy
 
-  compile 'fif:fif:0.4.0-SNAPSHOT'
+  compile 'fif:fif:1.0.0'
 
   #+END_SRC
 
@@ -124,7 +121,7 @@ core libraries for familiarity.
   <dependency>
     <groupId>fif</groupId>
     <artifactId>fif</artifactId>
-    <version>0.4.0-SNAPSHOT</version>
+    <version>1.0.0</version>
   </dependency>
 
   #+END_SRC
@@ -520,7 +517,7 @@ core libraries for familiarity.
 ** Variables
 
    *fif* strays away from Forth in the way it sets and gets
-   variables. Since *Word Referencing* was added to *fif*, the ability
+   variables. Since *fif* uses *Word Referencing*, the ability
    to get Word Variables simply requires you to place the word on the
    stack to retrieve the value. Setting the variable requires you to
    provide a *Word Reference*, as shown in the examples below.
@@ -739,17 +736,21 @@ core libraries for familiarity.
    #+END_SRC
 
    An additional alternative was introduced, which is to generate the
-   quoted form, with additonally evaluated clojure code included
-   through an escape sequence, '%=. This would be useful when
-   generating code from a client to plug into a fif stack machine as a
-   server command.
+   quoted form with additonally evaluated clojure code included
+   through an escape sequence. If the escape sequence is provided,
+   '%=, the next value in the sequence is evaluated as clojure
+   code. This would be useful when generating code from a client to
+   plug into a fif stack machine as a server command.
 
    #+BEGIN_SRC clojure
 
    (require '[fif.core :as fif])
    (require '[fif.client :refer [form-string]])
 
+
    (def secret-message "The Cake is a Lie")
+
+
    (fif/reval-string (form-string "The secret message is: " %= secret-message str println))
    ;; <stdout>: The secret message is: The Cake is a Lie
    ;; <stdout>: 
@@ -758,13 +759,14 @@ core libraries for familiarity.
    
 ** Making fif safer, because Russians...?
 
-   Although using *fif* from within clojure might have it's
-   shortfalls, *fif* can avoid the pitfalls of the clojure reader by
-   passing in strings containing EDN data.
+   Although using *fif* from within clojure might have its shortfalls,
+   *fif* can avoid these shortfalls of clojure by passing in strings
+   containing EDN data.
 
    The same unsafe example from before:
 
    #+BEGIN_SRC
+
    (require '[fif.core :as fif])
 
    (fif/reval-string "1 1 +") ;; => '(2)
