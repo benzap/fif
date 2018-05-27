@@ -17,8 +17,7 @@
   (repl-prompt [this]
     (print this "> "))
 
-  (repl-read [this]
-    (read-line))
+  (repl-read [this])
 
   (repl-eval [this sform]
     (swap! (:*sm this) evaluators/eval-string sform))
