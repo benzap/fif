@@ -1,6 +1,7 @@
 (ns fif.client
   "Functions for better interoperability between fif and a
-  clojure(script) client.")
+  clojure(script) client."
+  (:require [clojure.string :as str]))
 
 
 (def ^:dynamic *fif-clojure-value-escape* '%=)
@@ -36,7 +37,10 @@
       body)))
 
 
-#_(def x 10)
-#_(form test value %= x 10)
-
-
+(defmacro form-string
+  "Equivlant to `form`, but presents the result as a string that can
+  be consumed by a fif stack-machine."
+  [& body]
+  `(let [sform# (pr-str (form ~@body))]
+     ;; Remove surrounding vector
+     (subs sform# 1 (dec (count sform#)))))

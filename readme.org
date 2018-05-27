@@ -212,6 +212,24 @@ core libraries for familiarity.
    :: <stdout>: There!
    ;; <stdout>: 
 
+   ;;
+   ;; Clojure equivalent print functions have been maintained
+   ;;   
+
+   (fif/reval "Hello World!" println) ;; => '()
+   ;; <stdout>: Hello World!
+   ;; <stdout>: 
+
+   (fif/reval "Hello World!" print) ;; => '()
+   ;; <stdout>: Hello World!
+
+   (fif/reval "Hello World!" prn) ;; => '()
+   ;; <stdout>: "Hello World!"
+   ;; <stdout>: 
+
+   (fif/reval "Hello World!" pr) ;; => '()
+   ;; <stdout>: "Hello World!"
+
    #+END_SRC
 
 ** Basic Arithmetic and Stack Manipulation
@@ -625,9 +643,9 @@ core libraries for familiarity.
 
    #+BEGIN_SRC clojure
    (require '[fif.core :as fif])
-   (require '[fif.stack-machine :as stack])
    (require '[fif.def :refer [wrap-procedure-with-arity
-                              wrap-function-with-arity]])
+                              wrap-function-with-arity
+                              set-word-function]])
 
    ;; Wrap add-note! as a procedure which accepts 1 value from the
    ;; stack. Note that the procedure wrapper does not return the result
@@ -640,8 +658,8 @@ core libraries for familiarity.
 
    (def extended-stack-machine
      (-> fif/*default-stack*
-         (stack/set-word 'add-note! op-add-note!)
-         (stack/set-word 'get-notes op-get-notes)))
+         (set-word-function 'add-note! op-add-note!)
+         (set-word-function 'get-notes op-get-notes)))
 
    ;; Let's take our new functionality for a spin
    (reset! *secret-notes [])
@@ -685,13 +703,14 @@ core libraries for familiarity.
   
    (require '[fif.core :as fif])
    (require '[fif.stack-machine :as stack])
+   (require '[fif.def :refer [set-word-variable]])
 
    (defn secret-stack-machine
      "Returns a stack machine with a `secret` value stored in the fif
      variable 'secret"
      [secret]
      (-> fif/*default-stack*
-         (stack/set-variable 'secret secret)))
+         (set-word-variable 'secret secret)))
    
    
    (fif/with-stack (secret-stack-machine :fooey)
@@ -717,6 +736,24 @@ core libraries for familiarity.
 
 
    #+END_SRC
+
+   An additional alternative was introduced, which is to generate the
+   quoted form, with additonally evaluated clojure code included
+   through an escape sequence, '%=. This would be useful when
+   generating code from a client to plug into a fif stack machine as a
+   server command.
+
+   #+BEGIN_SRC clojure
+
+   (require '[fif.core :as fif])
+   (require '[fif.client :refer [form-string]])
+
+   (def secret-message "The Cake is a Lie")
+   (fif/reval-string (form-string "The secret message is: " %= secret-message str println))
+   ;; <stdout>: The secret message is: The Cake is a Lie
+   ;; <stdout>: 
+
+   #+END_SRC
    
 ** Making fif safer, because Russians...?
 
@@ -727,7 +764,8 @@ core libraries for familiarity.
    The same unsafe example from before:
 
    #+BEGIN_SRC
-   
+   (require '[fif.core :as fif])
+
    (fif/reval-string "1 1 +") ;; => '(2)
 
    (fif/reval-string "1 #=(+ 1 1) +") ;; ERROR
@@ -802,13 +840,15 @@ core libraries for familiarity.
   A few things to look out for:
 
   - +Implementation in Clojurescript+ *included since 0.3.0-snapshot*
-  - +Regex Support (#"" tagged literal is not valid EDN)+ *use 'regex word definition*
+  - +Regex Support (#"" tagged literal is not valid EDN)+ *use 'regex' word definition*
   - +Improved Error Messages+
   - +Socket Repl+ *included since 0.4.0-snapshot*
-  - Additional Standard Library Word Definitions *On-Going*
-  - A Time Machine Debugger
-  - Improved repl word definitions *On-Going*
+  - +Commandline Repl+ *included since 0.4.0-snapshot*
+  - +Programmable Repl in Clojure and Clojurescript+ *included since 0.4.0-snapshot*
+  - +Improved repl word definitions+ *On-Going*
+  - +Additional Standard Library Word Definitions+ *On-Going*
   - Improved Fif Macros
+  - A Time Machine Debugger
 
 * Related Readings
 
