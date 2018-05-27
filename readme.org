@@ -679,8 +679,8 @@ core libraries for familiarity.
    implemented within fif using `fif.core/prepl-eval`.
 
    For this example, i'm going to create a prepl from the
-   *default-stack* which will change state within an atom. An
-   additional atom will be used to capture stdout and stderr.
+   *default-stack* which will change state within an atom. Additional
+   atoms will be used to capture stdout and stderr.
 
    #+BEGIN_SRC clojure
      (require '[clojure.string :as str])
@@ -889,7 +889,7 @@ core libraries for familiarity.
    for configuring a server, while only exposing limited
    functionality.
 
-   #+BEGIN_SRC
+   #+BEGIN_SRC clojure
 
    (require '[fif.core :as fif])
    (require '[fif.stack-machine :as stack])
@@ -924,7 +924,7 @@ core libraries for familiarity.
 
   fif has the ability to start a commandline repl with
   `fif.core/repl`. If you wish to try out a default fif repl, you can
-  clone this repository and with leinigen installed: ~lein run~
+  clone this repository and with leiningen installed, run: ~lein run~
 
 * Development
   
