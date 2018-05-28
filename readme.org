@@ -770,7 +770,7 @@ core libraries for familiarity.
    
    
    (fif/with-stack (secret-stack-machine :fooey)
-     (fif/reval secret getv)) ;; => (:fooey)
+     (fif/reval secret)) ;; => (:fooey)
    
    
    (defn pill-popping-stack-machine
