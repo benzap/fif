@@ -85,8 +85,6 @@ core libraries for familiarity.
   This could be relaxed to clojure 1.7 with interest.
 
 * Installation
-  
-  *Since it is currently in alpha development, only a snapshot is provided*
 
   For the latest version, please visit [[https://clojars.org/fif][clojars.org]]
 
@@ -975,17 +973,13 @@ core libraries for familiarity.
 
    It also helps to note that fif kind of sounds like you /have a lisp/ :)
 
-** Is this production-ready?
-
-   *fif* is not production-ready, and its core library and language
-   semantics are subject to change while it remains in alpha.
-
 ** Do you plan on using fif in production?
 
-   With further developments, I think I can get it to the point where
-   it's a feature rich, and viable scripting language for my own
-   projects. It has the benefits of being completely sandboxed, and
-   with the addition of the socket repl server, it could be used as an
-   alternative to exposing functionality for setting and getting
+   It's at the point where it is a viable scripting language for my
+   own projects. It has the benefits of being completely sandboxed,
+   and with the addition of the socket repl server, it could be used
+   as an alternative to exposing functionality for setting and getting
    server configuration data, or even for automating certain
    functionality with external scripts.
+
+   
