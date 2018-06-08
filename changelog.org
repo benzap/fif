@@ -7,3 +7,10 @@
 
 * 1.0.0
   - First Production Release, and the start of changelog recordings.
+
+* 1.0.1
+
+  - Minor documentation grammar fixes for display word operations
+
+  - *fif* can now be compiled into a native executable using GraalVM's
+    ~native-image~. Please refer to the readme.

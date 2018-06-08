@@ -924,6 +924,27 @@ core libraries for familiarity.
   `fif.core/repl`. If you wish to try out a default fif repl, you can
   clone this repository and with leiningen installed, run: ~lein run~
 
+* Native 'fif' Executable *alpha*
+
+  As of version 1.0.1, *fif* can be used as a standalone scripting
+  language. Compilation into a native executable is done by using
+  [[http://www.graalvm.org][GraalVM]] with the ~native-image~ commandline-tool.
+
+  To generate this executable yourself:
+
+  - clone this repository
+  - make sure you have [[https://leiningen.org][leiningen]] installed
+  - download and unpack a copy of [[https://github.com/oracle/graal/releases][the graal repository]]
+  - set the environment variable GRAAL_HOME as the root path of this
+    graal repository
+  - While at the root of the fif repository, run the ~build-native.sh~
+    script.
+
+  The generated executable should be placed in the ./bin/ folder of
+  the repository.
+
+  /Not much can be done with the fif executable, but expect to see further developments/
+
 * Development
   
   You can pull the project from github. Clojure tests are run via
