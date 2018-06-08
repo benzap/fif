@@ -666,13 +666,13 @@ positive number when x is logically 'less than', 'equal to', or
       (set-global-word-defn
        'println (wrap-procedure-with-arity 1 println)
        :stdlib? true
-       :doc "( any -- ) Sends the top value to the standard as a string with a newline."
+       :doc "( any -- ) Sends the top value to standard output as a string with a newline."
        :group :stdlib.io)
 
       (set-global-word-defn
        'prn (wrap-procedure-with-arity 1 prn)
        :stdlib? true
-       :doc "( any -- ) Sends the top value to the standard output in reader notation with a newline."
+       :doc "( any -- ) Sends the top value to standard output in reader notation with a newline."
        :group :stdlib.io)
 
       (set-global-word-defn
