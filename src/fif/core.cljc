@@ -9,7 +9,8 @@
    [fif.stdlib :refer [import-stdlib]]
    [fif.impl.stack-machine :refer [new-stack-machine]]
    [fif.impl.prepl]
-   [fif.repl]))
+   [fif.repl])
+  (:gen-class))
 
 
 (def get-stack stack/get-stack)

@@ -1,4 +1,4 @@
-(defproject fif "1.0.0"
+(defproject fif "1.0.1"
   :description "Stack-based Programming in Clojure(script)"
   :url "http://github.com/benzap/fif"
   :license {:name "Eclipse Public License"
@@ -36,12 +36,19 @@
   :doo {:build "test"
         :alias {:default [:node]}}
 
+  :aliases {"project-version" ["run" "-m" "fif.utils.version/print-project-version"]}
+
   :profiles
   {:dev
-   {:main fif.core ;; `lein run` starts a repl
+   {:main fif.core
     :source-paths ["src" "dev" "test"]
     :dependencies [[org.clojure/tools.namespace "0.2.11"]]
     :repl-options {:init-ns fif.dev.user
                    ;;:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]
                    :port 9005
-                   }}})
+                   }}
+   :uberjar
+   {:jvm-opts ["-Dclojure.compiler.direct-linking=true"]
+    :main fif.core
+    :aot [fif.core]
+    }})
