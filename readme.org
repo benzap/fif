@@ -92,7 +92,7 @@ core libraries for familiarity.
   
   #+BEGIN_SRC clojure
 
-  [fif "1.0.0"]
+  [fif "1.0.1"]
 
   #+END_SRC
 
@@ -100,7 +100,7 @@ core libraries for familiarity.
 
   #+BEGIN_SRC clojure
 
-  fif {:mvn/version "1.0.0"}
+  fif {:mvn/version "1.0.1"}
 
   #+END_SRC
 
@@ -108,7 +108,7 @@ core libraries for familiarity.
 
   #+BEGIN_SRC groovy
 
-  compile 'fif:fif:1.0.0'
+  compile 'fif:fif:1.0.1'
 
   #+END_SRC
 
@@ -119,7 +119,7 @@ core libraries for familiarity.
   <dependency>
     <groupId>fif</groupId>
     <artifactId>fif</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
   </dependency>
 
   #+END_SRC
@@ -924,7 +924,7 @@ core libraries for familiarity.
   `fif.core/repl`. If you wish to try out a default fif repl, you can
   clone this repository and with leiningen installed, run: ~lein run~
 
-* Native 'fif' Executable *alpha*
+* Native Executable (alpha)
 
   As of version 1.0.1, *fif* can be used as a standalone scripting
   language. Compilation into a native executable is done by using
@@ -943,13 +943,13 @@ core libraries for familiarity.
   The generated executable should be placed in the ./bin/ folder of
   the repository.
 
-  /Not much can be done with the fif executable, but expect to see further developments/
+  /Note: Not much can be done with the fif executable currently, but expect to see further developments/
 
 * Development
   
   You can pull the project from github. Clojure tests are run via
-  ~lein test~, and Clojurescript tests are run via `lein
-  doo`. Clojurescript tests require you to have ~node~ on your
+  ~lein test~, and Clojurescript tests are run via ~lein doo~.
+  Clojurescript tests require you to have ~node~ on your
   Environment PATH.
 
   I welcome any and all pull requests that further improve what is
