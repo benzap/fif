@@ -924,7 +924,10 @@ core libraries for familiarity.
   located at `fif.commandline/-main`. The commandline repl has the
   ability to load scripts containing fif/edn code, and also includes
   additional standard library word definitions for reading and writing
-  files on the filesystem.
+  files on the filesystem. These additional word definitions are
+  located in the :stdlib.io group
+
+  The fif commandline can be accessed with ~lein run -- <arguments>~
 
 * Native Executable
 
@@ -944,9 +947,6 @@ core libraries for familiarity.
 
   The generated executable should be placed in the ./bin/ folder of
   the repository.
-
-  The resulting binary starts incredibly fast (<20ms), and can be used for
-  writing scripts for manipulating EDN data structures
 
   #+BEGIN_SRC sh
 
@@ -970,15 +970,32 @@ core libraries for familiarity.
     * Commandline Arguments are placed in the word variable $vargs
     * The :stdlib.io group includes additional io operations for reading
     and writing files
+  
+  $ fif
+  Fif Repl
+   'help' for Help Message
+   'bye' to Exit.
+  > 2 2 + println
+  4
+  > bye
+  For now, bye!
 
   #+END_SRC
 
-  Using fif as a commandline tool has the advantage of directly
+  The resulting binary starts incredibly fast (<20ms), and has the advantage of directly
   manipulating EDN configuration files.
 
   #+BEGIN_SRC sh
 
   $ fif -e '"./deps.edn" dup load-file [:deps fif] {:mvn/version "1.0.2"} assoc-in spit'
+
+  #+END_SRC
+
+  It can also be used like any standard scripting language. As an
+  example, i'm going to write a script to add, remove and list dependencies
+  from a "deps.edn" file
+
+  #+BEGIN_SRC clojure
 
   #+END_SRC
 
