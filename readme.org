@@ -1007,7 +1007,7 @@ Usage:
   clj-deps list
 
 Example:
-  clj-deps fif 1.0.2
+  clj-deps add fif 1.0.2
 "
 
 *cargs $vargs count setg
@@ -1067,7 +1067,7 @@ then then then
     clj-deps list
   
   Example:
-    clj-deps fif 1.0.2
+    clj-deps add fif 1.0.2
 
   #+END_SRC
 
