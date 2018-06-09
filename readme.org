@@ -992,10 +992,82 @@ core libraries for familiarity.
   #+END_SRC
 
   It can also be used like any standard scripting language. As an
-  example, i'm going to write a script to add, remove and list dependencies
-  from a "deps.edn" file
+  example, i'm going to write a primitive script to add, remove and
+  list dependencies from a "deps.edn" file called ~clj-deps~
 
   #+BEGIN_SRC clojure
+
+#!/usr/bin/env fif
+
+def help-message "clj dependency tool
+
+Usage:
+  clj-deps add <package> <version>
+  clj-deps remove <package>
+  clj-deps list
+
+Example:
+  clj-deps fif 1.0.2
+"
+
+*cargs $vargs count setg
+*command $vargs first setg
+*package $vargs second dup nil? not if read-string first then setg
+*version $vargs 2 get setg
+
+cargs 3 =
+command "add" =
+and
+if
+  "deps.edn" read-file first
+  [:deps package] ?
+  {} :mvn/version version assoc assoc-in
+  "deps.edn" <> spit
+else
+
+cargs 2 =
+command "remove" =
+and
+if
+  "deps.edn" read-file first
+  dup :deps get package dissoc :deps <> assoc
+  "deps.edn" <> spit
+else
+
+cargs 1 =
+command "list" =
+and
+if
+  "deps.edn" read-file first
+  :deps get (dup first . ":" . second :mvn/version get . cr nil) <> map
+else
+  help-message println
+then then then
+
+  #+END_SRC
+
+  An example of it's use:
+
+  #+BEGIN_SRC sh
+
+  $ echo "{}" > deps.edn
+  $ clj-deps add fif 1.0.2
+  $ clj-deps add clock 0.3.2
+  cat deps.edn
+  {:deps {fif {:mvn/version "1.0.2"}, clock {:mvn/version "0.3.2"}}}
+  $ clj-deps remove clock
+  $ clj-deps list
+  fif:1.0.2
+  $ clj-deps
+  clj dependency tool
+  
+  Usage:
+    clj-deps add <package> <version>
+    clj-deps remove <package>
+    clj-deps list
+  
+  Example:
+    clj-deps fif 1.0.2
 
   #+END_SRC
 
