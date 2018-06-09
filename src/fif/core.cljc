@@ -10,7 +10,7 @@
    [fif.impl.stack-machine :refer [new-stack-machine]]
    [fif.impl.prepl]
    [fif.repl])
-  (:gen-class))
+  #?(:clj (:gen-class)))
 
 
 (def get-stack stack/get-stack)
