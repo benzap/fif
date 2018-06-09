@@ -16,7 +16,17 @@
             wrap-procedure-with-arity]
     :include-macros true]))
 
-  
+
+(defn read-file-op
+  (let [[fpath] (stack/get-stack sm)
+        s (slurp fpath)
+        [sm fif-forms] (evaluators/read-string sm s)]
+    (-> sm
+        stack/pop-stack
+        (stack/push-stack fif-forms)
+        stack/dequeue-code)))
+
+
 (defn load-file-op
   [sm]
   (let [[fpath] (stack/get-stack sm)
@@ -46,6 +56,12 @@
        'spita (wrap-procedure-with-arity 2 #(spit %1 %2 :append true))
        :stdlib? true
        :doc "( fpath content ) Appends to the file `fpath` with `content`."
+       :group :stdlib.io)
+
+      (set-global-word-defn
+       'read-file read-file-op
+       :stdlib? true
+       :doc "( fpath -- form ) Reads the file in, and returns it as a form sequence."
        :group :stdlib.io)
 
       (set-global-word-defn

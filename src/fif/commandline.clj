@@ -17,21 +17,28 @@
 
 
 (def help-message
-  "fif scripting language.
+  "fif Language Commandline repl/eval
 
 Usage:
   fif [options]
   fif <filename> [arguments..] [options]
   
 Options:
-  -h, --help         Show this screen.
-  -e, --eval=<form>  Evaluate String Form
-")
+  -h, --help    Show this screen.
+  -e            Evaluate Commandline Arguments
+
+Website:
+  github.com/benzap/fif
+
+Notes:
+  * Commandline Arguments are placed in the word variable $vargs
+  * The :stdlib.io group includes additional io operations for reading
+  and writing files")
 
 
 (def cli-options
  [["-h" "--help"]
-  ["-e" "--eval"]])
+  ["-e" nil :id :eval]])
 
 
 (defn -main
