@@ -5,7 +5,8 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.238"]
-                 [org.clojure/tools.reader "1.2.2"]]
+                 [org.clojure/tools.reader "1.2.2"]
+                 [org.clojure/tools.cli "0.3.7"]]
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-ancient "0.6.15"]
             [lein-doo "0.1.10"]]
@@ -40,7 +41,7 @@
 
   :profiles
   {:dev
-   {:main fif.core
+   {:main fif.commandline
     :source-paths ["src" "dev" "test"]
     :dependencies [[org.clojure/tools.namespace "0.2.11"]]
     :repl-options {:init-ns fif.dev.user
@@ -49,6 +50,6 @@
                    }}
    :uberjar
    {:jvm-opts ["-Dclojure.compiler.direct-linking=true"]
-    :main fif.core
-    :aot [fif.core]
+    :main fif.commandline
+    :aot [fif.core fif.commandline]
     }})
