@@ -6,12 +6,14 @@
    [clojure.tools.cli :refer [parse-opts]]
    [fif.core :as fif]
    [fif.def :refer [set-word-variable]]
-   [fif.repl])
+   [fif.repl]
+   [fif.stdlib.io :refer [import-stdlib-io]])
   (:gen-class))
 
 
 (def ^:dynamic *commandline-stack*
-  fif/*default-stack*)
+  (-> fif/*default-stack*
+      import-stdlib-io))
 
 
 (def help-message
@@ -36,9 +38,6 @@ Options:
   [& args]
   (let [{:keys [options arguments errors]}
         (parse-opts args cli-options)]
-    (println "Options: " options)
-    (println "Arguments: " arguments)
-    (println "Errors: " errors)
     (cond
      (not (empty? errors))
      (do
@@ -52,14 +51,17 @@ Options:
      (println help-message)
 
      (:eval options)
-     (fif/eval-string (str/join " " arguments))
+     (fif/with-stack *commandline-stack*
+       (fif/eval-string (str/join " " arguments))
+       (flush))
 
      (> (count arguments) 0)
      (let [[filename & args] arguments
            sform (slurp filename)
            sm (set-word-variable *commandline-stack* '$vargs (vec args))]
        (fif/with-stack sm
-         (fif/eval-string sform)))
+         (fif/eval-string sform)
+         (flush)))
 
      :else
      (fif.repl/repl *commandline-stack*))))
