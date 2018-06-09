@@ -92,7 +92,7 @@ core libraries for familiarity.
   
   #+BEGIN_SRC clojure
 
-  [fif "1.0.1"]
+  [fif "1.0.2"]
 
   #+END_SRC
 
@@ -100,7 +100,7 @@ core libraries for familiarity.
 
   #+BEGIN_SRC clojure
 
-  fif {:mvn/version "1.0.1"}
+  fif {:mvn/version "1.0.2"}
 
   #+END_SRC
 
@@ -108,7 +108,7 @@ core libraries for familiarity.
 
   #+BEGIN_SRC groovy
 
-  compile 'fif:fif:1.0.1'
+  compile 'fif:fif:1.0.2'
 
   #+END_SRC
 
@@ -119,7 +119,7 @@ core libraries for familiarity.
   <dependency>
     <groupId>fif</groupId>
     <artifactId>fif</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
   </dependency>
 
   #+END_SRC
@@ -918,13 +918,15 @@ core libraries for familiarity.
    - Set *Connection Type* to /Raw/
    - Under the *Terminal* Setting Category, enable /Implicit CR in every LF/
 
-* Starting a commandline repl
+* Using fif from the commandline
 
-  fif has the ability to start a commandline repl with
-  `fif.core/repl`. If you wish to try out a default fif repl, you can
-  clone this repository and with leiningen installed, run: ~lein run~
+  fif supports a fairly straightforward commandline repl, which is
+  located at `fif.commandline/-main`. The commandline repl has the
+  ability to load scripts containing fif/edn code, and also includes
+  additional standard library word definitions for reading and writing
+  files on the filesystem.
 
-* Native Executable (alpha)
+* Native Executable
 
   As of version 1.0.1, *fif* can be used as a standalone scripting
   language. Compilation into a native executable is done by using
@@ -943,7 +945,42 @@ core libraries for familiarity.
   The generated executable should be placed in the ./bin/ folder of
   the repository.
 
-  /Note: Not much can be done with the fif executable currently, but expect to see further developments/
+  The resulting binary starts incredibly fast (<20ms), and can be used for
+  writing scripts for manipulating EDN data structures
+
+  #+BEGIN_SRC sh
+
+  $ fif -e 2 2 + println
+  4
+  $ fif -h
+  fif Language Commandline repl/eval
+  
+  Usage:
+    fif [options]
+    fif <filename> [arguments..] [options]
+  
+  Options:
+    -h, --help    Show this screen.
+    -e            Evaluate Commandline Arguments
+
+  Website:
+    github.com/benzap/fif
+
+  Notes:
+    * Commandline Arguments are placed in the word variable $vargs
+    * The :stdlib.io group includes additional io operations for reading
+    and writing files
+
+  #+END_SRC
+
+  Using fif as a commandline tool has the advantage of directly
+  manipulating EDN configuration files.
+
+  #+BEGIN_SRC sh
+
+  $ fif -e '"./deps.edn" dup load-file [:deps fif] {:mvn/version "1.0.2"} assoc-in spit'
+
+  #+END_SRC
 
 * Development
   
