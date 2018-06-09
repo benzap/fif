@@ -18,6 +18,7 @@
 
 
 (defn read-file-op
+  [sm]
   (let [[fpath] (stack/get-stack sm)
         s (slurp fpath)
         [sm fif-forms] (evaluators/read-string sm s)]
