@@ -8,7 +8,7 @@
    [fif.def :refer [set-word-variable]]
    [fif.repl]
    [fif.stdlib.io :refer [import-stdlib-io]])
-  #?(:clj (:gen-class)))
+  (:gen-class))
 
 
 (def ^:dynamic *commandline-stack*
