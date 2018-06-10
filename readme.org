@@ -8,6 +8,9 @@
 
 [[http://benzaporzan.me/fif-playground/][Try it Online!]]
 
+https://travis-ci.org/benzap/fif.svg?branch=master
+
+https://img.shields.io/clojars/v/fif.svg
 
 [[./doc/logo.svg]]
 
