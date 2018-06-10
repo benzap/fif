@@ -95,7 +95,7 @@ core libraries for familiarity.
   
   #+BEGIN_SRC clojure
 
-  [fif "1.0.2"]
+  [fif "1.0.2c"]
 
   #+END_SRC
 
@@ -103,7 +103,7 @@ core libraries for familiarity.
 
   #+BEGIN_SRC clojure
 
-  fif {:mvn/version "1.0.2"}
+  fif {:mvn/version "1.0.2c"}
 
   #+END_SRC
 
@@ -111,7 +111,7 @@ core libraries for familiarity.
 
   #+BEGIN_SRC groovy
 
-  compile 'fif:fif:1.0.2'
+  compile 'fif:fif:1.0.2c'
 
   #+END_SRC
 
@@ -122,7 +122,7 @@ core libraries for familiarity.
   <dependency>
     <groupId>fif</groupId>
     <artifactId>fif</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.2c</version>
   </dependency>
 
   #+END_SRC

@@ -14,3 +14,24 @@
 
   - *fif* can now be compiled into a native executable using GraalVM's
     ~native-image~. Please refer to the readme.
+
+  - Introduced new word definitions for the commandline version of fif
+    ~slurp~, ~spit~, ~spita~, ~read-file~, and ~load-file~.
+
+* 1.0.2
+  
+  - Improved commandline with evaluation and repl support
+
+* 1.0.2a
+
+  - Hot-Fixed cljs build of fif
+
+* 1.0.2b
+
+  - Hot-Fixed clj build of fif
+
+* 1.0.2c
+
+  - Fixed clojar deployment
+
+
