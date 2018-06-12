@@ -13,3 +13,7 @@ pom.xml.asc
 .hgignore
 .hg/
 /resources/public/js/compiled
+/dpkg_config/*
+!/dpkg_config/Makefile
+!/dpkg_config/default
+!/dpkg_config/default/*

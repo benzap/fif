@@ -25,13 +25,14 @@ lein uberjar
 echo ""
 
 echo "Building Native Image..."
-native-image -jar target/fif-$FIF_VERSION-standalone.jar -H:Name="fif" -H:+ReportUnsupportedElementsAtRuntime
+native-image -jar target/fif-$FIF_VERSION-standalone.jar -H:Name="fif-${FIF_VERSION}" -H:+ReportUnsupportedElementsAtRuntime
 echo ""
 
 echo "Post Configuration..."
 mkdir -p bin
 chmod 744 fif
-mv fif ./bin/
+mv fif-$FIF_VERSION ./bin/
+ln -s ./bin/fif-$FIF_VERSION ./bin/fif
 echo ""
 
 echo "Built executable can be found at ./bin/fif"
