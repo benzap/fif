@@ -1,0 +1,13 @@
+# Makefile for dpkg build
+
+
+install:
+	cp FIF_NAME_EXE /usr/bin/FIF_NAME_EXE
+	chmod 755 /usr/bin/FIF_NAME_EXE
+	rm -f /usr/bin/fif
+	ln -s /usr/bin/FIF_NAME_EXE /usr/bin/fif
+
+
+distclean:
+	rm -f /usr/bin/FIF_NAME_EXE
+	rm -f /usr/bin/fif
