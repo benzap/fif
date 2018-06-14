@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+chmod 755 /usr/bin/FIF_EXE_NAME
+rm -f /usr/bin/fif
+ln -s /usr/bin/FIF_EXE_NAME /usr/bin/fif

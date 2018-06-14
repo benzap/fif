@@ -1,4 +1,6 @@
 # Makefile for generating dpkgs for the native-image compiled 'fif' executable
+# Requires: leiningen
+# Optional: fif
 
 EMAIL := benzaporzan@gmail.com
 
@@ -21,28 +23,35 @@ endif
 
 FIF_EXE_NAME := fif-$(FIF_VERSION)
 
-DMAKE_DIR := $(DIST_DIR)/dpkg/$(ARCH)/$(FIF_EXE_NAME)
+
+DEB_NAME := $(FIF_EXE_NAME)-$(ARCH)
+DEB_VERSION := 1
+
+DMAKE_DIR := $(DIST_DIR)/dpkg/$(DEB_NAME)
 PROJ_FIF_EXE := $(PROJECT_ROOT_DIR)/bin/$(FIF_EXE_NAME)
-DPKG_FIF_EXE := $(DMAKE_DIR)/$(FIF_EXE_NAME)
+DPKG_FIF_EXE := $(DMAKE_DIR)/usr/bin/$(FIF_EXE_NAME)
 
 init:
-	mkdir -p $(DMAKE_DIR)
-	cd $(DMAKE_DIR) && dh_make --copyright custom \
-				   --copyrightfile $(PROJECT_ROOT_DIR)/LICENSE \
-				   --email $(EMAIL) \
-				   --single --native --yes
-	rm -f $(DMAKE_DIR)/debian/README
-	rm -f $(DMAKE_DIR)/debian/*.ex
-	cp dbuild.mk.template $(DMAKE_DIR)/Makefile
-	sed -i "s/FIF_NAME_EXE/$(FIF_EXE_NAME)/g" $(DMAKE_DIR)/Makefile
+	mkdir -p $(DMAKE_DIR)/DEBIAN
+	touch $(DMAKE_DIR)/DEBIAN/control
+	echo "Package: fif" >> $(DMAKE_DIR)/DEBIAN/control
+	echo "Version: $(FIF_VERSION)-$(DEB_VERSION)" >> $(DMAKE_DIR)/DEBIAN/control
+	echo "Section: interpreters" >> $(DMAKE_DIR)/DEBIAN/control
+	echo "Priority: optional" >> $(DMAKE_DIR)/DEBIAN/control
+	echo "Homepage: http://github.com/benzap/fif" >> $(DMAKE_DIR)/DEBIAN/control
+	echo "Architecture: $(ARCH)" >> $(DMAKE_DIR)/DEBIAN/control
+	echo "Maintainer: Benjamin Zaporzan <benzaporzan@gmail.com>" >> $(DMAKE_DIR)/DEBIAN/control
+	echo "Description: Interpreter and Repl for the fif language" >> $(DMAKE_DIR)/DEBIAN/control
 
-	sed -i "s/Section:.*/Section: interpreters/" $(DMAKE_DIR)/debian/control
-	sed -i "s/Homepage:.*/Homepage: http:\/\/github.com\/benzap\/fif/" $(DMAKE_DIR)/debian/control
-	sed -i "s/Architecture:.*/Architecture: any-$(ARCH)/" $(DMAKE_DIR)/debian/control
-	sed -i "s/Description:.*/Description: Interpreter and Repl for the fif language/" \
-		$(DMAKE_DIR)/debian/control
-	sed -i "s/ <insert long description.*//g" $(DMAKE_DIR)/debian/control
+	cp prerm.template $(DMAKE_DIR)/DEBIAN/prerm
+	chmod 775 $(DMAKE_DIR)/DEBIAN/prerm
+	sed -i "s/FIF_EXE_NAME/$(FIF_EXE_NAME)/g" $(DMAKE_DIR)/DEBIAN/prerm
 
+	cp postinst.template $(DMAKE_DIR)/DEBIAN/postinst
+	chmod 775 $(DMAKE_DIR)/DEBIAN/postinst
+	sed -i "s/FIF_EXE_NAME/$(FIF_EXE_NAME)/g" $(DMAKE_DIR)/DEBIAN/postinst
+
+	cp $(PROJECT_ROOT_DIR)/LICENSE $(DMAKE_DIR)/DEBIAN/license
 
 $(PROJ_FIF_EXE):
 	echo "Building Native Image..."
@@ -50,18 +59,21 @@ $(PROJ_FIF_EXE):
 
 
 $(DPKG_FIF_EXE): $(PROJ_FIF_EXE)
+	mkdir -p $(DMAKE_DIR)/usr/bin
 	cp $(PROJ_FIF_EXE) $(DPKG_FIF_EXE)
+	chmod 755 $(DPKG_FIF_EXE)
 
 
 prepare: $(DPKG_FIF_EXE)
+	find $(DMAKE_DIR) -type d | xargs chmod 755
 
 
-
-
+build:
+	dpkg-deb --build $(DMAKE_DIR)
 
 clean:
 	rm -rf $(DMAKE_DIR)
 
 
-dpkg: clean init prepare
+dpkg: clean init prepare build
 

@@ -32,7 +32,8 @@ echo "Post Configuration..."
 mkdir -p bin
 chmod 744 fif
 mv fif-$FIF_VERSION ./bin/
+rm ./bin/fif
 ln -s ./bin/fif-$FIF_VERSION ./bin/fif
 echo ""
 
-echo "Built executable can be found at ./bin/fif"
+echo "Built executable can be found at ./bin/fif-${FIF_VERSION}"
