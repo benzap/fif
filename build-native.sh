@@ -30,9 +30,9 @@ echo ""
 
 echo "Post Configuration..."
 mkdir -p bin
-chmod 744 fif
+chmod 744 fif-${FIF_VERSION}
 mv fif-$FIF_VERSION ./bin/
-rm ./bin/fif
+rm -f ./bin/fif
 ln -s ./bin/fif-$FIF_VERSION ./bin/fif
 echo ""
 
