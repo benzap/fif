@@ -30,14 +30,21 @@ dpkg: $(PROJ_FIF_EXE)
 	make -C dist_config/dpkg/ dpkg
 
 
+# Generate .tar.gz Distribution for native executable
+tar: $(PROJ_FIF_EXE)
+	make -C dist_config/tar/ tar
+
+
 install: $(PROJ_FIF_EXE)
 	cp $(PROJ_FIF_EXE) /usr/bin/$(FIF_EXE_NAME)
+	chmod 755 /usr/bin/$(FIF_EXE_NAME)
 	rm -f /usr/bin/fif
-	ln -s /usr/bin/$(FIF_EXE_NAME) fif
+	ln -s /usr/bin/$(FIF_EXE_NAME) /usr/bin/fif
 
 
 clean:
 	rm -f $(PROJ_FIF_EXE)
+	rm -rf dist
 
 
 distclean:
