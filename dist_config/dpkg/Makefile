@@ -31,6 +31,11 @@ DMAKE_DIR := $(DIST_DIR)/dpkg/$(DEB_NAME)
 PROJ_FIF_EXE := $(PROJECT_ROOT_DIR)/bin/$(FIF_EXE_NAME)
 DPKG_FIF_EXE := $(DMAKE_DIR)/usr/bin/$(FIF_EXE_NAME)
 
+
+# default
+all: dpkg
+
+
 init:
 	mkdir -p $(DMAKE_DIR)/DEBIAN
 	touch $(DMAKE_DIR)/DEBIAN/control
@@ -70,6 +75,7 @@ prepare: $(DPKG_FIF_EXE)
 
 build:
 	dpkg-deb --build $(DMAKE_DIR)
+
 
 clean:
 	rm -rf $(DMAKE_DIR)
