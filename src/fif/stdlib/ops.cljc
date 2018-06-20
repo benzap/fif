@@ -4,6 +4,7 @@
   - Most of the functions listed were taken from the Forth standard library."
   (:require
    [clojure.string :as str]
+   [clojure.pprint :as pprint]
    [fif.stack-machine :as stack]
    [fif.stack-machine.words :as words :refer [set-global-word-defn]]
    [fif.def :as def
@@ -554,6 +555,12 @@ positive number when x is logically 'less than', 'equal to', or
        :group :stdlib.math.arithmetic)
 
       (set-global-word-defn
+       'pprint (wrap-procedure-with-arity 1 pprint/pprint)
+       :stdlib? true
+       :doc "( any -- ) Display clojure value pretty-printed to standard out."
+       :group :stdlib.pprint)
+
+      (set-global-word-defn
        'pos-int? (wrap-function-with-arity 1 pos-int?)
        :stdlib? true
        :doc "( any -- bool ) Returns true if the top value is a positive fixed precision integer."
@@ -600,6 +607,12 @@ positive number when x is logically 'less than', 'equal to', or
        :stdlib? true
        :doc "( any -- bool ) Returns true if the top value is a symbol."
        :group :stdlib.type-checking)
+
+      (set-global-word-defn
+       'symbol (wrap-function-with-arity 1 symbol)
+       :stdlib? true
+       :doc "( any -- bool ) Returns the top value as a symbol, otherwise nil."
+       :group :stdlib.conversion)
 
       (set-global-word-defn
        'true? (wrap-function-with-arity 1 true?)

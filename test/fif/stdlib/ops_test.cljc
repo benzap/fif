@@ -643,6 +643,14 @@
       => '(false))))
 
 
+(deftest test-pprint-op
+  (testing "Testing 'pos-int?' operator"
+    (are-eq*
+      (teval {:a "test"} pprint)
+
+      => '())))
+
+
 (deftest test-seq?-op
   (testing "Testing 'seq?' operator"
     (are-eq*
@@ -697,6 +705,14 @@
       (teval _test__ symbol?)
 
       => '(true))))
+
+
+(deftest test-symbol-op
+  (testing "Testing 'symbol' operator"
+    (are-eq*
+      (teval "test-value" symbol)
+
+      => '(test-value))))
 
 
 (deftest test-true?-op
