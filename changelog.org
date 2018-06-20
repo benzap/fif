@@ -35,3 +35,8 @@
   - Fixed clojar deployment
 
 
+* 1.0.3
+
+  - Added ~symbol~ word function
+
+  - Added ~pprint~ word function
