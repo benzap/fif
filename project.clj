@@ -1,12 +1,12 @@
-(defproject fif "1.0.3"
+(defproject fif "1.0.4"
   :description "Stack-based Programming in Clojure(script)"
   :url "http://github.com/benzap/fif"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.10.238"]
-                 [org.clojure/tools.reader "1.2.2"]
-                 [org.clojure/tools.cli "0.3.7"]]
+  :dependencies [[org.clojure/clojure "1.10.0"]
+                 [org.clojure/clojurescript "1.10.439"]
+                 [org.clojure/tools.reader "1.3.2"]
+                 [org.clojure/tools.cli "0.4.1"]]
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-ancient "0.6.15"]
             [lein-doo "0.1.10"]]
@@ -45,11 +45,10 @@
     :source-paths ["src" "dev" "test"]
     :dependencies [[org.clojure/tools.namespace "0.2.11"]]
     :repl-options {:init-ns fif.dev.user
-                   ;;:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]
-                   :port 9005
-                   }}
+                   :port 9005}}
+                   
    :uberjar
    {:jvm-opts ["-Dclojure.compiler.direct-linking=true"]
     :main fif.commandline
-    :aot [fif.core fif.commandline]
-    }})
+    :aot [fif.core fif.commandline]}})
+    

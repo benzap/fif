@@ -7,9 +7,8 @@
    [clojure.pprint :as pprint]
    [fif.stack-machine :as stack]
    [fif.stack-machine.words :as words :refer [set-global-word-defn]]
-   [fif.def :as def
-    :refer [wrap-function-with-arity
-            wrap-procedure-with-arity]
+   [fif.def :as def :refer [wrap-function-with-arity
+                            wrap-procedure-with-arity]
     :include-macros true]))
 
 
