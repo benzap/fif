@@ -5,8 +5,94 @@
 #+LANGUAGE: en
 #+OPTIONS: H:2 num:t toc:t \n:nil ::t |:t ^:t f:t tex:t
 
-* 1.0.0
-  - First Production Release, and the start of changelog recordings.
+* 1.0.4
+  
+  - Added piecewise word functions, ~%~, ~%1~, ~%2~, and ~%3~
+
+    - These word functions allow you to dereference word variables
+      that have been placed on the stack ex.
+
+      #+BEGIN_SRC clojure
+
+      def x 2
+
+      *x 2 + . ;; Error, x has to be dereferenced
+
+      #+END_SRC
+
+      The fix
+
+      #+BEGIN_SRC clojure
+
+      def x 2
+
+      *x % 2 + . ;; *x is placed back on the code queue and dereferenced
+
+      ;; alternatives
+
+      *x %1 2 + .
+
+      *x 2 %2 + .
+
+      #+END_SRC
+
+      It can also be used to reorganize values on the stack
+
+      #+BEGIN_SRC clojure
+
+      a b c %3 .s ;; <3> (b c a)
+
+      a b c %2 %3 .s ;; <3> (c b a)
+
+      #+END_SRC
+
+    - How is this different from ~over~ and other such stack
+      modication functions?
+
+      The difference is that it is placed back on the code queue for
+      re-evaluation, so it can make for some interesting dereferencing
+      techniques that weren't possible before.
+
+      example:
+
+      #+BEGIN_SRC clojure
+
+      doc assocv "( w k v -- 'w ) Associate key-value pair into word variable"
+      fn assocv ;; untested
+        *v <> setl
+        *k <> setl
+
+        dup % k v assoc setl
+      endfn
+
+      def x {:a 1 :b 2}
+      *x :c 3 assocv
+
+      x . ;; {:a 1 :b 2 :c 3}
+
+      #+END_SRC
+
+* 1.0.3
+
+  - Added ~symbol~ word function
+
+  - Added ~pprint~ word function
+
+* 1.0.2c
+
+  - Fixed clojar deployment
+
+* 1.0.2b
+
+  - Hot-Fixed clj build of fif
+
+* 1.0.2a
+
+  - Hot-Fixed cljs build of fif
+
+* 1.0.2
+  
+  - Improved commandline with evaluation and repl support
 
 * 1.0.1
 
@@ -18,25 +104,5 @@
   - Introduced new word definitions for the commandline version of fif
     ~slurp~, ~spit~, ~spita~, ~read-file~, and ~load-file~.
 
-* 1.0.2
-  
-  - Improved commandline with evaluation and repl support
-
-* 1.0.2a
-
-  - Hot-Fixed cljs build of fif
-
-* 1.0.2b
-
-  - Hot-Fixed clj build of fif
-
-* 1.0.2c
-
-  - Fixed clojar deployment
-
-
-* 1.0.3
-
-  - Added ~symbol~ word function
-
-  - Added ~pprint~ word function
+* 1.0.0
+  - First Production Release, and the start of changelog recordings.
