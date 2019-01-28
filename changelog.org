@@ -58,11 +58,11 @@
       #+BEGIN_SRC clojure
 
       doc assocv "( w k v -- 'w ) Associate key-value pair into word variable"
-      fn assocv ;; untested
+      fn assocv
         *v <> setl
         *k <> setl
 
-        dup % k v assoc setl
+        dup % k v assoc setg
       endfn
 
       def x {:a 1 :b 2}
