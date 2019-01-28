@@ -15,56 +15,56 @@
   "(n -- 'n) Queues the first value on the stack back on the code
   stack. Used to dereference variables on the stack, or to reorganize stack values."
   [sm]
-  (let [[first] (stack/get-stack sm)]
+  (let [[x1] (stack/get-stack sm)]
     (-> sm
         stack/pop-stack
         stack/dequeue-code
-        (stack/enqueue-code first))))
+        (stack/push-code x1))))
 
 
 (defn piecewise-second
   [sm]
-  (let [[second first] (stack/get-stack sm)]
+  (let [[x1 x2] (stack/get-stack sm)]
     (-> sm
         stack/pop-stack
         stack/pop-stack
-        (stack/push-stack first)
+        (stack/push-stack x1)
         stack/dequeue-code
-        (stack/enqueue-code second))))
+        (stack/push-code x2))))
 
 
 (defn piecewise-third
   [sm]
-  (let [[third second first] (stack/get-stack sm)]
+  (let [[x1 x2 x3] (stack/get-stack sm)]
     (-> sm
         stack/pop-stack
         stack/pop-stack
         stack/pop-stack
-        (stack/push-stack second)
-        (stack/push-stack first)
+        (stack/push-stack x2)
+        (stack/push-stack x1)
         stack/dequeue-code
-        (stack/enqueue-code third))))
+        (stack/push-code x3))))
 
 
 (defn import-stdlib-piecewise [sm]
   (-> sm
       
       (set-global-word-defn
-       '% (wrap-function-with-arity 1 piecewise-first)
+       '% piecewise-first
        :stdlib? true
        :doc "( n -- 'n ) Pop and re-evaluate the first value on the stack.")
 
       (set-global-word-defn
-       '%1 (wrap-function-with-arity 1 piecewise-first)
+       '%1 piecewise-first
        :stdlib? true
        :doc "( n -- 'n ) Pop and re-evaluate the first value on the stack.")
 
       (set-global-word-defn
-       '%2 (wrap-function-with-arity 1 piecewise-second)
+       '%2 piecewise-second
        :stdlib? true
        :doc "( n -- 'n ) Pop and re-evaluate the second value on the stack.")
 
       (set-global-word-defn
-       '%3 (wrap-function-with-arity 1 piecewise-third)
+       '%3 piecewise-third
        :stdlib? true
        :doc "( n -- 'n ) Pop and re-evaluate the third value on the stack.")))

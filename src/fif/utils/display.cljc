@@ -1,4 +1,5 @@
 (ns fif.utils.display
+  (:refer-clojure :exclude [PrintWriter-on])
   (:require
    [clojure.pprint :refer [pprint]])
   #?(:clj (:import [java.io BufferedWriter PrintWriter Writer])))

@@ -1,6 +1,7 @@
 (ns fif.impl.prepl
   "Implementation of programmable repl. Useful for implementing fif
   outside of a standard input/output environment."
+  (:refer-clojure :exclude [PrintWriter-on])
   (:require
    [fif.stack-machine :as stack]
    [fif.stack-machine.evaluators :as evaluators]

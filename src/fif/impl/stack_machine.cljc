@@ -172,8 +172,13 @@
 
 
   ;; Code Queue
+  (push-code [this arg]
+    (assoc-in this [:code-stack] (vec (concat [arg] (:code-stack this)))))
+
   (enqueue-code [this arg]
-    (update-in this [:code-stack] concat (list arg)))
+    (-> this
+        (update-in [:code-stack] concat (list arg))
+        (update-in [:code-stack] vec)))
 
   (dequeue-code [this]
     (update-in this [:code-stack] #(-> % rest vec)))

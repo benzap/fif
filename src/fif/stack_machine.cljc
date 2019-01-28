@@ -57,6 +57,7 @@
   (set-flags [this flags])
   (clear-flags [this])
 
+  (push-code [this arg])
   (enqueue-code [this arg])
   (dequeue-code [this])
   (set-code [this stack])

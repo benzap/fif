@@ -38,6 +38,7 @@
    [fif.stdlib.tools-test]
    [fif.stdlib.realizer-test]
    [fif.stdlib.repl-test]
+   [fif.stdlib.piecewise-test]
    [fif.stdlib.variable-test]
 
    ;; Test Cases ./utils
@@ -90,6 +91,7 @@
  'fif.stdlib.tools-test
  'fif.stdlib.realizer-test
  'fif.stdlib.repl-test
+ 'fif.stdlib.piecewise-test
  'fif.stdlib.variable-test
 
 
