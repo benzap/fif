@@ -52,19 +52,23 @@
       (set-global-word-defn
        '% piecewise-first
        :stdlib? true
-       :doc "( n -- 'n ) Pop and re-evaluate the first value on the stack.")
+       :doc "( n -- 'n ) Pop and re-evaluate the first value on the stack."
+       :group :stdlib.piecewise)
 
       (set-global-word-defn
        '%1 piecewise-first
        :stdlib? true
-       :doc "( n -- 'n ) Pop and re-evaluate the first value on the stack.")
+       :doc "( n -- 'n ) Pop and re-evaluate the first value on the stack."
+       :group :stdlib.piecewise)
 
       (set-global-word-defn
        '%2 piecewise-second
        :stdlib? true
-       :doc "( n -- 'n ) Pop and re-evaluate the second value on the stack.")
+       :doc "( n -- 'n ) Pop and re-evaluate the second value on the stack."
+       :group :stdlib.piecewise)
 
       (set-global-word-defn
        '%3 piecewise-third
        :stdlib? true
-       :doc "( n -- 'n ) Pop and re-evaluate the third value on the stack.")))
+       :doc "( n -- 'n ) Pop and re-evaluate the third value on the stack."
+       :group :stdlib.piecewise)))
