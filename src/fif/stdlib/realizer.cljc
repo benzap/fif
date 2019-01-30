@@ -1,4 +1,8 @@
 (ns fif.stdlib.realizer
+  "Notes:
+
+  - depends on 'apply' word function in the collectors stdlib
+  "
   (:require
    [fif.stack-machine :as stack-machine]
    [fif.stack-machine.processor :as processor]
@@ -31,9 +35,25 @@
 (defmethod realize-mode
   {:op ::? :op-state ::init}
   [sm]
-  (let [[collection] (-> sm stack-machine/get-stack)]
+  (let [[collection] (-> sm stack-machine/get-stack)
+        coll-type (empty collection)
+        collection
+        (if (map? collection)
+          (reduce
+           (fn [xs [k v]]
+             (let [bform (cond-> '()
+                           true                      (concat [k])
+                           (or (seq? k) (symbol? k)) (concat ['apply])
+                           true                      (concat [v])
+                           (or (seq? v) (symbol? v)) (concat ['apply])
+                           true vec)]
+               (concat xs [bform arg-realize-token])))
+           []
+           collection)
+          collection)]
+    
     (-> sm
-        (stack-machine.stash/update-stash assoc ::collection-type (empty collection))
+        (stack-machine.stash/update-stash assoc ::collection-type coll-type)
         (mode/update-state assoc :op-state ::collect)
         stack-machine/dequeue-code
         stack-machine/pop-stack
@@ -54,6 +74,15 @@
       (processor/process-arg sm))))
       
 
+(defn fix-map-key-pairs
+  [kp]
+  (case (count kp)
+   0 nil
+   1 [(first kp) nil]
+   2 kp
+   [(first kp) (rest kp)]))
+
+
 (defmethod realize-mode
   {:op ::? :op-state ::finish}
   [sm]
@@ -62,6 +91,7 @@
         (-> sm
             stack-machine/get-stack
             (utils.token/split-at-token arg-realize-start-token))
+        realized-collection (if (map? coll-type) (keep fix-map-key-pairs realized-collection) realized-collection)
         realized-collection (->> realized-collection reverse (into coll-type))
         realized-collection (if (seq? realized-collection)
                               (reverse realized-collection)

@@ -5,6 +5,38 @@
 #+LANGUAGE: en
 #+OPTIONS: H:2 num:t toc:t \n:nil ::t |:t ^:t f:t tex:t
 
+* 1.1.0
+  
+  - The realizer has been updated to work with maps.
+
+    Examples
+
+    #+BEGIN_SRC clojure
+
+    def a 10
+    def b 12
+
+    {:a a :b b} ? . ;; {:a 10 :b 12}
+
+    #+END_SRC
+  
+    As you can see, symbols are realized. Note that lists are realized
+    as well, while other collection types are ignored
+
+    More Advanced Examples
+
+    #+BEGIN_SRC clojure
+
+    {:a (2 2 +)} ? . ;; {:a 4}
+
+    {:a (2 2 2 +)} ? . ;; {:a (2 4)}
+
+    {:a [2 2 +]} ? . ;; {:a [2 2 +]}
+
+    {:a ([2 2 +] ?)} ? . ;; {:a [4]}
+
+    #+END_SRC
+
 * 1.0.4
   
   - Added piecewise word functions, ~%~, ~%1~, ~%2~, and ~%3~

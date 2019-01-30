@@ -41,9 +41,11 @@
 
 (defn apply-op
   "Takes the top value, which is a collection of values, and places them
-  at the front of the code queue."
+  at the front of the code queue. Places any non-collection values on
+  the code queue."
   [sm]
-  (let [[coll] (stack/get-stack sm)]
+  (let [[coll] (stack/get-stack sm)
+        coll (if (coll? coll) coll [coll])]
     (-> sm
         stack/dequeue-code
         stack/pop-stack
