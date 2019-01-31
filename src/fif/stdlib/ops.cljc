@@ -699,6 +699,61 @@ positive number when x is logically 'less than', 'equal to', or
        :doc "( n -- n ) Returns a random floating point number between  [0 n)."
        :group :stdlib.random)
 
+      ;;
+      ;; Type Coercion
+      ;;
+      
+
+      (set-global-word-defn
+       'int (wrap-function-with-arity 1 int)
+       :stdlib? true
+       :doc "( any -- integer ) Coerce value into an integer value."
+       :group :stdlib.conversion)
+
+      (set-global-word-defn
+       'float (wrap-function-with-arity 1 float)
+       :stdlib? true
+       :doc "( any -- float ) Coerce value into a float value."
+       :group :stdlib.conversion)
+
+      (set-global-word-defn
+       'boolean (wrap-function-with-arity 1 boolean)
+       :stdlib? true
+       :doc "( any -- boolean ) Coerce value into a boolean value."
+       :group :stdlib.conversion)
+      
+      #?(:clj (set-global-word-defn
+               'char (wrap-function-with-arity 1 char)
+               :stdlib? true
+               :doc "( any -- char ) Coerce value into a character value."
+               :group :stdlib.conversion))
+
+      ;;
+      ;; Ratio Functions
+      ;;
+
+      #?(:clj (set-global-word-defn
+               'rationalize (wrap-function-with-arity 1 rationalize)
+               :stdlib? true
+               :doc "( any -- ratio ) Coerce value into a ratio value."
+               :group :stdlib.ratio))
+
+      #?(:clj (set-global-word-defn
+               'numerator (wrap-function-with-arity 1 numerator)
+               :stdlib? true
+               :doc "( ratio -- integer ) Get the numerator from a ratio."
+               :group :stdlib.ratio))
+
+      #?(:clj (set-global-word-defn
+               'denominator (wrap-function-with-arity 1 denominator)
+               :stdlib? true
+               :doc "( ratio -- integer ) Get the denominator from a ratio."
+               :group :stdlib.ratio))
+
+      ;;
+      ;; String functions
+      ;;
+
       (set-global-word-defn
        'str (wrap-function-with-arity 2 str)
        :stdlib? true
@@ -906,7 +961,7 @@ positive number when x is logically 'less than', 'equal to', or
           're-groups (wrap-function-with-arity 1 re-groups)
           :stdlib? true
           :doc "( matcher -- g ) Returns the most recent re-group from the most recent re-find-match."
-          :group :stdlib.regex))
+          :group :stdlib.regex))))
 
-      ))
+      
 
