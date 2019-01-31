@@ -8,6 +8,7 @@
    [fif.stdlib.variable :refer [import-stdlib-variable-mode]]
    [fif.stdlib.constant :refer [import-stdlib-constant-mode]]
    [fif.stdlib.macro :refer [import-stdlib-macro-mode]]
+   [fif.stdlib.math :refer [import-stdlib-math]]
    [fif.stdlib.collecter :refer [import-stdlib-collecter-mode]]
    [fif.stdlib.collection-ops :refer [import-stdlib-collection-ops]]
    [fif.stdlib.functional-ops :refer [import-stdlib-functional-ops]]
@@ -30,6 +31,7 @@
       import-stdlib-variable-mode
       import-stdlib-constant-mode
       import-stdlib-macro-mode
+      import-stdlib-math
       import-stdlib-collecter-mode
       import-stdlib-collection-ops
       import-stdlib-functional-ops
