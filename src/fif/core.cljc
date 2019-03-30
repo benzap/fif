@@ -138,17 +138,3 @@
      (-> *default-stack*
          (stack/set-step-max step-max#)
          (stack.evaluators/eval-fn (quote ~body)))))
-
-
-;;
-;; Feature Ideas
-;;
-
-#_(reval 2 0 do {:id i} ?m loop) ;; => '({:id 0} {:id 1} {:id 2})
-
-#_(reval (%:name %:age) {:name "Ben" :age 29} format) ;; (("Ben" 29))
-
-#_(reval (%0 %1) ["Ben" 29] format) ;; (("Ben" 29))
-
-#_(reval (% %) ["Ben" 29]) ;; ((["Ben" 29] ["Ben" 29]))
-

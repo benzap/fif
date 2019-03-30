@@ -43,9 +43,9 @@
            (fn [xs [k v]]
              (let [bform (cond-> '()
                            true                      (concat [k])
-                           (or (seq? k) (symbol? k)) (concat ['apply])
+                           (or (seq? k) #_(symbol? k)) (concat ['apply])
                            true                      (concat [v])
-                           (or (seq? v) (symbol? v)) (concat ['apply])
+                           (or (seq? v) #_(symbol? v)) (concat ['apply])
                            true vec)]
                (concat xs [bform arg-realize-token])))
            []
