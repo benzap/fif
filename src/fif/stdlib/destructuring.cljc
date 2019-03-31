@@ -22,12 +22,20 @@
   (some (complement symbol?) parameters))
 
 
+(defn- pop-stack-n [sm n]
+  (loop [sm sm n n]
+    (if (<= n 0)
+      sm
+      (recur (stack/pop-stack sm) (dec n)))))
+
+
 (defn destructure-op
   [sm]
   (let [[parameters & stack] (stack/get-stack sm)
         arguments (take (count parameters) stack)
         arg-list (zipmap (reverse parameters) arguments)
-        sm (stack/dequeue-code sm)]
+        sm (-> (pop-stack-n sm (inc (count parameters)))
+               stack/dequeue-code)]
     (cond
       ;; Parameters should be presented as a vector
       (not (vector? parameters))

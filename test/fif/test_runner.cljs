@@ -41,6 +41,7 @@
    [fif.stdlib.repl-test]
    [fif.stdlib.piecewise-test]
    [fif.stdlib.variable-test]
+   [fif.stdlib.destructuring-test]
 
    ;; Test Cases ./utils
    [fif.utils.scope-test]
@@ -95,6 +96,7 @@
  'fif.stdlib.repl-test
  'fif.stdlib.piecewise-test
  'fif.stdlib.variable-test
+ 'fif.stdlib.destructuring-test
 
 
  ;; Test Cases ./utils
