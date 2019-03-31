@@ -10,7 +10,7 @@
 
 [[https://travis-ci.org/benzap/fif][https://travis-ci.org/benzap/fif.svg?branch=master]]
 
-[[https://clojars.org/fif][https://img.shields.io/clojars/v/fif.svg]]
+[[https://clojars.org/fif][https://img.shields.io/clojars/v/fif-lang/fif.svg]]
 
 [[./doc/logo.svg]]
 
