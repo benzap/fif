@@ -89,13 +89,13 @@ core libraries for familiarity.
 
 * Installation
 
-  For the latest version, please visit [[https://clojars.org/fif][clojars.org]]
+  For the latest version, please visit [[https://clojars.org/fif-lang/fif][clojars.org]]
 
   *Leiningen/Boot*
   
   #+BEGIN_SRC clojure
 
-  [fif "1.3.0"]
+  [fif-lang/fif "1.3.0"]
 
   #+END_SRC
 
@@ -103,7 +103,7 @@ core libraries for familiarity.
 
   #+BEGIN_SRC clojure
 
-  fif {:mvn/version "1.3.0"}
+  fif-lang/fif {:mvn/version "1.3.0"}
 
   #+END_SRC
 
@@ -111,7 +111,7 @@ core libraries for familiarity.
 
   #+BEGIN_SRC groovy
 
-  compile 'fif:fif:1.3.0'
+  compile 'fif-lang:fif:1.3.0'
 
   #+END_SRC
 
@@ -120,7 +120,7 @@ core libraries for familiarity.
   #+BEGIN_SRC xml
 
   <dependency>
-    <groupId>fif</groupId>
+    <groupId>fif-lang</groupId>
     <artifactId>fif</artifactId>
     <version>1.3.0</version>
   </dependency>
