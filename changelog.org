@@ -5,6 +5,99 @@
 #+LANGUAGE: en
 #+OPTIONS: H:2 num:t toc:t \n:nil ::t |:t ^:t f:t tex:t
 
+* 1.3.0
+  
+  - Improved the realizer ~?~
+    - Non-collection values pass through without error
+    - Bug Fix: Symbols containing a collection are now correctly
+      evaluated
+  
+  - Added new operator, the multi-realizer ~??~, which is a catch-all
+    realizer for collections containing nested collections. This
+    removes the need to chain the realizer to realize inner
+    collections.
+
+    ex.
+
+    #+BEGIN_SRC clojure
+
+    fn name
+      *first-name <> setl
+      *last-name <> setl
+      {:first-name first-name :last-name last-name} ?
+    endfn
+
+    ;;
+    ;; before
+    ;;
+
+    [{:user-data ("Ben" "Zap" name)
+      :email "benzap@testnet.com"} ?
+      
+     {:user-data ("John" "Doe" name)
+      :email "john.doe@hotmail.com"} ?] ?
+
+    ;;
+    ;; after
+    ;;
+
+    [{:user-data ("Ben" "Zap" name)
+      :email "benzap@testnet.com"}
+      
+     {:user-data ("John" "Doe" name)
+      :email "john.doe@hotmail.com"}] ??
+
+    #+END_SRC
+  
+    - Added a new destructuring operator '&', which creates local
+      variables from a supplied vector of parameters, and arguments
+      which reside on the stack
+
+      ex.
+
+      #+BEGIN_SRC clojure
+
+      1 2 3 [a b c] &
+
+      a b c ;; '(1 2 3)
+
+      #+END_SRC
+
+      This can be used in tandem with a function to assign stack values
+      to parameters in a much clearer way.
+
+      ex.
+
+      #+BEGIN_SRC clojure
+
+      ;;
+      ;; before
+      ;;
+
+      fn name
+	*first-name <> setl
+	*last-name <> setl
+	{:first-name first-name :last-name last-name} ?
+      endfn
+
+      ;;
+      ;; after
+      ;;
+
+      fn name [first-name last-name] &
+	{:first-name first-name :last-name last-name} ?
+      endfn
+
+      #+END_SRC
+
+* 1.2.0
+  - Added coercion word functions ~int~, ~float~, ~boolean~
+    - Clojure only: ~char~, ~rationalize~, ~numerator~, ~denominator~
+
+  - Added math word functions ~PI~, ~E~, ~acos~, ~asin~, ~atan~,
+    ~atan2~, ~cbrt~, ~ceil~, ~cos~, ~cosh~, ~exp~, ~floor~, ~log~,
+    ~pow~, ~round~, ~sin~, ~sinh~, ~sqrt~, ~tan~, ~tanh~
+
 * 1.1.0
   
   - The realizer has been updated to work with maps.
