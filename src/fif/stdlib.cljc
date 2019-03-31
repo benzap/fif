@@ -37,7 +37,7 @@
       import-stdlib-collection-ops
       import-stdlib-functional-ops
       import-stdlib-realize-mode
-      ;;import-stdlib-realize-multi-mode
+      import-stdlib-realize-multi-mode
       import-stdlib-stack-tools
       import-stdlib-repl
       import-stdlib-reader

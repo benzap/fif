@@ -36,11 +36,11 @@
   (reduce
    (fn [xs [k v]]
      (let [bform (cond-> '()
-                   true                      (concat [k])
-                   (or (seq? k) #_(symbol? k)) (concat ['apply])
-                   true                      (concat [v])
-                   (or (seq? v) #_(symbol? v)) (concat ['apply])
-                   true vec)]
+                   true     (concat [k])
+                   (seq? k) (concat ['apply])
+                   true     (concat [v])
+                   (seq? v) (concat ['apply])
+                   true     vec)]
        (concat xs [bform arg-realize-token])))
    []
    m))
@@ -51,7 +51,6 @@
   [sm]
   (let [[collection] (-> sm stack-machine/get-stack)
         coll-type (empty collection)
-
         collection
         (if (map? collection) 
           (prepare-map-collection collection)
@@ -64,7 +63,9 @@
           stack-machine/pop-stack
           (stack-machine/push-stack arg-realize-start-token)
           (stack-machine/update-code #(concat %2 %3 %1) collection [arg-realize-finish-token]))
-      (exceptions/raise-validation-error sm 0 collection "Realizer can only realize collections"))))
+      (-> sm
+          exit-realize-mode
+          stack-machine/dequeue-code))))
 
 
 (defmethod realize-mode
