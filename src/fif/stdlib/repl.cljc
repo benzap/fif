@@ -207,6 +207,16 @@
      (stack/dequeue-code sm)))
 
 
+(defn list-words-op
+  [sm]
+  (let [words (-> sm words/get-word-listing keys)
+        listing
+        (->> words
+             (keep #(words/get-global-metadata sm %))
+             vec)]
+    (-> sm stack/dequeue-code (stack/push-stack listing))))
+
+
 ;; TODO: use proper mode function
 (defn dir-op
   [sm]
@@ -286,6 +296,10 @@
        :doc "( wname metadata -- ) Sets and merges the key values of `metadata` into the metadata of `wname`."
        :stdlib? true
        :group :stdlib.metadata)
+
+      (words/set-global-word-defn
+       'list-words list-words-op
+       :doc " ( -- coll ) Returns the metadata of every word as a collection.")
 
       (stack/set-mode see-mode-flag see-mode)
       (stack/set-mode doc-mode-flag doc-mode)
