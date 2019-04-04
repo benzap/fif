@@ -15,7 +15,9 @@
 
 
 (defn error-object? [obj]
-  (-> obj first (= error-symbol)))
+  (if (vector? obj)
+    (-> obj first (= error-symbol))
+    false))
 
 
 (defn stack-error

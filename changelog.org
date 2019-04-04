@@ -4,6 +4,8 @@
 #+EMAIL: benzaporzan@gmail.com
 #+LANGUAGE: en
 #+OPTIONS: H:2 num:t toc:t \n:nil ::t |:t ^:t f:t tex:t
+* 1.3.2
+  - Fixed error handling checks to be more resilient to non-collections
 * 1.3.1
   - Added ~list-words~ word function to return a list all words and
     their metadata that exist within the given stack machine.
