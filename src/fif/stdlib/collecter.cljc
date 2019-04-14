@@ -8,7 +8,8 @@
                                     set-global-meta]]
    [fif.stack-machine.exceptions :as exceptions]
    [fif.utils.token :as token]
-   [fif.stdlib.macro :refer [import-stdlib-macro-mode]]))
+   [fif.stdlib.macro :refer [import-stdlib-macro-mode]]
+   [fif.stdlib.repl :refer [import-stdlib-repl]]))
 
 
 (def collecter-mode-flag :collecter-mode)
@@ -43,9 +44,20 @@
 
 
 (defcode-eval import-collection-collecter-defaults
+  group list! :stdlib.collector
+  doc   list! "list! <elements> ! -- Create a list containing the given elements"
   macro list! _! () <-into! !_ endmacro
+
+  group map! :stdlib.collector
+  doc   map! "map! <elements> ! -- Create a map containing the given element pairs"
   macro map! _! {} <-into! !_ endmacro
+
+  group vec! :stdlib.collector
+  doc   vec! "vec! <elements> ! -- Create a vector containing the given elements"
   macro vec! _! [] <-into! !_ endmacro
+
+  group set! :stdlib.collector
+  doc   set! "set! <elements> ! -- Create a set containing the given elements"
   macro set! _! #{} <-into! !_ endmacro)
 
 
@@ -68,6 +80,7 @@
        :group :stdlib.mode.collecter)
 
       import-stdlib-macro-mode ;; fif Macro Dependency
+      import-stdlib-repl       ;; fif Repl 'doc and 'group dependencies
       import-collection-collecter-defaults
 
       (set-global-meta 'list! :stdlib? true)

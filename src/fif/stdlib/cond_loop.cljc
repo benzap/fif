@@ -553,12 +553,14 @@
       (set-global-word-defn
        'j get-loop-index-2
        :stdlib? true
-       :doc "( -- n ) Retrieve the index of the second from the innermost loop.")
+       :doc "( -- n ) Retrieve the index of the second from the innermost loop."
+       :group :stdlib.mode.conditional-loop)
 
       (set-global-word-defn
        'k get-loop-index-3
        :stdlib? true
-       :doc "( -- n ) Retrieve the index of the third from the innermost loop.")
+       :doc "( -- n ) Retrieve the index of the third from the innermost loop."
+       :group :stdlib.mode.conditional-loop)
 
       (stack/set-mode do-mode-flag do-mode)
       (stack/set-mode inner-do-mode-flag inner-do-mode)

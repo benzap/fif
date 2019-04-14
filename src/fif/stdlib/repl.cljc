@@ -299,7 +299,9 @@
 
       (words/set-global-word-defn
        'list-words list-words-op
-       :doc " ( -- coll ) Returns the metadata of every word as a collection.")
+       :doc " ( -- coll ) Returns the metadata of every word as a collection."
+       :stdlib? true
+       :group :stdlib.repl)
 
       (stack/set-mode see-mode-flag see-mode)
       (stack/set-mode doc-mode-flag doc-mode)

@@ -4,6 +4,50 @@
 #+EMAIL: benzaporzan@gmail.com
 #+LANGUAGE: en
 #+OPTIONS: H:2 num:t toc:t \n:nil ::t |:t ^:t f:t tex:t
+* 1.4.0
+  - Added ~$~ operator, which destructures a s-exp at the top of the
+    stack into the forth equivalent
+
+    ex.
+
+    #+BEGIN_SRC clojure
+
+    ;; Traditional Forth Expression to add two numbers
+    2 2 + . ;; 4
+    
+    ;; $-Expression alternative
+    (+ 2 2) $ . ;; 4
+
+    #+END_SRC
+
+    This should add a certain level of familiarity, with a nested word
+    operator being something that might be added in the future for
+    collections of s-expressions.
+
+    More advanced examples
+
+    #+BEGIN_SRC clojure
+
+    (reduce *+ (range 1 10)$)$ . ;; 45
+
+    #+END_SRC
+
+    The new word function is actually pretty easy to implement
+    yourself while in fif:
+
+    #+BEGIN_SRC
+
+    fn $ [coll] &
+      coll rest apply coll first apply
+    endfn
+
+    (+ 2 2) $ . ;; 4
+    
+    #+END_SRC
+
+    - Added documentation strings and appropriate groups to any
+      unassigned or undocumented stdlib word functions to display
+      better in fifiql.
 * 1.3.2
   - Fixed error handling checks to be more resilient to non-collections
 * 1.3.1

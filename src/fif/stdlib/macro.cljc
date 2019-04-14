@@ -102,13 +102,25 @@
   [sm]
   (-> sm
 
-      (set-global-word-defn arg-start-macro start-macro :stdlib? true)
+      (set-global-word-defn arg-start-macro start-macro
+       :stdlib? true
+       :doc "macro <body> endmacro -- Creates a macro from <body> form consisting of _! and !_"
+       :group :stdlib.macro)
 
-      (set-global-word-defn arg-start-macro-store start-macro-store :stdlib? true)
+      (set-global-word-defn arg-start-macro-store start-macro-store
+       :stdlib? true
+       :doc "macro <body> endmacro -- Creates a macro from <body> form consisting of _! and !_"
+       :group :stdlib.macro)
 
-      (set-global-word-defn arg-create-macro-stack op-create-temp-macro-stack :stdlib? true)
+      (set-global-word-defn arg-create-macro-stack op-create-temp-macro-stack
+       :stdlib? true
+       :doc "macro <body> endmacro -- Creates a macro from <body> form consisting of _! and !_"
+       :group :stdlib.macro)
 
-      (set-global-word-defn arg-transfer-macro-stack op-transfer-macro-stack :stdlib? true)
+      (set-global-word-defn arg-transfer-macro-stack op-transfer-macro-stack
+       :stdlib? true
+       :doc "macro <body> endmacro -- Creates a macro from <body> form consisting of _! and !_"
+       :group :stdlib.macro)
 
       (stack/set-mode macro-define-mode-flag macro-define-mode)
       (stack/set-mode macro-store-mode-flag macro-store-mode)))

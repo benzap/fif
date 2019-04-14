@@ -20,7 +20,8 @@
    [fif.stdlib.type-checking :refer [import-stdlib-type-checking]]
    [fif.stdlib.piecewise :refer [import-stdlib-piecewise]]
    [fif.stdlib.help :refer [import-stdlib-help]]
-   [fif.stdlib.destructuring :refer [import-stdlib-destructuring]]))
+   [fif.stdlib.destructuring :refer [import-stdlib-destructuring]]
+   [fif.stdlib.s-expression :refer [import-stdlib-s-expression]]))
 
 
 (defn import-stdlib [sm]
@@ -44,6 +45,5 @@
       import-stdlib-type-checking
       import-stdlib-piecewise
       import-stdlib-help
-      import-stdlib-destructuring))
-
-
+      import-stdlib-destructuring
+      import-stdlib-s-expression))
