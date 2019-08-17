@@ -23,18 +23,10 @@
 #
 # Requires: GraalVM with GRAAL_HOME environment variable set to the
 # root of the graal folder (might work if you just have native-image on the path)
+.PHONY: all build-native clean distclean
 
-FIF_EXISTS := $(shell which fif >/dev/null && echo "True" || echo "False")
-
-# Use fif to retrieve the project version, since it's faster
-ifeq ($(FIF_EXISTS), True)
-FIF_VERSION := $(shell fif -e \"project.clj\" read-file first 2 nth println)
-else
 FIF_VERSION := $(shell lein project-version)
-endif
-
 FIF_EXE_NAME := fif-$(FIF_VERSION)
-
 PROJ_FIF_EXE := bin/$(FIF_EXE_NAME)
 
 
@@ -43,8 +35,8 @@ all: clean build-native
 
 
 # Generate fif native executable
-build-native: $(PROF_FIF_EXE)
-
+build-native:
+	sh ./build-native.sh
 
 # Generate deb Package for native executable
 # Note: Tested on Ubuntu 17.10
@@ -82,5 +74,3 @@ distclean:
 	rm -f /usr/bin/fif
 
 
-$(PROJ_FIF_EXE):
-	sh ./build-native.sh

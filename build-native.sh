@@ -25,7 +25,13 @@ lein uberjar
 echo ""
 
 echo "Building Native Image..."
-native-image -jar target/fif-$FIF_VERSION-standalone.jar -H:Name="fif-${FIF_VERSION}" -H:+ReportUnsupportedElementsAtRuntime
+native-image -jar target/fif-$FIF_VERSION-standalone.jar \
+  -H:Name="fif-${FIF_VERSION}" \
+  --initialize-at-build-time \
+  --no-server \
+  --report-unsupported-elements-at-runtime \
+  --static \
+  --no-fallback
 echo ""
 
 echo "Post Configuration..."
